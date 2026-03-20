@@ -40,5 +40,5 @@ export const skills: Skill[] = [
   // { name: 'Vite', level: 'advanced', category: 'tools' },
 //   { name: 'Webpack', level: 'intermediate', category: 'tools' },
 //   { name: 'Jest', level: 'intermediate', category: 'tools' },
-  // { name: 'CI/CD', level: 'intermediate', category: 'tools' }
+  { name: 'CI/CD', level: 'advanced', category: 'tools' }
 ]

@@ -3,62 +3,59 @@ import type { Project } from '@/types'
 export const projects: Project[] = [
   {
     id: '1',
-    name: 'TruyenVietHay – Online Story Reading Platform',
-    description: 'A full-feature story platform with gamification and high-performance caching.',
+    name: 'TruyenVietHay - Backend for Story Reading & Audio Platform',
+    description: 'A scalable backend for an online story reading and audio platform, focused on content delivery, caching, authentication, and real-time engagement.',
     techStack: [
       'Node.js',
       'Express',
       'MySQL',
-      'Node-cache',
-      'REST API',
+      'Redis',
+      'Socket.io',
       'JWT',
-      'RBAC',
+      'Google OAuth',
       'Cloudinary',
-      'Aiven',
-      'Render',
-      'Test Accounts for HR: baodevnode(user) - baodev(author) - baodev1(admin) (password: 123456)', 
+      'AWS S3 / Cloudflare R2',
+      'Node-cron',
     ],
     architecture: [
-      'MVC-based architecture',
-      'Layered Caching Strategy (Node-cache)',
-      'RESTful API design',
-      'Relational database with Fulltext Search',
-      'Token-based authentication & authorization'
+      'RESTful backend architecture with Express, service layers, and MySQL persistence',
+      'Chapter metadata served by API while chapter JSON content is delivered through CDN object storage',
+      'Audio metadata served by API with direct MP3 playback from CDN for better scale and faster load times',
+      'Redis-backed caching, online state, and scheduled jobs for rankings, stats, and cleanup',
     ],
     features: [
-      'Gamification Engine: Logic for EXP calculation, automated daily tasks, and currency transactions',
-      'Performance Optimization: Implemented node-cache to reduce DB load for high-traffic endpoints (Rankings, Hot Stories)',
-      'Database Efficiency: Optimized SQL queries with Indexes and Fulltext Search for fast content retrieval',
-      'Content Delivery APIs: Efficient endpoints for chapter pagination, reading history, and detailed metadata',
-      'Security & Access: Fine-grained RBAC for Admins, Authors, and Users protected by JWT',
-      'Interaction System: Backend logic for flexible handling of comments, ratings, and follow lists ',
+      'Designed APIs for story reading, chapter metadata, reading history, audio playlists, and progress synchronization',
+      'Built CDN-based chapter and audio delivery flow to reduce backend load and improve scalability for high-traffic content access',
+      'Implemented authentication and authorization with JWT, Google OAuth, and role-based access for admin, author, and user',
+      'Developed interaction and gamification modules for comments, ratings, follows, badges, inventory, mailbox, and shop logic',
+      'Integrated Socket.io and Redis for real-time notifications, chat, online presence, and shared application state',
+      'Automated operational workloads with cron jobs for rankings, statistics aggregation, cleanup, and reward lifecycle handling',
     ],
     liveUrl: 'https://truyen-viet-hay.vercel.app/',
-    githubUrl: 'https://github.com/quocbao201104/TruyenVietHay.git'
+    githubUrl: 'https://github.com/quocbao201104/TruyenVietHay.git',
   },
-  
   {
-  id: '2',
-  name: 'Generic Content Ingestion Crawler (Node.js)',
-  description: 'A sequential crawler for ingesting and normalizing paginated content.',
-  techStack: [
-    'Node.js',
-    'Axios',
-    'Cheerio',
-    'MySQL',
-    'Dotenv'
-  ],
-  architecture: [
-    'Crawler layer for controlled HTTP fetching',
-    'Parser layer for structured HTML normalization',
-    'DAO / Model layer for database persistence'
-  ],
-  features: [
-    'Sequential crawling with configurable delay',
-    'Duplicate detection via slug-based checks',
-    'Robust HTML-to-text normalization',
-    'Modular and extensible architecture'
-  ],
-  githubUrl: 'https://github.com/quocbao201104/nodejs-content-crawler',
-  }
+    id: '2',
+    name: 'Generic Content Ingestion Crawler (Node.js)',
+    description: 'A sequential crawler for ingesting and normalizing paginated content.',
+    techStack: [
+      'Node.js',
+      'Axios',
+      'Cheerio',
+      'MySQL (Aiven)',
+      'Dotenv',
+    ],
+    architecture: [
+      'Crawler layer for controlled HTTP fetching',
+      'Parser layer for structured HTML normalization',
+      'DAO / Model layer for database persistence',
+    ],
+    features: [
+      'Sequential crawling with configurable delay',
+      'Duplicate detection via slug-based checks',
+      'Robust HTML-to-text normalization',
+      'Modular and extensible architecture',
+    ],
+    githubUrl: 'https://github.com/quocbao201104/nodejs-content-crawler',
+  },
 ]

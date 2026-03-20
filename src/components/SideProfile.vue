@@ -61,10 +61,10 @@
       <div class="flex flex-wrap gap-2">
         <span class="px-3 py-1 bg-dark-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">Node.js</span>
         <span class="px-3 py-1 bg-dark-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">Express</span>
-        <span class="px-3 py-1 bg-dark-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">MySQL(Aiven)</span>
+        <span class="px-3 py-1 bg-dark-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">MySQL</span>
         <span class="px-3 py-1 bg-dark-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">JWT & RBAC</span>
-        <span class="px-3 py-1 bg-dark-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">Cloudinary</span>
-        <span class="px-3 py-1 bg-dark-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">Node-cache</span>
+        <span class="px-3 py-1 bg-dark-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">Redis</span>
+        <span class="px-3 py-1 bg-dark-800 border border-gray-700 rounded text-xs text-gray-300 font-mono">Socket.io</span>
       </div>
       
       <div class="mt-8 pt-8 border-t border-gray-800 text-center">
