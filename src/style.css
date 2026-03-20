@@ -2,14 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --app-bg: #050505;
+  --panel-bg: #0F0E17;
+  --text-main: #d1d5db;
+  --text-strong: #f3f4f6;
+  --accent-gradient: linear-gradient(to right, #4f46e5, #9333ea);
+  --accent-gradient-soft: linear-gradient(to right, rgba(79, 70, 229, 0.15), rgba(147, 51, 234, 0.15));
+  --accent-purple-glow: rgba(147, 51, 234, 0.15);
+  --accent-pink-glow: rgba(79, 70, 229, 0.1);
+  --card-border: #4C1D95;
+}
+
 @layer base {
   * {
     @apply border-dark-800;
   }
   
   body {
-    @apply bg-dark-950 text-gray-100 antialiased;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--app-bg);
+    color: var(--text-main);
+    font-family: 'Inter', 'Geist', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   html {
@@ -26,38 +39,120 @@
     @apply py-16 md:py-24;
   }
 
+  .font-display-custom {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    letter-spacing: -0.025em;
+  }
+
+  .font-code-custom {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    letter-spacing: -0.01em;
+  }
+
   .gradient-text {
-    @apply bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .card-hover {
-    @apply transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary-500/20;
+    @apply transition-all duration-300 hover:scale-105;
   }
 
-  /* Glassmorphism Utilities */
+  .card-hover:hover {
+    box-shadow: 0 22px 45px -22px var(--accent-purple-glow), 0 0 24px var(--accent-pink-glow);
+  }
+
   .glass-card {
-    @apply bg-dark-900/60 backdrop-blur-md border border-white/5 rounded-xl shadow-xl;
+    @apply backdrop-blur-md border rounded-2xl;
+    background: var(--panel-bg);
+    border-color: var(--card-border);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-muted-text {
+    color: #c7cdd8;
+  }
+
+  .card-support-text {
+    color: #aeb6c3;
   }
   
   .glass-panel {
     @apply bg-dark-900/80 backdrop-blur-xl border-r border-white/5 h-full;
   }
 
-  /* Tech Accents */
   .tech-border {
     @apply relative border border-primary-500/30 overflow-hidden;
   }
   
   .tech-border::before {
     content: '';
-    @apply absolute top-0 left-0 w-1 h-full bg-primary-500 opacity-50;
+    @apply absolute top-0 left-0 w-1 h-full opacity-70;
+    background: var(--accent-gradient);
   }
   
   .tech-glow {
-    @apply shadow-[0_0_15px_rgba(34,197,94,0.1)];
+    box-shadow: 0 0 14px rgba(79, 70, 229, 0.12), 0 0 28px rgba(124, 58, 237, 0.05);
   }
 
-  /* Custom Scrollbar */
+  .accent-line {
+    background: linear-gradient(135deg, #7c3aed 0%, #c026d3 100%);
+  }
+
+  .accent-pill {
+    @apply border rounded-full;
+    border-color: rgba(99, 102, 241, 0.18);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(124, 58, 237, 0.06), rgba(192, 38, 211, 0.08));
+  }
+
+  .accent-icon {
+    @apply bg-dark-800;
+    color: #c4b5fd;
+    border: 1px solid rgba(99, 102, 241, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  }
+
+  .gradient-button {
+    background: var(--accent-gradient);
+    box-shadow: 0 14px 26px -18px rgba(79, 70, 229, 0.55), 0 0 18px rgba(124, 58, 237, 0.12);
+  }
+
+  .gradient-button:hover {
+    box-shadow: 0 18px 30px -18px rgba(79, 70, 229, 0.6), 0 0 20px rgba(192, 38, 211, 0.14);
+    transform: translateY(-1px);
+  }
+
+  .gradient-outline-button {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(124, 58, 237, 0.05), rgba(192, 38, 211, 0.06));
+    border-color: rgba(99, 102, 241, 0.14);
+  }
+
+  .gradient-outline-button:hover {
+    border-image: linear-gradient(135deg, rgba(79, 70, 229, 0.7), rgba(124, 58, 237, 0.55), rgba(192, 38, 211, 0.5)) 1;
+    color: #f3f4f6;
+    box-shadow: 0 12px 24px -24px rgba(79, 70, 229, 0.85), 0 0 16px rgba(124, 58, 237, 0.08);
+  }
+
+  .neon-project-card {
+    position: relative;
+    transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+  }
+
+  .neon-project-card:hover {
+    border-color: #6d28d9;
+    box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.6), 0 0 20px rgba(147, 51, 234, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .tech-tag {
+    @apply px-2 py-0.5 rounded text-[11px] font-code-custom bg-transparent;
+    color: var(--text-main);
+    border: 1px solid rgba(124, 58, 237, 0.35); /* Desaturated Purple-Pink border */
+  }
+
   ::-webkit-scrollbar {
     @apply w-2;
   }
@@ -71,18 +166,16 @@
   }
 }
 
-/* Background Pattern */
 .bg-tech-pattern {
-  background-color: #030712;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(34, 197, 94, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  background-color: #050505;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    radial-gradient(circle at 50% 30%, rgba(88, 28, 135, 0.1), #050505 60%);
+  background-size: 64px 64px, 64px 64px, 100% 100%;
+  background-attachment: fixed;
 }
 
-/* Print Styles for CV */
 @media print {
   @page {
     margin: 0.5in;
@@ -100,20 +193,17 @@
     font-size: 11pt;
   }
 
-  /* Hide navigation and footer when printing */
   header,
   footer,
   nav {
     display: none !important;
   }
 
-  /* Ensure main content takes full width */
   main {
     padding: 0 !important;
     margin: 0 !important;
   }
 
-  /* Prevent page breaks inside important elements */
   .project-item,
   .timeline-item,
   .skill-category,
@@ -121,21 +211,17 @@
     page-break-inside: avoid;
   }
 
-  /* Remove transitions and animations */
   * {
     transition: none !important;
     animation: none !important;
   }
 
-  /* Ensure links are visible with their URLs */
   a {
     text-decoration: underline;
     color: #374151 !important;
   }
 
-  /* Make sure text is black for readability */
   h1, h2, h3, h4, h5, h6, p, li, span {
     color: black !important;
   }
 }
-

@@ -4,7 +4,8 @@ export const socialLinks: SocialLink[] = [
   {
     name: 'GitHub',
     url: 'https://github.com/quocbao201104',
-    icon: 'github'
+    icon: 'github',
+    display: 'quocbao201104'
   },
 //   {
 //     name: 'LinkedIn',

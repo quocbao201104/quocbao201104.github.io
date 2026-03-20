@@ -12,7 +12,7 @@
         <div 
           v-for="skill in category.skills" 
           :key="skill.name"
-          class="skill-item bg-dark-800 border border-gray-700 rounded-lg p-3 hover:border-primary-400 transition-colors print:bg-white print:border-gray-300 print:p-2"
+          class="skill-item bg-dark-800 border border-gray-700 rounded-lg p-3 hover:border-secondary-400 transition-colors print:bg-white print:border-gray-300 print:p-2"
         >
           <div class="flex items-center justify-between mb-2 print:mb-1">
             <span class="font-medium text-gray-100 print:text-sm print:text-black">{{ skill.name }}</span>
@@ -69,9 +69,9 @@ const getCategoryDisplayName = (category: string): string => {
 
 const getLevelClass = (level: string): string => {
   const classes: Record<string, string> = {
-    'expert': 'bg-green-500/20 text-green-400',
-    'advanced': 'bg-blue-500/20 text-blue-400',
-    'intermediate': 'bg-yellow-500/20 text-yellow-400',
+    'expert': 'bg-secondary-500/20 text-secondary-300',
+    'advanced': 'bg-primary-500/20 text-primary-300',
+    'intermediate': 'bg-fuchsia-500/20 text-fuchsia-300',
     'beginner': 'bg-gray-500/20 text-gray-400'
   }
   return classes[level] || classes.beginner

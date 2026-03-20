@@ -6,6 +6,7 @@ export interface Project {
   features: string[]
   liveUrl?: string
   githubUrl?: string
+  sourceNote?: string
   architecture?: string[]
 }
 
