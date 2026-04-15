@@ -3,29 +3,25 @@ import type { Experience } from '@/types'
 export const experiences: Experience[] = [
   {
     id: '1',
-    title: 'Backend Developer',
-    company: 'Personal Project - TruyenVietHay',
-    startDate: '2025-06',
-    endDate: 'Present',
-    description: [
-      'Architected a scalable backend handling high-traffic chapter content and audio delivery using Node.js, Express, and MySQL',
-      'Optimized content delivery performance by decoupling chapter metadata from CDN-served object storage, significantly reducing API load',
-      'Secured user data and system endpoints by implementing robust JWT authentication, Google OAuth, and granular RBAC for distinct user roles',
-      'Enhanced real-time user engagement through Socket.io and Redis for instant chat, notifications, and dynamic online state synchronization',
-      'Automated system performance reporting and data cleanup using scheduled cron jobs, ensuring consistent high availability',
+    role: 'Backend Developer',
+    org: 'TruyenVietHay',
+    period: 'Jun 2025 - Present',
+    bullets: [
+      'Built and maintained Node.js services for story delivery, audio workflows, and user activity features.',
+      'Separated metadata APIs from CDN-served chapter and audio assets to reduce backend pressure on high-read flows.',
+      'Implemented JWT, Google OAuth, and role-based authorization across admin and user-facing operations.',
+      'Used Redis, Socket.io, and cron automation for notifications, online presence, and scheduled maintenance jobs.',
     ],
   },
   {
     id: '2',
-    title: 'Information Technology Student',
-    company: 'University',
-    startDate: '2022-09',
-    endDate: 'Present',
-    description: [
-      'Major in Information Technology',
-      'Focused on web development, databases, and software engineering',
-      'Self-studied backend development with Node.js and real-world projects',
-      'Built multiple personal projects to practice backend development',
+    role: 'Information Technology Student',
+    org: 'University',
+    period: 'Sep 2022 - Present',
+    bullets: [
+      'Focused on software engineering, databases, and web architecture with a backend-leaning project portfolio.',
+      'Used personal products and ingestion pipelines to practice API design, persistence, and automation workflows.',
+      'Built production-style side projects to strengthen real-world thinking around reliability and maintainability.',
     ],
   },
 ]

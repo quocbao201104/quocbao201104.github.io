@@ -3,12 +3,10 @@ import type { PersonalInfo } from '@/types'
 export const personalInfo: PersonalInfo = {
   fullName: 'Vo Dinh Quoc Bao',
   title: 'Backend Developer',
+  intro: 'I build backend systems focused on reliable APIs, caching strategy, and scalable content delivery.',
   location: 'Vietnam',
   dateOfBirth: '2004-11-20',
   yearsOfExperience: 2,
-  summary: `Passionate Backend Developer specializing in Node.js and scalable web applications. 
-Experienced in building robust RESTful APIs, implementing complex authentication systems, and optimizing database performance. 
-Strong focus on clean architecture and writing secure code to prevent common web vulnerabilities (robust JWT & RBAC implementations). 
-Currently seeking opportunities to contribute to innovative projects and grow as a software engineer.`,
+  summary: `Backend developer with hands-on experience building APIs, auth flows, background jobs, and data-heavy services using Node.js. I care about clean boundaries, secure defaults, and systems that stay dependable as traffic grows.`,
   languages: ['Vietnamese (Native)', 'English (Intermediate)']
 }

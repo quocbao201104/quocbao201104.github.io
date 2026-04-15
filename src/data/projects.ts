@@ -3,8 +3,9 @@ import type { Project } from '@/types'
 export const projects: Project[] = [
   {
     id: '1',
-    name: 'TruyenVietHay - Backend for Story Reading & Audio Platform',
-    description: 'A production-oriented backend for an online story reading and audio platform, built around scalable APIs, efficient content delivery, and secure service design.',
+    name: 'TruyenVietHay backend platform',
+    summary: 'Production-oriented backend for a story reading and audio platform, centered on scalable APIs, secure service design, and efficient content delivery.',
+    impact: 'Separated metadata APIs from asset delivery so reading and audio traffic could scale through CDN-backed storage instead of hitting the app server directly.',
     techStack: [
       'Node.js',
       'Express',
@@ -23,21 +24,22 @@ export const projects: Project[] = [
       'Redis-backed caching and shared state for latency-sensitive reads, notifications, and online presence',
       'Background job pipeline for rankings, statistics aggregation, cleanup, and reward lifecycle automation',
     ],
-    features: [
-      'Engineered RESTful APIs across 28 route modules for stories, chapters, reading history, audio playlists, comments, ratings, and follow features',
-      'Reduced backend workload by separating metadata from content delivery and routing high-volume chapter and audio assets through CDN/object storage',
-      'Designed a secure authentication pipeline with JWT, Google OAuth, and strict RBAC to protect administrative and user-sensitive operations',
-      'Integrated Redis caching, Socket.io real-time events, and Cron jobs to stabilize traffic spikes and automate rankings, statistics, and cleanup tasks',
-      'Developed gamification and user-engagement modules including badges, inventory, mailbox, notifications, and virtual rewards',
-      'Optimized schema design and MySQL query patterns for high-frequency reading, history tracking, and interaction workflows',
+    highlights: [
+      'Engineered REST APIs for stories, chapters, reading history, playlists, ratings, and follow features.',
+      'Designed a secure authentication flow with JWT, Google OAuth, and strict RBAC for sensitive operations.',
+      'Integrated Redis, Socket.io, and scheduled jobs to support notifications, rankings, and cleanup workflows.',
+      'Optimized MySQL schema and query paths for frequent reading, history tracking, and interaction-heavy endpoints.',
     ],
-    liveUrl: 'https://truyenviethay.id.vn/',
+    links: [
+      { label: 'Live', url: 'https://truyenviethay.id.vn/' },
+    ],
     sourceNote: 'Private repository',
   },
   {
     id: '2',
-    name: 'YouTube Audio Pipeline',
-    description: 'An automated pipeline system that scans YouTube Playlists, extracts and chunks audio using FFmpeg, uploads to Cloudflare R2, and syncs metadata to MySQL.',
+    name: 'YouTube audio ingestion pipeline',
+    summary: 'Automated ingestion pipeline that scans playlists, processes audio with FFmpeg, uploads assets to Cloudflare R2, and syncs metadata to MySQL.',
+    impact: 'Moved media-heavy work into a queue-driven pipeline so extraction and upload tasks could run safely without overwhelming application memory.',
     techStack: [
       'Node.js',
       'Docker',
@@ -51,19 +53,21 @@ export const projects: Project[] = [
       'Decoupled worker architecture scaling processing-heavy media operations safely',
       'Automated pipeline: Scrape -> Queue -> Process -> Upload -> Sync Database',
     ],
-    features: [
-      'Automated synchronization of YouTube playlists via scheduled cron jobs',
-      'Audio extraction, chunking, and downloading using yt-dlp and FFmpeg',
-      'Robust queue management via Redis preventing OOM and optimizing bandwidth',
-      'Direct structural mapping, regex title cleaning, and database population',
-      'Automated Cloudflare R2 storage optimization serving CDN streaming',
+    highlights: [
+      'Scheduled playlist synchronization with cron-driven discovery and processing.',
+      'Used Redis queues to coordinate extraction, chunking, upload, and database sync stages.',
+      'Cleaned and normalized metadata before persisting assets and stream references.',
+      'Handled storage delivery through Cloudflare R2 for CDN-friendly audio streaming.',
     ],
-    githubUrl: 'https://github.com/quocbao201104/truyenviethay-audio-ingest.git',
+    links: [
+      { label: 'GitHub', url: 'https://github.com/quocbao201104/truyenviethay-audio-ingest.git' },
+    ],
   },
   {
     id: '3',
-    name: 'Generic Content Ingestion Crawler (Node.js)',
-    description: 'A sequential crawler for ingesting and normalizing paginated content.',
+    name: 'Node.js content ingestion crawler',
+    summary: 'Sequential crawler for ingesting and normalizing paginated content into a structured persistence layer.',
+    impact: 'Built a predictable fetch-parse-store workflow that kept ingestion deterministic while reducing duplicate content and cleanup work.',
     techStack: [
       'Node.js',
       'Axios',
@@ -76,12 +80,14 @@ export const projects: Project[] = [
       'Parser layer for structured HTML normalization',
       'DAO / Model layer for database persistence',
     ],
-    features: [
-      'Sequential crawling with configurable delay',
-      'Duplicate detection via slug-based checks',
-      'Robust HTML-to-text normalization',
-      'Modular and extensible architecture',
+    highlights: [
+      'Controlled crawling with configurable pacing to avoid unstable fetch behavior.',
+      'Slug-based duplicate detection before persistence.',
+      'Robust normalization from HTML content into database-ready text fields.',
+      'Split the crawler into focused layers for fetching, parsing, and persistence.',
     ],
-    githubUrl: 'https://github.com/quocbao201104/nodejs-content-crawler',
+    links: [
+      { label: 'GitHub', url: 'https://github.com/quocbao201104/nodejs-content-crawler' },
+    ],
   },
 ]

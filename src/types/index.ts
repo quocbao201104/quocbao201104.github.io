@@ -1,13 +1,18 @@
+export interface ProjectLink {
+  label: string
+  url: string
+}
+
 export interface Project {
   id: string
   name: string
-  description: string
+  summary: string
+  impact: string
   techStack: string[]
-  features: string[]
-  liveUrl?: string
-  githubUrl?: string
+  highlights: string[]
+  architecture: string[]
+  links?: ProjectLink[]
   sourceNote?: string
-  architecture?: string[]
 }
 
 export interface Skill {
@@ -18,11 +23,10 @@ export interface Skill {
 
 export interface Experience {
   id: string
-  title: string
-  company: string
-  startDate: string
-  endDate: string | 'Present'
-  description: string[]
+  role: string
+  org: string
+  period: string
+  bullets: string[]
 }
 
 export interface SocialLink {
@@ -36,8 +40,27 @@ export interface PersonalInfo {
   fullName: string
   title: string
   location: string
+  intro: string
   dateOfBirth?: string
   yearsOfExperience: number
   summary: string
   languages: string[]
+}
+
+export interface OverviewCard {
+  id: string
+  label: string
+  title: string
+  body: string
+  metric?: string
+  items?: string[]
+  size?: 'default' | 'wide'
+}
+
+export interface SystemDesignArea {
+  id: string
+  label: string
+  title: string
+  description: string
+  details: string[]
 }
