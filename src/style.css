@@ -113,8 +113,7 @@
   }
 
   .hero-title {
-    @apply text-[2.8rem] font-semibold leading-[0.95] tracking-[-0.05em] text-white sm:text-5xl sm:leading-[0.96] lg:text-6xl;
-    text-wrap: balance;
+    @apply text-4xl font-semibold leading-[0.95] tracking-[-0.05em] text-white sm:text-5xl sm:leading-[0.96] lg:text-6xl;
   }
 
   .hero-subtitle {

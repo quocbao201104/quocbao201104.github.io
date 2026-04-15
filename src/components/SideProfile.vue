@@ -13,7 +13,7 @@
       <h1 class="text-3xl md:text-4xl font-bold mb-2 tracking-tight gradient-text font-display-custom">
         {{ personalInfo.fullName.split(' ').pop() }}
       </h1>
-      <h2 class="text-lg md:text-xl text-gray-300 font-medium">
+      <h2 class="text-lg md:text-xl text-gray-300 font-medium whitespace-nowrap">
         {{ personalInfo.fullName }}
       </h2>
       <div class="mt-4 px-4 py-1.5 inline-block accent-pill">
