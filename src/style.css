@@ -100,7 +100,7 @@
   }
 
   .hero-panel {
-    @apply rounded-[32px] border px-5 py-6 sm:px-7 sm:py-8 md:px-10 md:py-10;
+    @apply rounded-[28px] border px-4 py-5 sm:rounded-[32px] sm:px-7 sm:py-8 md:px-10 md:py-10;
     border-color: var(--border-soft);
     background:
       linear-gradient(180deg, rgba(18, 26, 36, 0.98), rgba(10, 14, 20, 0.9)),
@@ -109,29 +109,30 @@
   }
 
   .hero-grid {
-    @apply grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start;
+    @apply grid gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start;
   }
 
   .hero-title {
-    @apply text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl;
+    @apply text-[2.8rem] font-semibold leading-[0.95] tracking-[-0.05em] text-white sm:text-5xl sm:leading-[0.96] lg:text-6xl;
     text-wrap: balance;
   }
 
   .hero-subtitle {
-    @apply text-lg font-medium text-slate-300 sm:text-xl;
+    @apply text-base font-medium text-slate-300 sm:text-xl;
   }
 
   .profile-card {
     @apply rounded-[28px] p-5;
-    max-width: 280px;
-    margin-left: auto;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
   }
 
   .profile-avatar-shell {
     @apply mb-5 overflow-hidden rounded-[24px] border;
     border-color: var(--border-soft);
     background: rgba(255, 255, 255, 0.02);
-    max-width: 220px;
+    max-width: 180px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -220,6 +221,39 @@
     @apply rounded-[28px] p-5 md:p-6;
   }
 
+  .project-panel {
+    @apply rounded-[24px] p-4 sm:rounded-[28px] sm:p-5 md:p-6;
+  }
+
+  .project-header {
+    @apply flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between;
+  }
+
+  .project-copy {
+    @apply max-w-3xl space-y-3;
+  }
+
+  .project-name {
+    @apply text-xl font-semibold tracking-[-0.03em] text-white sm:text-2xl;
+    text-wrap: balance;
+  }
+
+  .project-links {
+    @apply flex flex-col gap-2 sm:flex-row sm:flex-wrap lg:max-w-xs lg:justify-end;
+  }
+
+  .mobile-project-link {
+    width: 100%;
+  }
+
+  .project-stack {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .project-detail-grid {
+    @apply grid gap-4 md:grid-cols-2 md:gap-5;
+  }
+
   .metric-pill,
   .meta-pill,
   .stack-pill {
@@ -275,6 +309,10 @@
     @apply pb-10 pt-14 text-center md:pt-20;
   }
 
+  .mobile-full-button {
+    width: 100%;
+  }
+
   ::-webkit-scrollbar {
     width: 10px;
   }
@@ -290,6 +328,25 @@
 
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(148, 163, 184, 0.62);
+  }
+}
+
+@media (min-width: 640px) {
+  .profile-card {
+    max-width: 280px;
+    margin-left: auto;
+  }
+
+  .profile-avatar-shell {
+    max-width: 220px;
+  }
+
+  .mobile-full-button {
+    width: auto;
+  }
+
+  .mobile-project-link {
+    width: auto;
   }
 }
 

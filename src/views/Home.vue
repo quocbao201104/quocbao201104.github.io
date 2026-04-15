@@ -1,6 +1,6 @@
 <template>
   <div class="portfolio-shell bg-grid-surface text-gray-100">
-    <main class="container-custom relative z-10 py-8 md:py-14">
+    <main class="container-custom relative z-10 py-6 md:py-14">
       <section class="hero-panel animate-fade-in">
         <div class="hero-grid">
           <div class="space-y-6">
@@ -15,24 +15,24 @@
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <a
                 v-if="githubLink"
                 :href="githubLink.url"
                 target="_blank"
                 rel="noreferrer"
-                class="button-primary"
+                class="button-primary mobile-full-button"
               >
                 <Github :size="16" />
                 <span>GitHub</span>
               </a>
-              <a :href="`mailto:${contactEmail}`" class="button-secondary">
+              <a :href="`mailto:${contactEmail}`" class="button-secondary mobile-full-button">
                 <Mail :size="16" />
                 <span>Contact</span>
               </a>
             </div>
 
-            <div class="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+            <div class="flex flex-col items-start gap-3 text-sm text-slate-400 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
               <div class="inline-flex items-center gap-2">
                 <MapPin :size="14" />
                 <span>{{ personalInfo.location }}</span>
@@ -124,28 +124,28 @@
           </p>
         </div>
 
-        <div class="space-y-5">
+        <div class="space-y-4 sm:space-y-5">
           <article v-for="project in projects" :key="project.id" class="surface-panel project-panel">
-            <div class="space-y-6">
-              <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                <div class="max-w-3xl space-y-3">
+            <div class="space-y-5 sm:space-y-6">
+              <div class="project-header">
+                <div class="project-copy">
                   <p class="section-label">Project {{ project.id }}</p>
-                  <div class="space-y-2">
-                    <h3 class="text-2xl font-semibold tracking-tight text-white">{{ project.name }}</h3>
+                  <div class="space-y-2 sm:space-y-3">
+                    <h3 class="project-name">{{ project.name }}</h3>
                     <p class="text-sm leading-6 text-slate-300 md:text-base">
                       {{ project.summary }}
                     </p>
                   </div>
                 </div>
 
-                <div class="flex flex-wrap gap-2 lg:max-w-xs lg:justify-end">
+                <div class="project-links">
                   <a
                     v-for="link in project.links"
                     :key="link.url"
                     :href="link.url"
                     target="_blank"
                     rel="noreferrer"
-                    class="button-secondary compact-button"
+                    class="button-secondary compact-button mobile-project-link"
                   >
                     <span>{{ link.label }}</span>
                     <ArrowUpRight :size="14" />
@@ -163,13 +163,13 @@
                 </p>
               </div>
 
-              <div class="flex flex-wrap gap-2">
+              <div class="project-stack">
                 <span v-for="tech in project.techStack" :key="tech" class="stack-pill">
                   {{ tech }}
                 </span>
               </div>
 
-              <div class="grid gap-5 md:grid-cols-2">
+              <div class="project-detail-grid">
                 <div class="detail-block">
                   <p class="section-label">Highlights</p>
                   <ul class="mt-3 space-y-3 text-sm leading-6 text-slate-300">
