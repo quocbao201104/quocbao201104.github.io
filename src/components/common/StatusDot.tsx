@@ -13,14 +13,12 @@ const toneClasses: Record<Tone, { dot: string; ring: string }> = {
 
 interface StatusDotProps {
   tone?: Tone;
-  pulse?: boolean;
   size?: 'sm' | 'md';
   className?: string;
 }
 
 export function StatusDot({
   tone = 'ok',
-  pulse = true,
   size = 'sm',
   className,
 }: StatusDotProps) {
@@ -31,14 +29,7 @@ export function StatusDot({
       aria-hidden
       className={cn('relative inline-flex', dim, className)}
     >
-      {pulse && tone !== 'muted' && (
-        <span
-          className={cn(
-            'absolute inset-0 rounded-full opacity-60 animate-pulse-glow',
-            c.dot,
-          )}
-        />
-      )}
+      {/* No continuous pulse animation (perf). */}
       <span className={cn('relative rounded-full', dim, c.dot, c.ring)} />
     </span>
   );

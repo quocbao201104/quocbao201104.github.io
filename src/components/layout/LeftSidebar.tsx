@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react';
 
 export function LeftSidebar() {
   return (
-    <aside className="hidden lg:flex w-[260px] shrink-0 border-r border-line/80 bg-bg-base/50 backdrop-blur-xl flex-col">
+    <aside className="hidden lg:flex w-[260px] shrink-0 border-r border-line/80 bg-bg-base/70 flex-col">
       <div className="flex flex-col gap-8 p-4 pt-6 flex-1 overflow-y-auto">
         <NavSection />
         <div className="divider" />

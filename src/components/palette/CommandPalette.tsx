@@ -68,7 +68,7 @@ export function CommandPalette() {
         >
           <div
             aria-hidden
-            className="absolute inset-0 bg-bg-sunken/70 backdrop-blur-md"
+            className="absolute inset-0 bg-bg-sunken/80"
           />
           <span
             aria-hidden

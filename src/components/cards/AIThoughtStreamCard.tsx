@@ -60,8 +60,7 @@ function Caret() {
 function ThinkingDot() {
   return (
     <span className="relative inline-flex h-2 w-2">
-      <span className="absolute inset-0 rounded-full bg-accent-purple/50 animate-pulse-ring" />
-      <span className="relative h-2 w-2 rounded-full bg-accent-purple shadow-[0_0_8px_rgba(168,85,247,0.7)]" />
+      <span className="relative h-2 w-2 rounded-full bg-accent-purple shadow-[0_0_8px_rgba(168,85,247,0.55)]" />
     </span>
   );
 }
@@ -89,18 +88,6 @@ function ThinkingWave({ active }: { active: boolean }) {
         strokeWidth="1.2"
         strokeOpacity="0.7"
       >
-        {active && (
-          <animate
-            attributeName="d"
-            dur="2.4s"
-            repeatCount="indefinite"
-            values="
-              M0,10 Q5,4 10,10 T20,10 T30,10 T40,10 T50,10 T60,10 T70,10 T86,10;
-              M0,10 Q5,16 10,10 T20,10 T30,10 T40,10 T50,10 T60,10 T70,10 T86,10;
-              M0,10 Q5,4 10,10 T20,10 T30,10 T40,10 T50,10 T60,10 T70,10 T86,10
-            "
-          />
-        )}
       </path>
     </svg>
   );

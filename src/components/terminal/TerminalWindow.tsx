@@ -155,7 +155,7 @@ export function TerminalWindow() {
   return (
     <section
       className={cn(
-        'shrink-0 border-t border-white/[0.04] bg-bg-base/65 backdrop-blur-2xl',
+        'shrink-0 border-t border-white/[0.04] bg-bg-base/80',
         'transition-[height] duration-500 ease-out',
         collapsed ? 'h-12' : 'h-[26vh] min-h-[200px] max-h-[280px]',
       )}

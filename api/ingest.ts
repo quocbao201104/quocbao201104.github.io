@@ -1,5 +1,9 @@
-import { corsHeaders, handleCors } from './_cors';
+import { corsHeaders, handleCors } from './_cors.js';
 import { createClient } from '@supabase/supabase-js';
+
+export const config = {
+  runtime: 'edge',
+};
 
 type IngestReq = {
   files: { path: string; content: string }[];
@@ -13,30 +17,39 @@ function getEnv(name: string) {
 
 const ALLOWED_TYPES = new Set(['profile', 'project', 'research', 'experiment', 'note', 'timeline']);
 
-async function openaiFetch(path: string, init: RequestInit) {
-  const base = getEnv('LLM_BASE_URL');
-  const url = base.replace(/\/$/, '') + path;
-  return fetch(url, init);
+// Xiaomi MiMo token-plan endpoint is chat-completions focused; embeddings may not be available.
+// Use a lightweight, deterministic local embedding for RAG so ingestion doesn't depend on /embeddings.
+const EMBED_DIMS = 1536;
+
+function fnv1a32(s: string) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+  }
+  return h >>> 0;
 }
 
-async function embedBatch(texts: string[]) {
-  const model = process.env.EMBED_MODEL ?? 'text-embedding-3-small';
-  const r = await openaiFetch('/embeddings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getEnv('LLM_API_KEY')}`,
-    },
-    body: JSON.stringify({ model, input: texts }),
-  });
-  if (!r.ok) {
-    const t = await r.text();
-    throw new Error(`Embeddings error: ${r.status} ${t}`);
+function cheapEmbed(text: string): number[] {
+  const v = new Array<number>(EMBED_DIMS).fill(0);
+  const tokens = text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s_-]+/gu, ' ')
+    .split(/\s+/g)
+    .filter(Boolean);
+
+  for (const tok of tokens) {
+    const h = fnv1a32(tok);
+    const idx = h % EMBED_DIMS;
+    const sign = (h & 1) === 0 ? 1 : -1;
+    v[idx] += sign * Math.min(3, 1 + tok.length / 6);
   }
-  const j = await r.json();
-  const data = j?.data;
-  if (!Array.isArray(data)) throw new Error('Embeddings response missing data');
-  return data.map((d: any) => d.embedding) as number[][];
+
+  let norm = 0;
+  for (let i = 0; i < v.length; i++) norm += v[i] * v[i];
+  norm = Math.sqrt(norm) || 1;
+  for (let i = 0; i < v.length; i++) v[i] = v[i] / norm;
+  return v;
 }
 
 function chunkText(text: string, maxChars = 1100, overlap = 180) {
@@ -124,7 +137,10 @@ export default async function handler(req: Request) {
 
   try {
     // Simple shared secret to prevent public ingest
-    const token = req.headers.get('authorization')?.replace('Bearer ', '');
+    const token =
+      req.headers.get('authorization')?.replace('Bearer ', '') ??
+      req.headers.get('x-ingest-token') ??
+      '';
     if (!token || token !== getEnv('INGEST_TOKEN')) {
       return new Response('Unauthorized', { status: 401, headers: corsHeaders(req.headers.get('origin')) });
     }
@@ -162,7 +178,7 @@ export default async function handler(req: Request) {
     for (const f of files) {
       const { meta, body } = parseFrontmatter(f.content);
       const chunks = chunkText(body);
-      const embeddings = await embedBatch(chunks);
+      const embeddings = chunks.map(cheapEmbed);
       chunks.forEach((c, idx) => {
         rows.push({
           path: f.path,

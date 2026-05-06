@@ -6,7 +6,7 @@ export function corsHeaders(origin: string | null) {
   return {
     'Access-Control-Allow-Origin': allowOrigin,
     'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Ingest-Token',
     'Access-Control-Max-Age': '86400',
   } as const;
 }
