@@ -114,6 +114,7 @@ export function TerminalWindow() {
           mode: remote.mode,
           sessionId,
           activeView: remote.activeView,
+          persona: remote.persona,
         });
         // Append answer as agent output
         setHistoryBySession((prev) => ({

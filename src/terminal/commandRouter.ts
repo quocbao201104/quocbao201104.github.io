@@ -24,6 +24,7 @@ export interface CommandResult {
     tone: 'purple' | 'cyan' | 'ok' | 'warn' | 'muted';
     message: string;
     activeView?: string;
+    persona?: 'bao' | 'recruiter' | 'architect' | 'memory';
   };
 }
 
@@ -43,7 +44,7 @@ export function runTerminalCommand(opts: {
     if (!msg) return { lines: [out('BAO.OS', 'Usage: llm <message>', 'muted')] };
     return {
       lines: [],
-      remote: { mode: 'llm', speaker: 'BAO.OS', tone: 'muted', message: msg },
+      remote: { mode: 'llm', speaker: 'BAO.OS', tone: 'muted', message: msg, persona: 'bao' },
     };
   }
   if (lower.startsWith('rag ')) {
@@ -51,7 +52,7 @@ export function runTerminalCommand(opts: {
     if (!msg) return { lines: [out('BAO.OS', 'Usage: rag <message>', 'muted')] };
     return {
       lines: [],
-      remote: { mode: 'rag', speaker: 'BAO.OS', tone: 'muted', message: msg },
+      remote: { mode: 'rag', speaker: 'BAO.OS', tone: 'muted', message: msg, persona: 'bao' },
     };
   }
 
@@ -84,50 +85,63 @@ export function runTerminalCommand(opts: {
 
   if (lower.startsWith('ask recruiter')) {
     const topic = raw.replace(/ask recruiter/i, '').trim();
-    if (!topic) {
-      return {
-        lines: [
-          out(
-            'Recruiter Agent',
-            "Tell me what role you’re targeting (backend / platform / AI infra), and I’ll summarize fit + strengths + likely interview angles.",
-            'purple' as any,
-          ),
-        ],
-      };
-    }
     return {
-      lines: [
-        out(
-          'Recruiter Agent',
-          `On "${topic}": I’d position Bao as a calm systems thinker — strong backend fundamentals, architecture taste, and pragmatic agentic experimentation. Want a 30-second pitch or a bullet resume rewrite?`,
-          'purple' as any,
-        ),
-      ],
+      lines: [],
+      remote: {
+        mode: 'llm',
+        speaker: 'Recruiter Agent',
+        tone: 'purple',
+        message: topic || 'Summarize Bao’s fit and strengths for backend/platform/AI infra roles.',
+        persona: 'recruiter',
+      },
     };
   }
 
   if (lower.startsWith('inspect architecture')) {
     const system = raw.replace(/inspect architecture/i, '').trim() || 'this system';
     return {
-      lines: [
-        out('Architect Agent', `Analyzing ${system}...`, 'cyan' as any),
-        out(
-          'Architect Agent',
-          'High-level: ingress → normalization → vector/graph memory → retrieval + rerank → response synthesis. Key risks: latency budgets, eval loops, and memory drift.',
-          'cyan' as any,
-        ),
-      ],
+      lines: [],
+      remote: {
+        mode: 'llm',
+        speaker: 'Architect Agent',
+        tone: 'cyan',
+        message: `Inspect architecture: ${system}. Provide boundaries, data flow, trade-offs, failure modes, and next steps.`,
+        persona: 'architect',
+      },
     };
   }
 
   if (lower.startsWith('run memory agent') || lower.startsWith('search memory')) {
     const q = raw.replace(/run memory agent|search memory/i, '').trim() || 'recent focus';
     return {
-      lines: [
-        out('Memory Agent', `Query: "${q}"`, 'ok' as any),
-        out('Memory Agent', 'Searching through episodic + semantic indexes...', 'ok' as any),
-        out('Memory Agent', 'Found 6 relevant memories. Top: GraphRAG tuning notes, retrieval eval checklist, and orchestration latency profiling.', 'ok' as any),
-      ],
+      lines: [],
+      remote: {
+        mode: 'rag',
+        speaker: 'Memory Agent',
+        tone: 'ok',
+        message: q,
+        persona: 'memory',
+      },
+    };
+  }
+
+  // Session defaults: typing plain text uses that tab’s persona/mode.
+  if (!/^(help|\?|clear|cls|switch\b|ask recruiter\b|inspect architecture\b|run memory agent\b|search memory\b|llm\b|rag\b)/i.test(lower)) {
+    if (opts.sessionId === 'architecture.ai') {
+      return {
+        lines: [],
+        remote: { mode: 'llm', speaker: 'Architect Agent', tone: 'cyan', message: raw, persona: 'architect' },
+      };
+    }
+    if (opts.sessionId === 'memory.log') {
+      return {
+        lines: [],
+        remote: { mode: 'rag', speaker: 'Memory Agent', tone: 'ok', message: raw, persona: 'memory' },
+      };
+    }
+    return {
+      lines: [],
+      remote: { mode: 'llm', speaker: 'BAO.OS', tone: 'muted', message: raw, persona: 'bao' },
     };
   }
 
