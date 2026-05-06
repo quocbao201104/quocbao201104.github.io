@@ -1,6 +1,10 @@
 import { corsHeaders, handleCors } from './_cors.js';
 import { createClient } from '@supabase/supabase-js';
 
+export const config = {
+  runtime: 'edge',
+};
+
 type Mode = 'llm' | 'rag';
 
 type ChatReq = {
