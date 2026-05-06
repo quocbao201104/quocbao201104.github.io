@@ -1,0 +1,214 @@
+import { corsHeaders, handleCors } from './_cors';
+import { createClient } from '@supabase/supabase-js';
+
+type Mode = 'llm' | 'rag';
+
+type ChatReq = {
+  message: string;
+  mode: Mode;
+  sessionId?: string;
+  activeView?: string;
+};
+
+type ChunkHit = {
+  id: string;
+  content: string;
+  source?: string | null;
+  title?: string | null;
+  similarity?: number | null;
+  path?: string | null;
+  type?: string | null;
+  subtype?: string | null;
+  status?: string | null;
+  contains_pii?: boolean | null;
+};
+
+function getEnv(name: string) {
+  const v = process.env[name];
+  if (!v) throw new Error(`Missing env: ${name}`);
+  return v;
+}
+
+async function openaiFetch(path: string, init: RequestInit) {
+  const base = getEnv('LLM_BASE_URL'); // e.g. https://token-plan-sgp.xiaomimimo.com/v1
+  const url = base.replace(/\/$/, '') + path;
+  return fetch(url, init);
+}
+
+async function embed(text: string) {
+  const model = process.env.EMBED_MODEL ?? 'text-embedding-3-small';
+  const r = await openaiFetch('/embeddings', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getEnv('LLM_API_KEY')}`,
+    },
+    body: JSON.stringify({ model, input: text }),
+  });
+  if (!r.ok) {
+    const t = await r.text();
+    throw new Error(`Embeddings error: ${r.status} ${t}`);
+  }
+  const j = await r.json();
+  const vec = j?.data?.[0]?.embedding;
+  if (!Array.isArray(vec)) throw new Error('Embeddings response missing vector');
+  return vec as number[];
+}
+
+function isContactIntent(message: string) {
+  const m = message.toLowerCase();
+  // English + Vietnamese + common variants
+  return (
+    m.includes('contact') ||
+    m.includes('email') ||
+    m.includes('e-mail') ||
+    m.includes('mail') ||
+    m.includes('phone') ||
+    m.includes('number') ||
+    m.includes('telegram') ||
+    m.includes('zalo') ||
+    m.includes('liên hệ') ||
+    m.includes('lien he') ||
+    m.includes('số điện thoại') ||
+    m.includes('so dien thoai') ||
+    m.includes('gmail') ||
+    m.includes('@')
+  );
+}
+
+function redactSensitive(text: string) {
+  // Email
+  let out = text.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[redacted-email]');
+  // Phone-ish (kept intentionally broad, but avoids eating long numeric sequences inside code)
+  out = out.replace(
+    /(?:\+?\d[\d\s().-]{7,}\d)/g,
+    (m) => (m.replace(/\d/g, '').length <= 6 ? '[redacted-phone]' : m),
+  );
+  return out;
+}
+
+function redactPrivateRepoLinks(text: string, allow: boolean) {
+  if (allow) return text;
+  // Conservative: hide GitHub repo URLs unless explicitly marked public via metadata (handled upstream).
+  return text.replace(/https?:\/\/github\.com\/[^\s)]+/gi, '[redacted-repo-link]');
+}
+
+async function retrieve(query: string, allowPii: boolean): Promise<ChunkHit[]> {
+  const supabaseUrl = getEnv('SUPABASE_URL');
+  const supabaseKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
+  const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: { persistSession: false },
+  });
+
+  const qvec = await embed(query);
+
+  // Requires an RPC function in Supabase:
+  //   match_chunks(query_embedding vector, match_count int, allow_pii bool)
+  //     returns (id, content, source, title, similarity, path, type, subtype, status, contains_pii)
+  const { data, error } = await supabase.rpc('match_chunks', {
+    query_embedding: qvec,
+    match_count: 6,
+    allow_pii: allowPii,
+  });
+  if (error) throw new Error(`Supabase rpc match_chunks error: ${error.message}`);
+  const hits = (data ?? []) as ChunkHit[];
+
+  // Server-side enforcement outside prompt: even if ingest/frontmatter is wrong,
+  // we prevent sensitive info from entering normal context.
+  if (!allowPii) {
+    return hits.map((h) => {
+      const status = (h.status ?? '').toLowerCase();
+      const isPublic = status === 'public';
+      const safe = redactSensitive(h.content);
+      return {
+        ...h,
+        content: redactPrivateRepoLinks(safe, isPublic),
+      };
+    });
+  }
+
+  return hits;
+}
+
+function buildSystemPrompt(mode: Mode, hits: ChunkHit[]) {
+  const base =
+    'You are BAO.OS — a calm, high-end AI operating system. Be concise, precise, and non-hype. Prefer bullet points and clear next steps.';
+
+  if (mode !== 'rag') return base;
+
+  const context =
+    hits.length === 0
+      ? 'No memory context retrieved.'
+      : `Memory context:\n${hits
+          .map(
+            (h, i) =>
+              `[#${i + 1}] ${h.title ?? h.source ?? h.id}\n${h.content}`.trim(),
+          )
+          .join('\n\n')}`;
+
+  return `${base}\n\n${context}\n\nIf context is insufficient, ask one clarifying question.`;
+}
+
+export default async function handler(req: Request) {
+  const cors = handleCors(req);
+  if (cors) return cors;
+
+  try {
+    if (req.method !== 'POST') {
+      return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(req.headers.get('origin')) });
+    }
+    const body = (await req.json()) as ChatReq;
+    const message = (body?.message ?? '').trim();
+    const mode = body?.mode ?? 'llm';
+    if (!message) {
+      return new Response(JSON.stringify({ error: 'Missing message' }), {
+        status: 400,
+        headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+      });
+    }
+
+    const allowPii = isContactIntent(message);
+    const hits = mode === 'rag' ? await retrieve(message, allowPii) : [];
+    const model = process.env.LLM_MODEL ?? 'mimo-v2.5-pro';
+
+    const r = await openaiFetch('/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${getEnv('LLM_API_KEY')}`,
+      },
+      body: JSON.stringify({
+        model,
+        temperature: 0.2,
+        messages: [
+          { role: 'system', content: buildSystemPrompt(mode, hits) },
+          { role: 'user', content: message },
+        ],
+      }),
+    });
+
+    const text = await r.text();
+    if (!r.ok) {
+      return new Response(JSON.stringify({ error: `LLM error ${r.status}`, detail: text }), {
+        status: 500,
+        headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+      });
+    }
+
+    const j = JSON.parse(text);
+    const answer = j?.choices?.[0]?.message?.content ?? '';
+    return new Response(
+      JSON.stringify({
+        answer,
+        hits: hits.map((h) => ({ id: h.id, title: h.title, source: h.source, similarity: h.similarity })),
+      }),
+      { headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } },
+    );
+  } catch (e: any) {
+    return new Response(JSON.stringify({ error: e?.message ?? 'Unknown error' }), {
+      status: 500,
+      headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+    });
+  }
+}
+
