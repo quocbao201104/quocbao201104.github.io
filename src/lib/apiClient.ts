@@ -4,10 +4,12 @@ export function getApiBaseUrl() {
   const envUrl = (import.meta as any).env?.VITE_API_BASE_URL?.replace(/\/$/, '');
   if (envUrl) return envUrl;
 
-  // Safe default for GitHub Pages hosting (prevents hitting github.io /api/* which returns 405 HTML).
+  // Safe default for static hosting (GitHub Pages / custom domain).
+  // Prevents hitting the static host /api/* which returns 405 HTML.
   if (typeof window !== 'undefined') {
     const host = window.location.hostname;
-    if (host.endsWith('github.io')) return 'https://bao-os-api.vercel.app';
+    const isLocal = host === 'localhost' || host === '127.0.0.1';
+    if (!isLocal) return 'https://bao-os-api.vercel.app';
   }
 
   return '';
