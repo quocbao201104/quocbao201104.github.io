@@ -42,7 +42,7 @@ const r = await fetch(`${API_BASE}/api/ingest`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${INGEST_TOKEN}`,
+    'X-Ingest-Token': INGEST_TOKEN,
   },
   body: JSON.stringify(payload),
 });

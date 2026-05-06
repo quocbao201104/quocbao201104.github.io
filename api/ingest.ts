@@ -128,7 +128,10 @@ export default async function handler(req: Request) {
 
   try {
     // Simple shared secret to prevent public ingest
-    const token = req.headers.get('authorization')?.replace('Bearer ', '');
+    const token =
+      req.headers.get('authorization')?.replace('Bearer ', '') ??
+      req.headers.get('x-ingest-token') ??
+      '';
     if (!token || token !== getEnv('INGEST_TOKEN')) {
       return new Response('Unauthorized', { status: 401, headers: corsHeaders(req.headers.get('origin')) });
     }
