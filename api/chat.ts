@@ -113,6 +113,37 @@ function redactPrivateRepoLinks(text: string, allow: boolean) {
   return text.replace(/https?:\/\/github\.com\/[^\s)]+/gi, '[redacted-repo-link]');
 }
 
+function redactLocalPaths(text: string) {
+  let out = text;
+  // Windows paths: C:\Users\...
+  out = out.replace(/[A-Z]:\\[^\s`]+/g, '[redacted-local-path]');
+  // Common unix home paths
+  out = out.replace(/\/Users\/[^\s`]+/g, '[redacted-local-path]');
+  out = out.replace(/\/home\/[^\s`]+/g, '[redacted-local-path]');
+  return out;
+}
+
+function stripPrivateRepoHints(text: string) {
+  // Remove lines that tend to leak private repo/local machine details.
+  return text
+    .split('\n')
+    .filter((line) => {
+      const l = line.toLowerCase();
+      if (l.includes('local path:')) return false;
+      if (l.includes('private repository')) return false;
+      if (l.includes('private repo')) return false;
+      return true;
+    })
+    .join('\n')
+    .trim();
+}
+
+function compactContext(text: string, maxChars: number) {
+  const t = text.trim();
+  if (t.length <= maxChars) return t;
+  return t.slice(0, maxChars).trimEnd() + '\n…';
+}
+
 async function retrieve(query: string, allowPii: boolean): Promise<ChunkHit[]> {
   const supabaseUrl = getEnv('SUPABASE_URL');
   const supabaseKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
@@ -139,7 +170,7 @@ async function retrieve(query: string, allowPii: boolean): Promise<ChunkHit[]> {
     return hits.map((h) => {
       const status = (h.status ?? '').toLowerCase();
       const isPublic = status === 'public';
-      const safe = redactSensitive(h.content);
+      const safe = stripPrivateRepoHints(redactLocalPaths(redactSensitive(h.content)));
       return {
         ...h,
         content: redactPrivateRepoLinks(safe, isPublic),
@@ -162,11 +193,21 @@ function buildSystemPrompt(mode: Mode, hits: ChunkHit[]) {
       : `Memory context:\n${hits
           .map(
             (h, i) =>
-              `[#${i + 1}] ${h.title ?? h.source ?? h.id}\n${h.content}`.trim(),
+              `[#${i + 1}] ${h.title ?? h.source ?? h.id}\n${compactContext(h.content, 700)}`.trim(),
           )
           .join('\n\n')}`;
 
-  return `${base}\n\n${context}\n\nIf context is insufficient, ask one clarifying question.`;
+  return [
+    base,
+    'RAG rules:',
+    '- Use the memory context as notes. Do NOT copy/paste it verbatim.',
+    '- Synthesize in your own words. Quote at most 1 short sentence if needed.',
+    '- Do not mention private repos, local file paths, or internal links unless the user explicitly asks.',
+    '',
+    context,
+    '',
+    'If context is insufficient, ask one clarifying question.',
+  ].join('\n');
 }
 
 export default async function handler(req: Request) {
