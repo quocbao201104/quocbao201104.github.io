@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type SectionId = 'home' | 'projects' | 'agents' | 'lab' | 'memory';
+export type SectionId = 'home' | 'projects' | 'agents' | 'lab' | 'memory' | 'terminal';
 
 interface UIState {
   paletteOpen: boolean;
@@ -14,6 +14,8 @@ interface UIState {
   terminalCollapsed: boolean;
   toggleTerminal: () => void;
   setTerminalCollapsed: (v: boolean) => void;
+  terminalDocked: boolean;
+  setTerminalDocked: (v: boolean) => void;
 
   activeSection: SectionId;
   setActiveSection: (s: SectionId) => void;
@@ -46,6 +48,8 @@ export const useUIStore = create<UIState>((set) => ({
         : { terminalVisible: true, terminalCollapsed: false },
     ),
   setTerminalCollapsed: (v) => set({ terminalCollapsed: v }),
+  terminalDocked: true,
+  setTerminalDocked: (v) => set({ terminalDocked: v }),
 
   activeSection: 'home',
   setActiveSection: (s) => set({ activeSection: s }),

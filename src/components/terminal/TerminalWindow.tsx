@@ -25,6 +25,9 @@ export function TerminalWindow() {
   const collapsed = useUIStore((s) => s.terminalCollapsed);
   const toggle = useUIStore((s) => s.toggleTerminal);
   const hideTerminal = useUIStore((s) => s.hideTerminal);
+  const terminalDocked = useUIStore((s) => s.terminalDocked);
+  const setTerminalDocked = useUIStore((s) => s.setTerminalDocked);
+  const openTab = useUIStore((s) => s.openTab);
   const sessionId = useUIStore((s) => s.terminalSession);
   const setSession = useUIStore((s) => s.setTerminalSession);
 
@@ -167,18 +170,24 @@ export function TerminalWindow() {
       className={cn(
         'shrink-0 border-t border-white/[0.04] bg-bg-base/80',
         'transition-[height] duration-500 ease-out',
-        collapsed ? 'h-12' : 'h-[26vh] min-h-[200px] max-h-[280px]',
+        terminalDocked ? (collapsed ? 'h-12' : 'h-[26vh] min-h-[200px] max-h-[280px]') : 'h-full',
       )}
     >
       <Header
         collapsed={collapsed}
         onToggle={toggle}
         onClose={hideTerminal}
+        docked={terminalDocked}
+        onExpand={() => {
+          setTerminalDocked(false);
+          openTab('terminal');
+        }}
+        onDock={() => setTerminalDocked(true)}
         activeSessionId={sessionId}
         onSelectSession={setSession}
       />
 
-      {!collapsed && (
+      {(!collapsed || !terminalDocked) && (
         <div className="relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_240px] gap-0 h-[calc(100%-44px)]">
           {/* Subtle scanline + noise overlay */}
           <span
@@ -250,12 +259,18 @@ function Header({
   collapsed,
   onToggle,
   onClose,
+  docked,
+  onExpand,
+  onDock,
   activeSessionId,
   onSelectSession,
 }: {
   collapsed: boolean;
   onToggle: () => void;
   onClose: () => void;
+  docked: boolean;
+  onExpand: () => void;
+  onDock: () => void;
   activeSessionId: string;
   onSelectSession: (id: string) => void;
 }) {
@@ -319,6 +334,11 @@ function Header({
         <HeaderIconBtn label="Clear"><Trash2 size={12} /></HeaderIconBtn>
         <HeaderIconBtn label="More"><MoreHorizontal size={12} /></HeaderIconBtn>
         <HeaderIconBtn label="Close terminal" onClick={onClose}><X size={12} /></HeaderIconBtn>
+        {docked ? (
+          <HeaderIconBtn label="Open in workspace" onClick={onExpand}><ChevronUp size={12} /></HeaderIconBtn>
+        ) : (
+          <HeaderIconBtn label="Dock terminal" onClick={onDock}><ChevronDown size={12} /></HeaderIconBtn>
+        )}
         <button
           type="button"
           onClick={onToggle}
