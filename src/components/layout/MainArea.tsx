@@ -26,7 +26,14 @@ export function MainArea() {
       {/* Central panel header — flush to the panel edges (VSCode-like) */}
       <WorkspaceHeader active={active} />
 
-      <div key={active} className="px-6 lg:px-12 py-10 lg:py-14">
+      <div
+        key={active}
+        className={
+          active === 'terminal'
+            ? 'px-0 py-0'
+            : 'px-6 lg:px-12 py-10 lg:py-14'
+        }
+      >
         {active === 'home' && <HomeWorkspace />}
         {active === 'projects' && <ProjectsView />}
         {active === 'agents' && <AgentsView />}
@@ -142,10 +149,8 @@ function TerminalWorkspace() {
   }, [setTerminalDocked, showTerminal]);
 
   return (
-    <div className="h-[calc(100vh-56px-48px)] min-h-[520px]">
-      <div className="h-full border border-white/[0.04] bg-bg-base/70 rounded-xl overflow-hidden">
-        <TerminalWindow />
-      </div>
+    <div className="h-[calc(100vh-56px-48px)] min-h-[520px] border-t border-white/[0.04] bg-bg-base/70 overflow-hidden">
+      <TerminalWindow />
     </div>
   );
 }
