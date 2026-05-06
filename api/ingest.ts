@@ -1,4 +1,4 @@
-import { corsHeaders, handleCors } from './_cors';
+import { corsHeaders, handleCors } from './_cors.js';
 import { createClient } from '@supabase/supabase-js';
 
 type IngestReq = {
