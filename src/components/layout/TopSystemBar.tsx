@@ -30,7 +30,7 @@ export function TopSystemBar() {
   return (
     <header
       className={cn(
-        'relative z-50 h-14 shrink-0 border-b border-line/80 bg-bg-base/70 backdrop-blur-xl',
+        'relative z-50 h-14 shrink-0 border-b border-line/80 bg-bg-base/85',
         'flex items-center px-4 lg:px-6 gap-4',
       )}
     >

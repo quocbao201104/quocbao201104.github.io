@@ -14,9 +14,9 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-app text-ink-muted vignette-edges">
-      {/* Ambient atmosphere — soft drifting orbs */}
-      <GlowOrb className="-top-40 right-0 animate-drift" color="purple" size={760} />
-      <GlowOrb className="bottom-0 -left-40 animate-drift [animation-delay:6s]" color="cyan" size={520} />
+      {/* Static atmosphere (no idle animation) */}
+      <GlowOrb className="-top-40 right-0" color="purple" size={760} />
+      <GlowOrb className="bottom-0 -left-40" color="cyan" size={520} />
 
       {/* Subtle grid backdrop, faded at edges */}
       <div

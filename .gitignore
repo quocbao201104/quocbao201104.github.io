@@ -28,3 +28,5 @@ dist-ssr
 
 # Cursor local workspace artifacts
 .cursor/
+.vercel
+.env*.local

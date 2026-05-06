@@ -1,11 +1,9 @@
-import { AnimatePresence, motion } from 'framer-motion';
 import { HeroBlock } from '@/components/hero/HeroBlock';
 import { NeuralGraph } from '@/components/hero/NeuralGraph';
 import { CurrentFocusCard } from '@/components/cards/CurrentFocusCard';
 import { RecentDeploymentCard } from '@/components/cards/RecentDeploymentCard';
 import { GithubActivityCard } from '@/components/cards/GithubActivityCard';
 import { AIThoughtStreamCard } from '@/components/cards/AIThoughtStreamCard';
-import { fadeUp, stagger } from '@/lib/motion';
 import { useUIStore, type SectionId } from '@/stores/uiStore';
 import { ProjectsView } from '@/components/workspace/ProjectsView';
 import { AgentsView } from '@/components/workspace/AgentsView';
@@ -27,22 +25,13 @@ export function MainArea() {
       {/* Central panel header — flush to the panel edges (VSCode-like) */}
       <WorkspaceHeader active={active} />
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="px-6 lg:px-12 py-10 lg:py-14"
-        >
-          {active === 'home' && <HomeWorkspace />}
-          {active === 'projects' && <ProjectsView />}
-          {active === 'agents' && <AgentsView />}
-          {active === 'lab' && <LabView />}
-          {active === 'memory' && <MemoryView />}
-        </motion.div>
-      </AnimatePresence>
+      <div key={active} className="px-6 lg:px-12 py-10 lg:py-14">
+        {active === 'home' && <HomeWorkspace />}
+        {active === 'projects' && <ProjectsView />}
+        {active === 'agents' && <AgentsView />}
+        {active === 'lab' && <LabView />}
+        {active === 'memory' && <MemoryView />}
+      </div>
     </div>
   );
 }
@@ -59,25 +48,12 @@ function HomeWorkspace() {
       </section>
 
       {/* CARD ROW */}
-      <motion.section
-        initial="hidden"
-        animate="show"
-        variants={stagger(0.08)}
-        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5"
-      >
-        <motion.div variants={fadeUp}>
-          <CurrentFocusCard />
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <RecentDeploymentCard />
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <GithubActivityCard />
-        </motion.div>
-        <motion.div variants={fadeUp}>
-          <AIThoughtStreamCard />
-        </motion.div>
-      </motion.section>
+      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5">
+        <CurrentFocusCard />
+        <RecentDeploymentCard />
+        <GithubActivityCard />
+        <AIThoughtStreamCard />
+      </section>
     </div>
   );
 }
@@ -98,7 +74,7 @@ function WorkspaceHeader({ active }: { active: SectionId }) {
     tabs.find((t) => t.id === active)?.label ?? 'home.tsx';
 
   return (
-    <div className="border-y border-white/[0.05] bg-bg-base/35 backdrop-blur-2xl overflow-hidden rounded-none">
+    <div className="border-y border-white/[0.05] bg-bg-base/55 overflow-hidden rounded-none">
       <div className="flex items-center gap-0 bg-white/[0.01] border-b border-white/[0.04]">
         {tabs
           .filter((t) => openedTabs.includes(t.id))

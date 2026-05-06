@@ -54,15 +54,16 @@
 
 @layer components {
   .glass {
-    @apply bg-white/[0.025] backdrop-blur-2xl border border-white/[0.05];
+    /* No large-container backdrop blur (perf). Keep a crisp translucent surface. */
+    @apply bg-white/[0.03] border border-white/[0.05];
   }
 
   .glass-strong {
-    @apply bg-white/[0.04] backdrop-blur-2xl border border-white/[0.08];
+    @apply bg-white/[0.045] border border-white/[0.08];
   }
 
   .glass-soft {
-    @apply bg-white/[0.015] backdrop-blur-xl border border-white/[0.04];
+    @apply bg-white/[0.02] border border-white/[0.04];
   }
 
   .panel {

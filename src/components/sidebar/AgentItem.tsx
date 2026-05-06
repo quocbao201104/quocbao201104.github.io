@@ -59,7 +59,7 @@ export function AgentItem({ agent }: { agent: Agent }) {
           )}
         />
         <span className="absolute -right-0.5 -top-0.5">
-          <StatusDot tone={tone} pulse={agent.status !== 'idle'} />
+          <StatusDot tone={tone} />
         </span>
       </span>
 
