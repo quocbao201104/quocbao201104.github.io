@@ -45,8 +45,13 @@ export function TerminalWindow() {
     }),
   );
   const [input, setInput] = useState('');
+  const [helpOpen, setHelpOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const cmdHistoryRef = useRef<Record<string, string[]>>({});
+  const cmdCursorRef = useRef<Record<string, number>>({});
+  const tabCycleRef = useRef<Record<string, number>>({});
 
   // Reset input when changing session
   useEffect(() => {
@@ -75,6 +80,46 @@ export function TerminalWindow() {
     void submitAsync();
   };
 
+  const tabSuggestions = (sid: string) => {
+    if (sid === 'architecture.ai') return ['inspect architecture ', 'rag '];
+    if (sid === 'memory.log') return ['search memory ', 'rag '];
+    return ['llm ', 'rag '];
+  };
+
+  const applyTabSuggestion = () => {
+    if (input.trim().length > 0) return;
+    const opts = tabSuggestions(sessionId);
+    const i = tabCycleRef.current[sessionId] ?? 0;
+    const next = opts[i % opts.length]!;
+    tabCycleRef.current[sessionId] = (i + 1) % opts.length;
+    setInput(next);
+    window.setTimeout(() => inputRef.current?.focus(), 0);
+  };
+
+  const historyUp = () => {
+    const list = cmdHistoryRef.current[sessionId] ?? [];
+    if (list.length === 0) return;
+    const cur = cmdCursorRef.current[sessionId] ?? -1;
+    const next = cur === -1 ? list.length - 1 : Math.max(0, cur - 1);
+    cmdCursorRef.current[sessionId] = next;
+    setInput(list[next] ?? '');
+  };
+
+  const historyDown = () => {
+    const list = cmdHistoryRef.current[sessionId] ?? [];
+    if (list.length === 0) return;
+    const cur = cmdCursorRef.current[sessionId] ?? -1;
+    if (cur === -1) return;
+    const next = cur + 1;
+    if (next >= list.length) {
+      cmdCursorRef.current[sessionId] = -1;
+      setInput('');
+      return;
+    }
+    cmdCursorRef.current[sessionId] = next;
+    setInput(list[next] ?? '');
+  };
+
   const submitAsync = async () => {
     const raw = input.trim();
     if (!raw) return;
@@ -90,6 +135,11 @@ export function TerminalWindow() {
       [sessionId]: [...(prev[sessionId] ?? []), cmdLine],
     }));
     setInput('');
+    setHelpOpen(false);
+
+    // Record command history (per session)
+    cmdHistoryRef.current[sessionId] = [...(cmdHistoryRef.current[sessionId] ?? []), raw].slice(-50);
+    cmdCursorRef.current[sessionId] = -1;
 
     // Resolve (either local canned, or remote LLM/RAG)
     const res = runTerminalCommand({
@@ -97,6 +147,11 @@ export function TerminalWindow() {
       prompt: activeSession.prompt,
       input: raw,
     });
+
+    if (res.ui?.openHelp) {
+      setHelpOpen(true);
+      return;
+    }
 
     if (res.clear) {
       setHistoryBySession((prev) => ({ ...prev, [sessionId]: [] }));
@@ -204,6 +259,23 @@ export function TerminalWindow() {
             className="relative overflow-y-auto px-5 lg:px-6 py-4 space-y-1.5"
             onMouseDown={() => inputRef.current?.focus()}
           >
+            {helpOpen && (
+              <div className="mb-3 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+                <div className="text-2xs font-mono uppercase tracking-wider2 text-ink-dim">
+                  Commands (Tab to autofill, ↑/↓ history, Esc close)
+                </div>
+                <div className="mt-2 grid gap-1.5 text-[12px] font-mono text-ink-muted/95">
+                  <div><span className="text-ink-dim">help</span> — open this panel</div>
+                  <div><span className="text-ink-dim">clear</span> — clear screen</div>
+                  <div><span className="text-ink-dim">llm &lt;message&gt;</span> — direct LLM</div>
+                  <div><span className="text-ink-dim">rag &lt;message&gt;</span> — RAG answer</div>
+                  <div><span className="text-ink-dim">ask recruiter &lt;topic&gt;</span> — recruiter persona</div>
+                  <div><span className="text-ink-dim">inspect architecture &lt;system&gt;</span> — architect (RAG)</div>
+                  <div><span className="text-ink-dim">search memory &lt;query&gt;</span> — memory agent (RAG)</div>
+                </div>
+              </div>
+            )}
+
             {/* Interactive history */ }
             {history.map((line, i) => (
               <TerminalLineRow
@@ -222,6 +294,18 @@ export function TerminalWindow() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') onSubmit();
+                  else if (e.key === 'Tab') {
+                    e.preventDefault();
+                    applyTabSuggestion();
+                  } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    historyUp();
+                  } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    historyDown();
+                  } else if (e.key === 'Escape') {
+                    setHelpOpen(false);
+                  }
                 }}
                 placeholder='Type "help"...'
                 className="flex-1 bg-transparent outline-none border-none text-ink-bright placeholder:text-ink-dim"
@@ -241,9 +325,19 @@ export function TerminalWindow() {
                   key={q.cmd}
                   className="grid grid-cols-[110px_minmax(0,1fr)] items-baseline gap-3"
                 >
-                  <span className="font-mono text-[12px] text-accent-purple-soft truncate">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Drop placeholder tokens like <topic>
+                      const seed = q.cmd.replace(/<[^>]+>/g, '').trimEnd() + ' ';
+                      setInput(seed);
+                      window.setTimeout(() => inputRef.current?.focus(), 0);
+                    }}
+                    className="text-left font-mono text-[12px] text-accent-purple-soft truncate hover:text-accent-purple"
+                    title={q.cmd}
+                  >
                     &gt; {q.cmd}
-                  </span>
+                  </button>
                   <span className="text-2xs text-ink-dim truncate">{q.hint}</span>
                 </li>
               ))}

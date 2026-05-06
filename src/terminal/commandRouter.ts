@@ -18,6 +18,9 @@ export interface CommandResult {
   lines: TerminalLine[];
   clear?: boolean;
   switchSession?: string;
+  ui?: {
+    openHelp?: boolean;
+  };
   remote?: {
     mode: 'llm' | 'rag';
     speaker: string;
@@ -58,16 +61,8 @@ export function runTerminalCommand(opts: {
 
   if (lower === 'help' || lower === '?') {
     return {
-      lines: [
-        out('', 'Available commands:', 'muted'),
-        out('', '  help', 'muted'),
-        out('', '  clear', 'muted'),
-        out('', '  llm <message>        (real model via Vercel proxy)', 'muted'),
-        out('', '  rag <message>        (real model + Supabase pgvector)', 'muted'),
-        out('', '  ask recruiter <topic>', 'muted'),
-        out('', '  inspect architecture <system>', 'muted'),
-        out('', '  search memory <query>', 'muted'),
-      ],
+      lines: [],
+      ui: { openHelp: true },
     };
   }
 
