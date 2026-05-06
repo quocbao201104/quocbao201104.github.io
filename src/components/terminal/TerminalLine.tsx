@@ -21,9 +21,24 @@ interface TerminalLineProps {
 
 export function TerminalLineRow({ line, animate, onDone }: TerminalLineProps) {
   if (line.kind === 'command') {
-    return <CommandRow line={line} animate={animate} onDone={onDone} />;
+    // Keep command echo instant; only animate output lines.
+    return <CommandRow line={line} animate={false} onDone={onDone} />;
   }
   return <OutputRow line={line} animate={animate} onDone={onDone} />;
+}
+
+function formatForTerminal(raw: string) {
+  let t = raw.replace(/\r\n/g, '\n');
+  // Strip code fences but keep content
+  t = t.replace(/```[a-zA-Z0-9_-]*\n/g, '');
+  t = t.replace(/```/g, '');
+  // Strip common markdown emphasis/backticks
+  t = t.replace(/\*\*(.*?)\*\*/g, '$1');
+  t = t.replace(/\*/g, '');
+  t = t.replace(/`([^`]+)`/g, '$1');
+  // Normalize headings (# Title) → Title
+  t = t.replace(/^#{1,6}\s+/gm, '');
+  return t.trimEnd();
 }
 
 function CommandRow({
@@ -79,7 +94,8 @@ function OutputRow({
   }, [animate, reduced]);
 
   const tone = line.speakerTone ?? 'muted';
-  const { displayed, done } = useTypewriter(line.text, {
+  const formatted = formatForTerminal(line.text);
+  const { displayed, done } = useTypewriter(formatted, {
     enabled: animate && latencyDone,
     speed: 11,
     onComplete: onDone,

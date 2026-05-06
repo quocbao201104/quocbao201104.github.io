@@ -10,6 +10,7 @@ import { useUIStore } from '@/stores/uiStore';
 export default function App() {
   const terminalCollapsed = useUIStore((s) => s.terminalCollapsed);
   const terminalVisible = useUIStore((s) => s.terminalVisible);
+  const terminalDocked = useUIStore((s) => s.terminalDocked);
   const dockH = terminalCollapsed ? 48 : 280;
 
   return (
@@ -46,7 +47,7 @@ export default function App() {
         </div>
       </div>
 
-      {terminalVisible && (
+      {terminalVisible && terminalDocked && (
         <div
           className="
             fixed bottom-0 z-40

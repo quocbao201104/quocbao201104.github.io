@@ -41,7 +41,7 @@ export function runTerminalCommand(opts: {
   // Real LLM / RAG mode (server-side)
   if (lower.startsWith('llm ')) {
     const msg = raw.slice(4).trim();
-    if (!msg) return { lines: [out('BAO.OS', 'Usage: llm <message>', 'muted')] };
+    if (!msg) return { lines: [out('', 'Usage: llm <message>', 'muted')] };
     return {
       lines: [],
       remote: { mode: 'llm', speaker: 'BAO.OS', tone: 'muted', message: msg, persona: 'bao' },
@@ -49,7 +49,7 @@ export function runTerminalCommand(opts: {
   }
   if (lower.startsWith('rag ')) {
     const msg = raw.slice(4).trim();
-    if (!msg) return { lines: [out('BAO.OS', 'Usage: rag <message>', 'muted')] };
+    if (!msg) return { lines: [out('', 'Usage: rag <message>', 'muted')] };
     return {
       lines: [],
       remote: { mode: 'rag', speaker: 'BAO.OS', tone: 'muted', message: msg, persona: 'bao' },
@@ -140,7 +140,7 @@ export function runTerminalCommand(opts: {
   return {
     lines: [
       out(
-        'BAO.OS',
+        '',
         `Unknown command: "${raw}". Type "help" for options.`,
         'muted',
       ),

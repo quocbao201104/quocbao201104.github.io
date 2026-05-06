@@ -11,6 +11,7 @@ import { LabView } from '@/components/workspace/LabView';
 import { MemoryView } from '@/components/workspace/MemoryView';
 import { useEffect } from 'react';
 import { profile } from '@/data/profile';
+import { TerminalWindow } from '@/components/terminal/TerminalWindow';
 
 export function MainArea() {
   const active = useUIStore((s) => s.activeSection);
@@ -31,6 +32,7 @@ export function MainArea() {
         {active === 'agents' && <AgentsView />}
         {active === 'lab' && <LabView />}
         {active === 'memory' && <MemoryView />}
+        {active === 'terminal' && <TerminalWorkspace />}
       </div>
     </div>
   );
@@ -68,6 +70,7 @@ function WorkspaceHeader({ active }: { active: SectionId }) {
     { id: 'agents', label: 'agents.ai' },
     { id: 'lab', label: 'lab' },
     { id: 'memory', label: 'memory.log' },
+    { id: 'terminal', label: 'terminal' },
   ];
 
   const activeLabel =
@@ -125,6 +128,23 @@ function WorkspaceHeader({ active }: { active: SectionId }) {
           {profile.handle} <span className="text-ink-faint">›</span> src{' '}
           <span className="text-ink-faint">›</span> {activeLabel}
         </p>
+      </div>
+    </div>
+  );
+}
+
+function TerminalWorkspace() {
+  const showTerminal = useUIStore((s) => s.showTerminal);
+  const setTerminalDocked = useUIStore((s) => s.setTerminalDocked);
+  useEffect(() => {
+    showTerminal();
+    setTerminalDocked(false);
+  }, [setTerminalDocked, showTerminal]);
+
+  return (
+    <div className="h-[calc(100vh-56px-48px)] min-h-[520px]">
+      <div className="h-full border border-white/[0.04] bg-bg-base/70 rounded-xl overflow-hidden">
+        <TerminalWindow />
       </div>
     </div>
   );
