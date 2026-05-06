@@ -29,62 +29,27 @@ export const sessions: SessionMeta[] = [
 
 const sessionScripts: Record<string, TerminalLine[]> = {
   session_01: [
-    { kind: 'command', prompt: PROMPT, text: 'ask recruiter' },
     {
       kind: 'output',
-      speaker: 'Recruiter Agent',
-      speakerTone: 'purple',
-      text:
-        "Hi! I can help you learn more about Bao's background, skills, and experience. What would you like to know?",
-    },
-    { kind: 'command', prompt: PROMPT, text: 'inspect architecture orgmind' },
-    {
-      kind: 'output',
-      speaker: 'Architect Agent',
-      speakerTone: 'cyan',
-      text:
-        'Analyzing OrgMind architecture... Generating system diagram and explanation.',
-    },
-    { kind: 'command', prompt: PROMPT, text: 'run memory agent' },
-    {
-      kind: 'output',
-      speaker: 'Memory Agent',
-      speakerTone: 'ok',
-      text: 'Searching through 1043 memories... Found 23 relevant memories.',
+      speaker: 'BAO.OS',
+      speakerTone: 'muted',
+      text: 'Session: session_01 (general). Use: llm <msg> | rag <msg> | help',
     },
   ],
   'architecture.ai': [
-    { kind: 'command', prompt: 'bao@arch:~$', text: 'explain graphrag pipeline' },
     {
       kind: 'output',
       speaker: 'Architect Agent',
       speakerTone: 'cyan',
-      text:
-        'GraphRAG: chunk → embed → entity-extract → graph-build → traverse → retrieve → re-rank.',
-    },
-    { kind: 'command', prompt: 'bao@arch:~$', text: 'render diagram orgmind' },
-    {
-      kind: 'output',
-      speaker: 'Architect Agent',
-      speakerTone: 'cyan',
-      text:
-        'Rendering ASCII diagram of OrgMind ingest, retrieval and reasoning layers...',
+      text: 'Session: architecture.ai. Type normally (defaults to Architect LLM), or use: inspect architecture <system>',
     },
   ],
   'memory.log': [
-    { kind: 'command', prompt: 'bao@memory:~$', text: 'tail -f recall.stream' },
     {
       kind: 'output',
       speaker: 'Memory Agent',
       speakerTone: 'ok',
-      text: 'Streaming recall events. 3.2k embeddings indexed. Drift below threshold.',
-    },
-    { kind: 'command', prompt: 'bao@memory:~$', text: 'compact --policy lru' },
-    {
-      kind: 'output',
-      speaker: 'Memory Agent',
-      speakerTone: 'ok',
-      text: 'Compaction complete. 412 stale items archived. Retention: 30d.',
+      text: 'Session: memory.log. Type normally (defaults to RAG), or use: search memory <query>',
     },
   ],
 };
@@ -99,10 +64,11 @@ export interface QuickCommand {
 }
 
 export const quickCommands: QuickCommand[] = [
-  { cmd: 'ask recruiter', hint: 'Get hiring perspective' },
-  { cmd: 'inspect architecture', hint: 'Analyze system design' },
-  { cmd: 'run research agent', hint: 'Latest AI research' },
-  { cmd: 'search memory', hint: 'Search your knowledge' },
-  { cmd: 'open neural lab', hint: 'View experiments' },
+  { cmd: 'ask recruiter <topic>', hint: 'Hiring perspective (real LLM)' },
+  { cmd: 'inspect architecture <system>', hint: 'System design review (real LLM)' },
+  { cmd: 'search memory <query>', hint: 'Search content/ memory (real RAG)' },
+  { cmd: 'switch session_01|architecture.ai|memory.log', hint: 'Change persona tab' },
+  { cmd: 'llm <message>', hint: 'Direct LLM' },
+  { cmd: 'rag <message>', hint: 'Direct RAG' },
   { cmd: 'help', hint: 'Show all commands' },
 ];

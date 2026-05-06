@@ -7,11 +7,14 @@ export const config = {
 
 type Mode = 'llm' | 'rag';
 
+type Persona = 'bao' | 'recruiter' | 'architect' | 'memory';
+
 type ChatReq = {
   message: string;
   mode: Mode;
   sessionId?: string;
   activeView?: string;
+  persona?: Persona;
 };
 
 type ChunkHit = {
@@ -181,11 +184,33 @@ async function retrieve(query: string, allowPii: boolean): Promise<ChunkHit[]> {
   return hits;
 }
 
-function buildSystemPrompt(mode: Mode, hits: ChunkHit[]) {
+function buildSystemPrompt(mode: Mode, hits: ChunkHit[], persona: Persona) {
   const base =
     'You are BAO.OS — a calm, high-end AI operating system. Be concise, precise, and non-hype. Prefer bullet points and clear next steps.';
 
-  if (mode !== 'rag') return base;
+  const personaRules =
+    persona === 'recruiter'
+      ? [
+          'Persona: Recruiter Agent.',
+          '- Write like a senior recruiter / hiring manager.',
+          '- Focus on positioning, strengths, evidence, and interview angles.',
+          '- Keep it practical: 5–10 bullets max, then 1 suggested next step.',
+        ]
+      : persona === 'architect'
+        ? [
+            'Persona: Architect Agent.',
+            '- Focus on system design: boundaries, data flow, trade-offs, failure modes.',
+            '- Prefer clear structure: Overview → Components → Data flow → Risks → Next steps.',
+          ]
+        : persona === 'memory'
+          ? [
+              'Persona: Memory Agent.',
+              '- Behave like a calm “second brain”: retrieve, summarize, and cite which memory items you used (by title) without quoting long passages.',
+              '- If the user asks to “search”, respond with top matches first, then a short summary.',
+            ]
+          : [];
+
+  if (mode !== 'rag') return [base, ...personaRules].join('\n');
 
   const context =
     hits.length === 0
@@ -199,6 +224,7 @@ function buildSystemPrompt(mode: Mode, hits: ChunkHit[]) {
 
   return [
     base,
+    ...personaRules,
     'RAG rules:',
     '- Use the memory context as notes. Do NOT copy/paste it verbatim.',
     '- Synthesize in your own words. Quote at most 1 short sentence if needed.',
@@ -221,6 +247,7 @@ export default async function handler(req: Request) {
     const body = (await req.json()) as ChatReq;
     const message = (body?.message ?? '').trim();
     const mode = body?.mode ?? 'llm';
+    const persona = body?.persona ?? 'bao';
     if (!message) {
       return new Response(JSON.stringify({ error: 'Missing message' }), {
         status: 400,
@@ -242,7 +269,7 @@ export default async function handler(req: Request) {
         model,
         temperature: 0.2,
         messages: [
-          { role: 'system', content: buildSystemPrompt(mode, hits) },
+          { role: 'system', content: buildSystemPrompt(mode, hits, persona) },
           { role: 'user', content: message },
         ],
       }),
