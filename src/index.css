@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-bg-base text-ink-muted font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Remove default focus, replace with cyan ring */
+  *:focus {
+    outline: none;
+  }
+  *:focus-visible {
+    outline: 2px solid theme('colors.accent.cyan');
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background-color: rgba(168, 85, 247, 0.35);
+    color: theme('colors.ink.bright');
+  }
+
+  /* Custom thin scrollbar */
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.25);
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/[0.025] backdrop-blur-2xl border border-white/[0.05];
+  }
+
+  .glass-strong {
+    @apply bg-white/[0.04] backdrop-blur-2xl border border-white/[0.08];
+  }
+
+  .glass-soft {
+    @apply bg-white/[0.015] backdrop-blur-xl border border-white/[0.04];
+  }
+
+  .panel {
+    @apply glass rounded-xl shadow-panel;
+  }
+
+  .panel-soft {
+    @apply glass-soft rounded-xl;
+  }
+
+  .panel-flat {
+    @apply bg-bg-raised border border-line rounded-xl;
+  }
+
+  .label-eyebrow {
+    @apply text-2xs font-mono uppercase tracking-wider2 text-ink-dim;
+  }
+
+  .text-gradient-purple {
+    background: linear-gradient(135deg, #c4a3f7 0%, #a855f7 50%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .ring-glow-purple {
+    box-shadow:
+      0 0 0 1px rgba(168, 85, 247, 0.4),
+      0 0 24px -2px rgba(168, 85, 247, 0.55);
+  }
+
+  .ring-glow-cyan {
+    box-shadow:
+      0 0 0 1px rgba(103, 232, 249, 0.4),
+      0 0 24px -2px rgba(103, 232, 249, 0.55);
+  }
+
+  .divider {
+    @apply h-px bg-line w-full;
+  }
+}
+
+@layer utilities {
+  .bg-app {
+    background:
+      radial-gradient(60% 50% at 80% -10%, rgba(168, 85, 247, 0.09) 0%, transparent 60%),
+      radial-gradient(40% 40% at -10% 110%, rgba(103, 232, 249, 0.06) 0%, transparent 60%),
+      #07070b;
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: -1px -1px;
+  }
+
+  /* Cinematic edge vignette — sits above content but pointer-events-none */
+  .vignette-edges::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    background: radial-gradient(
+      ellipse 110% 90% at 50% 50%,
+      transparent 55%,
+      rgba(0, 0, 0, 0.35) 100%
+    );
+  }
+
+  /* Faint horizontal scanline texture for terminal */
+  .texture-scanlines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(255, 255, 255, 0.012) 2px,
+      rgba(255, 255, 255, 0.012) 3px
+    );
+  }
+
+  /* Soft noise — for terminal/atmosphere depth */
+  .texture-noise {
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+
+  .mask-radial-fade {
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 100%);
+  }
+
+  .mask-radial-soft {
+    mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 40%, transparent 100%);
+  }
+
+  .mask-fade-bottom {
+    mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
