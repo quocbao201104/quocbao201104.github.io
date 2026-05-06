@@ -39,24 +39,40 @@ async function openaiFetch(path: string, init: RequestInit) {
   return fetch(url, init);
 }
 
-async function embed(text: string) {
-  const model = process.env.EMBED_MODEL ?? 'text-embedding-3-small';
-  const r = await openaiFetch('/embeddings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getEnv('LLM_API_KEY')}`,
-    },
-    body: JSON.stringify({ model, input: text }),
-  });
-  if (!r.ok) {
-    const t = await r.text();
-    throw new Error(`Embeddings error: ${r.status} ${t}`);
+// Xiaomi MiMo token-plan endpoint is chat-completions focused; embeddings may not be available.
+// Use a lightweight, deterministic local embedding for RAG so ingestion/search don't depend on /embeddings.
+const EMBED_DIMS = 1536;
+
+function fnv1a32(s: string) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    // h *= 16777619 (with overflow)
+    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
   }
-  const j = await r.json();
-  const vec = j?.data?.[0]?.embedding;
-  if (!Array.isArray(vec)) throw new Error('Embeddings response missing vector');
-  return vec as number[];
+  return h >>> 0;
+}
+
+function cheapEmbed(text: string): number[] {
+  const v = new Array<number>(EMBED_DIMS).fill(0);
+  const tokens = text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s_-]+/gu, ' ')
+    .split(/\s+/g)
+    .filter(Boolean);
+
+  for (const tok of tokens) {
+    const h = fnv1a32(tok);
+    const idx = h % EMBED_DIMS;
+    const sign = (h & 1) === 0 ? 1 : -1;
+    v[idx] += sign * Math.min(3, 1 + tok.length / 6);
+  }
+
+  let norm = 0;
+  for (let i = 0; i < v.length; i++) norm += v[i] * v[i];
+  norm = Math.sqrt(norm) || 1;
+  for (let i = 0; i < v.length; i++) v[i] = v[i] / norm;
+  return v;
 }
 
 function isContactIntent(message: string) {
@@ -104,7 +120,7 @@ async function retrieve(query: string, allowPii: boolean): Promise<ChunkHit[]> {
     auth: { persistSession: false },
   });
 
-  const qvec = await embed(query);
+  const qvec = cheapEmbed(query);
 
   // Requires an RPC function in Supabase:
   //   match_chunks(query_embedding vector, match_count int, allow_pii bool)
