@@ -13,6 +13,7 @@ import { TerminalLineRow } from './TerminalLine';
 import {
   quickCommands,
   sessions,
+  getScript,
 } from '@/data/terminalScript';
 import { useUIStore } from '@/stores/uiStore';
 import { cn } from '@/lib/cn';
@@ -51,6 +52,14 @@ export function TerminalWindow() {
 
   const activeSession = sessions.find((s) => s.id === sessionId) ?? sessions[0]!;
   const history = historyBySession[sessionId] ?? [];
+
+  // Seed per-session banner/help on first open
+  useEffect(() => {
+    setHistoryBySession((prev) => {
+      if (prev[sessionId]?.length) return prev;
+      return { ...prev, [sessionId]: getScript(sessionId) };
+    });
+  }, [sessionId]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -191,7 +200,7 @@ export function TerminalWindow() {
               <TerminalLineRow
                 key={`${sessionId}-hist-${i}`}
                 line={line}
-                animate={false}
+                animate={i >= Math.max(0, history.length - 1)}
               />
             ))}
 

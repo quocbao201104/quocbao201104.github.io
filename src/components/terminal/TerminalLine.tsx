@@ -92,10 +92,7 @@ function OutputRow({
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       className="font-mono text-[12.5px] leading-relaxed"
     >
-      <span className={cn('font-semibold', speakerToneClasses[tone])}>
-        {line.speaker}:
-      </span>{' '}
-      <span className="text-ink-muted/95">
+      <span className={cn('text-ink-muted/95 whitespace-pre-wrap break-words', speakerToneClasses[tone])}>
         {animate && !latencyDone ? <Cursor /> : displayed}
         {animate && latencyDone && !done && <Cursor />}
       </span>

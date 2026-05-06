@@ -59,28 +59,20 @@ export function runTerminalCommand(opts: {
   if (lower === 'help' || lower === '?') {
     return {
       lines: [
-        out('BAO.OS', 'Available commands:', 'muted'),
-        out('BAO.OS', '  help', 'muted'),
-        out('BAO.OS', '  clear', 'muted'),
-        out('BAO.OS', '  llm <message>        (real model via Vercel proxy)', 'muted'),
-        out('BAO.OS', '  rag <message>        (real model + Supabase pgvector)', 'muted'),
-        out('BAO.OS', '  ask recruiter [topic]', 'muted'),
-        out('BAO.OS', '  inspect architecture [system]', 'muted'),
-        out('BAO.OS', '  run memory agent [query]', 'muted'),
-        out('BAO.OS', '  switch session_01|architecture.ai|memory.log', 'muted'),
+        out('', 'Available commands:', 'muted'),
+        out('', '  help', 'muted'),
+        out('', '  clear', 'muted'),
+        out('', '  llm <message>        (real model via Vercel proxy)', 'muted'),
+        out('', '  rag <message>        (real model + Supabase pgvector)', 'muted'),
+        out('', '  ask recruiter <topic>', 'muted'),
+        out('', '  inspect architecture <system>', 'muted'),
+        out('', '  search memory <query>', 'muted'),
       ],
     };
   }
 
   if (lower === 'clear' || lower === 'cls') {
     return { lines: [], clear: true };
-  }
-
-  if (lower.startsWith('switch ')) {
-    const target = lower.replace('switch ', '').trim();
-    const allow = ['session_01', 'architecture.ai', 'memory.log'];
-    if (allow.includes(target)) return { lines: [out('BAO.OS', `Switching to ${target}...`, 'muted')], switchSession: target };
-    return { lines: [out('BAO.OS', `Unknown session "${target}". Try: ${allow.join(' | ')}`, 'warn' as any)] };
   }
 
   if (lower.startsWith('ask recruiter')) {
@@ -102,7 +94,7 @@ export function runTerminalCommand(opts: {
     return {
       lines: [],
       remote: {
-        mode: 'llm',
+        mode: 'rag',
         speaker: 'Architect Agent',
         tone: 'cyan',
         message: `Inspect architecture: ${system}. Provide boundaries, data flow, trade-offs, failure modes, and next steps.`,
@@ -126,11 +118,11 @@ export function runTerminalCommand(opts: {
   }
 
   // Session defaults: typing plain text uses that tab’s persona/mode.
-  if (!/^(help|\?|clear|cls|switch\b|ask recruiter\b|inspect architecture\b|run memory agent\b|search memory\b|llm\b|rag\b)/i.test(lower)) {
+  if (!/^(help|\?|clear|cls|ask recruiter\b|inspect architecture\b|run memory agent\b|search memory\b|llm\b|rag\b)/i.test(lower)) {
     if (opts.sessionId === 'architecture.ai') {
       return {
         lines: [],
-        remote: { mode: 'llm', speaker: 'Architect Agent', tone: 'cyan', message: raw, persona: 'architect' },
+        remote: { mode: 'rag', speaker: 'Architect Agent', tone: 'cyan', message: raw, persona: 'architect' },
       };
     }
     if (opts.sessionId === 'memory.log') {

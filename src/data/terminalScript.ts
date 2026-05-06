@@ -41,7 +41,7 @@ const sessionScripts: Record<string, TerminalLine[]> = {
       kind: 'output',
       speaker: 'Architect Agent',
       speakerTone: 'cyan',
-      text: 'Session: architecture.ai. Type normally (defaults to Architect LLM), or use: inspect architecture <system>',
+      text: 'Session: architecture.ai. Type normally (defaults to Architect RAG), or use: inspect architecture <system>',
     },
   ],
   'memory.log': [
@@ -67,7 +67,6 @@ export const quickCommands: QuickCommand[] = [
   { cmd: 'ask recruiter <topic>', hint: 'Hiring perspective (real LLM)' },
   { cmd: 'inspect architecture <system>', hint: 'System design review (real LLM)' },
   { cmd: 'search memory <query>', hint: 'Search content/ memory (real RAG)' },
-  { cmd: 'switch session_01|architecture.ai|memory.log', hint: 'Change persona tab' },
   { cmd: 'llm <message>', hint: 'Direct LLM' },
   { cmd: 'rag <message>', hint: 'Direct RAG' },
   { cmd: 'help', hint: 'Show all commands' },
