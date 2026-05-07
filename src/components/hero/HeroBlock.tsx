@@ -25,7 +25,7 @@ export function HeroBlock() {
   });
 
   return (
-    <div className="relative flex flex-col gap-5">
+    <div className="relative flex flex-col gap-4">
       <p className="font-mono text-[12px] uppercase tracking-wider2 text-accent-cyan/85">
         {profile.eyebrow}
       </p>
@@ -42,7 +42,7 @@ export function HeroBlock() {
           </span>
 
           {/* Wordmark with ghost stroke duplicate for depth */}
-          <h1 className="relative font-semibold leading-[0.85] tracking-[-0.085em] text-[64px] sm:text-[86px] lg:text-[104px] xl:text-[118px]">
+          <h1 className="relative font-semibold leading-[0.85] tracking-[-0.085em] text-[60px] sm:text-[82px] lg:text-[96px] xl:text-[108px]">
             <span className="sr-only">{profile.headline.line1}</span>
 
             {/* Outlined ghost — sits behind, slight offset, editorial layering */}
@@ -69,7 +69,7 @@ export function HeroBlock() {
         {/* Signature stroke — static gradient hairline */}
         <div
           aria-hidden
-          className="ml-[26px] sm:ml-[34px] mt-3 h-px w-[120px] bg-gradient-to-r from-accent-purple via-fuchsia-400/80 to-accent-cyan opacity-80"
+          className="ml-[26px] sm:ml-[34px] mt-2 h-px w-[120px] bg-gradient-to-r from-accent-purple via-fuchsia-400/80 to-accent-cyan opacity-80"
         />
       </div>
 
@@ -93,7 +93,7 @@ export function HeroBlock() {
         )}
       </div>
 
-      <div className="mt-1 flex max-w-[620px] flex-wrap items-center gap-2">
+      <div className="mt-0.5 flex max-w-[620px] flex-wrap items-center gap-2">
         {profile.roleChips.slice(0, 4).map((role) => (
           <span
             key={role}
