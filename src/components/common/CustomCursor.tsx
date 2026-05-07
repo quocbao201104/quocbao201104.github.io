@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const INNER_SIZE = 6;
-const OUTER_SIZE = 18;
+const OUTER_SIZE = 68;
 const LAG_FACTOR = 0.12;
 
 export function CustomCursor() {
@@ -15,11 +15,21 @@ export function CustomCursor() {
   const targetRef = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
-    if (reducedMotion) return;
+    const cursorHiddenClass = 'custom-cursor-active';
+
+    if (reducedMotion) {
+      document.documentElement.classList.remove(cursorHiddenClass);
+      return;
+    }
 
     const isTouchDevice =
       'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    if (isTouchDevice) return;
+    if (isTouchDevice) {
+      document.documentElement.classList.remove(cursorHiddenClass);
+      return;
+    }
+
+    document.documentElement.classList.add(cursorHiddenClass);
 
     const onMove = (e: MouseEvent) => {
       targetRef.current = { x: e.clientX, y: e.clientY };
@@ -55,6 +65,7 @@ export function CustomCursor() {
     rafId.current = requestAnimationFrame(tick);
 
     return () => {
+      document.documentElement.classList.remove(cursorHiddenClass);
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseleave', onLeave);
       document.removeEventListener('mouseenter', onEnter);

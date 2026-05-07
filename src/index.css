@@ -35,6 +35,13 @@
     color: theme('colors.ink.bright');
   }
 
+  @media (hover: hover) and (pointer: fine) {
+    html.custom-cursor-active,
+    html.custom-cursor-active * {
+      cursor: none !important;
+    }
+  }
+
   /* Custom thin scrollbar */
   *::-webkit-scrollbar {
     width: 8px;
