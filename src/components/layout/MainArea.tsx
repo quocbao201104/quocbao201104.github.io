@@ -74,7 +74,7 @@ const heroSignals = [
 
 function HomeSignalPanel() {
   return (
-    <aside className="panel-soft relative overflow-hidden p-6 sm:p-7 lg:p-8">
+    <aside className="panel-soft relative z-0 overflow-hidden p-6 sm:p-7 lg:mt-[300px] lg:p-8 xl:mt-[312px]">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-radial-purple opacity-70"
