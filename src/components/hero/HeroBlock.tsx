@@ -25,7 +25,7 @@ export function HeroBlock() {
   });
 
   return (
-    <div className="relative flex flex-col gap-4">
+    <div className="relative z-10 flex flex-col gap-4">
       <p className="font-mono text-[12px] uppercase tracking-wider2 text-accent-cyan/85">
         {profile.eyebrow}
       </p>
@@ -74,7 +74,7 @@ export function HeroBlock() {
       </div>
 
       {/* Intro typewriter — between wordmark and chips */}
-      <div className="max-w-[720px] -mt-1">
+      <div className="relative z-20 max-w-[720px] -mt-1">
         {reducedMotion ? (
           <p
             className="min-h-[1.75rem] text-[15px] leading-relaxed text-ink-muted sm:min-h-[1.9rem] sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis sm:text-base"
