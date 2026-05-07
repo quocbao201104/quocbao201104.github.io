@@ -37,7 +37,7 @@ export default function App() {
             <div className="flex flex-1 min-h-0 overflow-hidden">
               <div
                 id="center-scroll"
-                className="flex-1 min-w-0 overflow-hidden"
+                className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden"
                 style={{ paddingBottom: terminalVisible ? dockH : 0 }}
               >
                 <MainArea />
