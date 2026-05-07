@@ -4,6 +4,7 @@ import { MainArea } from '@/components/layout/MainArea';
 import { RightPanels } from '@/components/layout/RightPanels';
 import { BottomTerminal } from '@/components/layout/BottomTerminal';
 import { CommandPalette } from '@/components/palette/CommandPalette';
+import { CustomCursor } from '@/components/common/CustomCursor';
 import { GlowOrb } from '@/components/common/GlowOrb';
 import { useUIStore } from '@/stores/uiStore';
 
@@ -60,6 +61,7 @@ export default function App() {
         </div>
       )}
 
+      <CustomCursor />
       <CommandPalette />
     </div>
   );
