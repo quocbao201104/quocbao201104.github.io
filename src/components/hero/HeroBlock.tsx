@@ -2,14 +2,30 @@ import { ArrowRight, Sparkles, ChevronDown } from 'lucide-react';
 import { profile } from '@/data/profile';
 import { cn } from '@/lib/cn';
 import { useUIStore } from '@/stores/uiStore';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useLoopingTypewriter } from '@/hooks/useLoopingTypewriter';
 
 export function HeroBlock() {
   const openTab = useUIStore((s) => s.openTab);
   const setTerminalDocked = useUIStore((s) => s.setTerminalDocked);
   const showTerminal = useUIStore((s) => s.showTerminal);
+  const reducedMotion = usePrefersReducedMotion();
+
+  const introLines = [
+    "I'm Bao, a developer who enjoys turning complex AI ideas into useful products.",
+    'I build backend systems, retrieval workflows, and agent experiences with a focus on clarity, performance, and craft.',
+  ] as const;
+
+  const { displayed } = useLoopingTypewriter(introLines, {
+    enabled: !reducedMotion,
+    typeSpeedMs: 26,
+    deleteSpeedMs: 14,
+    pauseAfterTypedMs: 1100,
+    pauseAfterDeletedMs: 260,
+  });
 
   return (
-    <div className="relative flex flex-col gap-6">
+    <div className="relative flex flex-col gap-5">
       <p className="font-mono text-[12px] uppercase tracking-wider2 text-accent-cyan/85">
         {profile.eyebrow}
       </p>
@@ -57,7 +73,25 @@ export function HeroBlock() {
         />
       </div>
 
-      <div className="flex max-w-[620px] flex-wrap items-center gap-2">
+      {/* Intro typewriter — between wordmark and chips */}
+      <div className="max-w-[720px] -mt-1">
+        {reducedMotion ? (
+          <div className="space-y-1.5 text-[15px] leading-relaxed text-ink-muted sm:text-base">
+            <p>{introLines[0]}</p>
+            <p>{introLines[1]}</p>
+          </div>
+        ) : (
+          <p
+            className="min-h-[2.75rem] text-[15px] leading-relaxed text-ink-muted sm:text-base"
+            aria-label={introLines.join(' ')}
+          >
+            {displayed}
+            <span aria-hidden className="inline-block w-[0.6ch]" />
+          </p>
+        )}
+      </div>
+
+      <div className="mt-1 flex max-w-[620px] flex-wrap items-center gap-2">
         {profile.roleChips.slice(0, 4).map((role) => (
           <span
             key={role}
@@ -73,7 +107,7 @@ export function HeroBlock() {
         ))}
       </div>
 
-      <p className="max-w-[600px] text-[15px] leading-relaxed text-ink-muted sm:text-base">
+      <p className="-mt-1 max-w-[600px] text-[15px] leading-relaxed text-ink-muted sm:text-base">
         {profile.bio}
       </p>
 
@@ -130,7 +164,7 @@ export function HeroBlock() {
       </div>
 
       {/* Scroll cue */}
-      <div className="pt-4 flex items-center gap-2 text-ink-dim label-eyebrow">
+      <div className="pt-3 flex items-center gap-2 text-ink-dim label-eyebrow">
         <ChevronDown size={11} />
         Scroll to explore
       </div>
