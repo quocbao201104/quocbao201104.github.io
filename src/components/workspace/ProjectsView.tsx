@@ -1,6 +1,5 @@
 import { ExternalLink, Github, Heart, Shield, Brain, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { projects } from '@/data/projects';
+import { getMarkdownProjects } from '@/lib/projects/markdownProjects';
 import { cn } from '@/lib/cn';
 
 const icons = {
@@ -11,6 +10,8 @@ const icons = {
 };
 
 export function ProjectsView() {
+  const projects = getMarkdownProjects();
+
   return (
     <div className="flex flex-col gap-6">
       <header className="flex items-end justify-between gap-6">
@@ -27,12 +28,9 @@ export function ProjectsView() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-        {projects.map((p, idx) => (
-          <motion.article
+        {projects.map((p) => (
+          <article
             key={p.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.04 * idx, ease: [0.22, 1, 0.36, 1] }}
             className={cn(
               'panel-soft rounded-2xl p-6 lg:p-7 overflow-hidden',
               'border border-white/[0.05] hover:border-white/[0.07]',
@@ -90,7 +88,7 @@ export function ProjectsView() {
                 </span>
               ))}
             </div>
-          </motion.article>
+          </article>
         ))}
       </div>
     </div>
