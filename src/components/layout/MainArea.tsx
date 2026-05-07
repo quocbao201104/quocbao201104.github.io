@@ -30,6 +30,8 @@ export function MainArea() {
         className={
           active === 'terminal'
             ? 'px-0 py-0'
+            : active === 'home'
+              ? 'px-6 lg:px-12 py-8 lg:py-10'
             : 'px-6 lg:px-12 py-10 lg:py-14'
         }
       >
@@ -46,9 +48,9 @@ export function MainArea() {
 
 function HomeWorkspace() {
   return (
-    <div className="flex flex-col gap-16 lg:gap-20">
+    <div className="flex flex-col gap-12 lg:gap-16">
       {/* HOME — Hero + quiet identity panel */}
-      <section className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,0.7fr)] gap-10 lg:gap-12 xl:gap-16 items-start min-h-[560px]">
+      <section className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,0.7fr)] gap-10 lg:gap-12 xl:gap-16 items-start">
         <HeroBlock />
         <HomeSignalPanel />
       </section>
