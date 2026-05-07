@@ -6,12 +6,13 @@ export const profile = {
     version: 'v1.0.0',
   },
   role: 'AI Engineer · Backend Architect · Agentic Systems Builder',
-  eyebrow: 'AI Engineer & Builder',
+  eyebrow: '// hello world !! Welcome to my portfolio',
+  roleChips: ['AI Engineer', 'Backend Architect', 'RAG Builder', 'Agent Systems'],
   headline: {
-    line1: 'Building Intelligent Systems for the',
-    accent: 'AI Era.',
+    line1: 'Baodev',
+    accent: '',
   },
-  bio: 'Designing memory, agents, and intelligent infrastructure for autonomous workflows. Currently focused on retrieval-augmented cognition, agent orchestration, and long-horizon reasoning.',
+  bio: 'I am Bao, a developer who enjoys turning complex AI ideas into useful products. I build backend systems, retrieval workflows, and agent experiences with a focus on clarity, performance, and craft.',
   now: 'Currently exploring agent memory and GraphRAG architectures.',
   philosophy:
     'Building at the intersection of AI systems and scalable backend engineering.',

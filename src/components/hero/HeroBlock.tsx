@@ -5,29 +5,32 @@ import { cn } from '@/lib/cn';
 export function HeroBlock() {
   return (
     <div className="relative flex flex-col gap-6">
-      {/* Eyebrow chip */}
-      <div className="inline-flex">
-        <span
-          className={cn(
-            'inline-flex items-center gap-2 rounded-full px-3 py-1.5',
-            'border border-accent-purple/25 bg-accent-purple/[0.08]',
-            'text-2xs font-mono uppercase tracking-wider2 text-accent-purple-soft',
-          )}
-        >
-          <Sparkles size={11} className="text-accent-purple" />
-          {profile.eyebrow}
-        </span>
-      </div>
+      <p className="font-mono text-[12px] uppercase tracking-wider2 text-accent-cyan/85">
+        {profile.eyebrow}
+      </p>
 
-      {/* Headline — softer scale, more breathing room */}
-      <h1 className="text-[36px] sm:text-[42px] lg:text-[50px] leading-[1.12] tracking-[-0.02em] font-semibold text-ink-bright">
-        {profile.headline.line1}{' '}
-        <span className="text-gradient-purple">{profile.headline.accent}</span>
+      <h1 className="text-[64px] sm:text-[86px] lg:text-[104px] xl:text-[118px] leading-[0.9] tracking-[-0.075em] font-semibold text-ink-bright">
+        {profile.headline.line1}
       </h1>
 
-      {/* Subheading */}
-      <p className="text-[15px] text-ink-muted max-w-[480px] leading-relaxed">
-        {profile.role}
+      <div className="flex max-w-[620px] flex-wrap items-center gap-2">
+        {profile.roleChips.slice(0, 4).map((role) => (
+          <span
+            key={role}
+            className={cn(
+              'rounded-full border border-line bg-bg-raised/70 px-3 py-1.5',
+              'font-mono text-2xs uppercase tracking-wider2 text-ink-muted',
+              'transition-colors duration-200 ease-out hover:border-accent-purple/45',
+              'hover:bg-accent-purple/[0.08] hover:text-ink-bright',
+            )}
+          >
+            {role}
+          </span>
+        ))}
+      </div>
+
+      <p className="max-w-[600px] text-[15px] leading-relaxed text-ink-muted sm:text-base">
+        {profile.bio}
       </p>
 
       {/* "Now" identity line — quiet, human */}
