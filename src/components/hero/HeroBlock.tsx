@@ -14,9 +14,48 @@ export function HeroBlock() {
         {profile.eyebrow}
       </p>
 
-      <h1 className="text-[64px] sm:text-[86px] lg:text-[104px] xl:text-[118px] leading-[0.9] tracking-[-0.075em] font-semibold text-ink-bright">
-        {profile.headline.line1}
-      </h1>
+      {/* Wordmark — layered, editorial, premium */}
+      <div className="group/word relative -mb-1">
+        <div className="flex items-start gap-2.5 sm:gap-4">
+          {/* Magazine-style index marker */}
+          <span
+            aria-hidden
+            className="select-none whitespace-nowrap pt-3 sm:pt-5 lg:pt-6 xl:pt-7 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider2 text-ink-dim/70"
+          >
+            01&nbsp;/
+          </span>
+
+          {/* Wordmark with ghost stroke duplicate for depth */}
+          <h1 className="relative font-semibold leading-[0.85] tracking-[-0.085em] text-[64px] sm:text-[86px] lg:text-[104px] xl:text-[118px]">
+            <span className="sr-only">{profile.headline.line1}</span>
+
+            {/* Outlined ghost — sits behind, slight offset, editorial layering */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 select-none translate-x-[2px] translate-y-[2px] text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.06)]"
+            >
+              Baodev
+            </span>
+
+            {/* Foreground: split wordmark + accent dot */}
+            <span aria-hidden className="relative inline-flex items-end">
+              <span className="text-ink-bright">Bao</span>
+              <span className="bg-gradient-to-r from-accent-purple via-fuchsia-400 to-accent-cyan bg-clip-text text-transparent">
+                dev
+              </span>
+              <span className="relative inline-block text-accent-purple drop-shadow-[0_0_10px_rgba(168,85,247,0.6)] transition-transform duration-300 ease-out group-hover/word:translate-x-1">
+                .
+              </span>
+            </span>
+          </h1>
+        </div>
+
+        {/* Signature stroke — static gradient hairline */}
+        <div
+          aria-hidden
+          className="ml-[26px] sm:ml-[34px] mt-3 h-px w-[120px] bg-gradient-to-r from-accent-purple via-fuchsia-400/80 to-accent-cyan opacity-80"
+        />
+      </div>
 
       <div className="flex max-w-[620px] flex-wrap items-center gap-2">
         {profile.roleChips.slice(0, 4).map((role) => (
