@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const INNER_SIZE = 6;
-const OUTER_SIZE = 68;
+const OUTER_SIZE = 34;
 const LAG_FACTOR = 0.12;
 
 export function CustomCursor() {
@@ -84,7 +84,7 @@ export function CustomCursor() {
       {/* Outer square — follows with lag */}
       <div
         ref={outerRef}
-        className="absolute left-0 top-0"
+        className="custom-cursor-frame absolute left-0 top-0"
         style={{
           width: OUTER_SIZE,
           height: OUTER_SIZE,

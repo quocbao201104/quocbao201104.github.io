@@ -60,6 +60,29 @@
 }
 
 @layer components {
+  .custom-cursor-frame::before,
+  .custom-cursor-frame::after {
+    content: '';
+    position: absolute;
+    background: rgba(168, 85, 247, 0.6);
+  }
+
+  .custom-cursor-frame::before {
+    top: -7px;
+    left: 50%;
+    width: 1.5px;
+    height: 7px;
+    transform: translateX(-50%);
+  }
+
+  .custom-cursor-frame::after {
+    top: 50%;
+    left: -7px;
+    width: 7px;
+    height: 1.5px;
+    transform: translateY(-50%);
+  }
+
   .glass {
     /* No large-container backdrop blur (perf). Keep a crisp translucent surface. */
     @apply bg-white/[0.03] border border-white/[0.05];
