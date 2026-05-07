@@ -1,5 +1,4 @@
 import { HeroBlock } from '@/components/hero/HeroBlock';
-import { NeuralGraph } from '@/components/hero/NeuralGraph';
 import { CurrentFocusCard } from '@/components/cards/CurrentFocusCard';
 import { RecentDeploymentCard } from '@/components/cards/RecentDeploymentCard';
 import { GithubActivityCard } from '@/components/cards/GithubActivityCard';
@@ -48,12 +47,10 @@ export function MainArea() {
 function HomeWorkspace() {
   return (
     <div className="flex flex-col gap-16 lg:gap-20">
-      {/* HOME — Hero + Graph */}
-      <section className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.25fr)] gap-10 lg:gap-12 xl:gap-16 items-center min-h-[560px]">
+      {/* HOME — Hero + quiet identity panel */}
+      <section className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,0.7fr)] gap-10 lg:gap-12 xl:gap-16 items-center min-h-[560px]">
         <HeroBlock />
-        <div className="hidden md:block">
-          <NeuralGraph />
-        </div>
+        <HomeSignalPanel />
       </section>
 
       {/* CARD ROW */}
@@ -64,6 +61,45 @@ function HomeWorkspace() {
         <AIThoughtStreamCard />
       </section>
     </div>
+  );
+}
+
+const heroSignals = [
+  { label: 'Focus', value: 'AI Products' },
+  { label: 'Stack', value: 'React / TS / RAG' },
+  { label: 'Mode', value: 'Build in public' },
+];
+
+function HomeSignalPanel() {
+  return (
+    <aside className="panel-soft relative overflow-hidden p-6 sm:p-7 lg:p-8">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-radial-purple opacity-70"
+      />
+      <div className="relative flex flex-col gap-8">
+        <div>
+          <p className="label-eyebrow text-accent-purple-soft">current signal</p>
+          <p className="mt-3 text-2xl font-semibold leading-tight tracking-[-0.03em] text-ink-bright">
+            Building calm, useful AI systems with backend discipline.
+          </p>
+        </div>
+
+        <div className="grid gap-3">
+          {heroSignals.map((item) => (
+            <div
+              key={item.label}
+              className="flex items-center justify-between border-b border-line-soft pb-3 last:border-b-0 last:pb-0"
+            >
+              <span className="font-mono text-2xs uppercase tracking-wider2 text-ink-dim">
+                {item.label}
+              </span>
+              <span className="text-sm text-ink-muted">{item.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </aside>
   );
 }
 
