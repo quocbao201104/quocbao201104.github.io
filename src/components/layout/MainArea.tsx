@@ -15,11 +15,6 @@ import { TerminalWindow } from '@/components/terminal/TerminalWindow';
 export function MainArea() {
   const active = useUIStore((s) => s.activeSection);
 
-  useEffect(() => {
-    const el = document.getElementById('center-scroll');
-    if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [active]);
-
   return (
     <div className="relative mx-auto w-full max-w-[1200px]">
       {/* Central panel header — flush to the panel edges (VSCode-like) */}
