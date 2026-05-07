@@ -12,6 +12,7 @@
   #root {
     height: 100%;
     overflow-x: hidden;
+    overflow-y: hidden;
   }
 
   body {
@@ -19,6 +20,7 @@
     font-feature-settings: 'cv11', 'ss01', 'ss03';
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow: hidden;
   }
 
   /* Remove default focus, replace with cyan ring */
