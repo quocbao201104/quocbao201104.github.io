@@ -74,17 +74,17 @@ export function HeroBlock() {
       </div>
 
       {/* Intro typewriter — between wordmark and chips */}
-      <div className="relative z-20 -mt-1 max-w-[720px] sm:w-max sm:max-w-none sm:pointer-events-none">
+      <div className="relative z-20 -mt-1 max-w-[720px]">
         {reducedMotion ? (
           <p
-            className="min-h-[1.75rem] text-[15px] leading-relaxed text-ink-muted sm:min-h-[1.9rem] sm:whitespace-nowrap sm:text-base"
+            className="min-h-[1.75rem] text-[15px] leading-relaxed text-ink-muted sm:text-base"
             aria-label={introLines.join(' ')}
           >
             {introLines.join(' / ')}
           </p>
         ) : (
           <p
-            className="min-h-[1.75rem] text-[15px] leading-relaxed text-ink-muted sm:min-h-[1.9rem] sm:whitespace-nowrap sm:text-base"
+            className="min-h-[1.75rem] text-[15px] leading-relaxed text-ink-muted sm:text-base"
             aria-label={introLines.join(' ')}
           >
             {displayed}
