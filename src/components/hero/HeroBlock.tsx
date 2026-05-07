@@ -76,13 +76,15 @@ export function HeroBlock() {
       {/* Intro typewriter — between wordmark and chips */}
       <div className="max-w-[720px] -mt-1">
         {reducedMotion ? (
-          <div className="space-y-1.5 text-[15px] leading-relaxed text-ink-muted sm:text-base">
-            <p>{introLines[0]}</p>
-            <p>{introLines[1]}</p>
-          </div>
+          <p
+            className="min-h-[1.75rem] text-[15px] leading-relaxed text-ink-muted sm:min-h-[1.9rem] sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis sm:text-base"
+            aria-label={introLines.join(' ')}
+          >
+            {introLines.join(' / ')}
+          </p>
         ) : (
           <p
-            className="min-h-[2.75rem] text-[15px] leading-relaxed text-ink-muted sm:text-base"
+            className="min-h-[1.75rem] text-[15px] leading-relaxed text-ink-muted sm:min-h-[1.9rem] sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis sm:text-base"
             aria-label={introLines.join(' ')}
           >
             {displayed}
@@ -106,10 +108,6 @@ export function HeroBlock() {
           </span>
         ))}
       </div>
-
-      <p className="-mt-1 max-w-[600px] text-[15px] leading-relaxed text-ink-muted sm:text-base">
-        {profile.bio}
-      </p>
 
       {/* "Now" identity line — quiet, human */}
       <div className="flex items-center gap-2.5 mt-1">
