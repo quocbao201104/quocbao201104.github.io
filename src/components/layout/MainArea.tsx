@@ -7,6 +7,7 @@ import { useUIStore, type SectionId } from '@/stores/uiStore';
 import { ProjectsView } from '@/components/workspace/ProjectsView';
 import { AgentsView } from '@/components/workspace/AgentsView';
 import { LabView } from '@/components/workspace/LabView';
+import { SkillsView } from '@/components/workspace/SkillsView';
 import { MemoryView } from '@/components/workspace/MemoryView';
 import { useEffect } from 'react';
 import { profile } from '@/data/profile';
@@ -34,6 +35,7 @@ export function MainArea() {
         {active === 'projects' && <ProjectsView />}
         {active === 'agents' && <AgentsView />}
         {active === 'lab' && <LabView />}
+        {active === 'skills' && <SkillsView />}
         {active === 'memory' && <MemoryView />}
         {active === 'terminal' && <TerminalWorkspace />}
       </div>
@@ -109,6 +111,7 @@ function WorkspaceHeader({ active }: { active: SectionId }) {
     { id: 'projects', label: 'projects.ts' },
     { id: 'agents', label: 'agents.ai' },
     { id: 'lab', label: 'lab' },
+    { id: 'skills', label: 'skills.json' },
     { id: 'memory', label: 'memory.log' },
     { id: 'terminal', label: 'terminal' },
   ];

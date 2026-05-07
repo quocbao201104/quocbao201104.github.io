@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type SectionId = 'home' | 'projects' | 'agents' | 'lab' | 'memory' | 'terminal';
+export type SectionId = 'home' | 'projects' | 'agents' | 'lab' | 'skills' | 'memory' | 'terminal';
 
 interface UIState {
   paletteOpen: boolean;

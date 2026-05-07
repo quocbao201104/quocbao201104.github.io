@@ -1,4 +1,4 @@
-import { Home, FolderGit2, Bot, FlaskConical, Brain } from 'lucide-react';
+import { Home, FolderGit2, Bot, FlaskConical, Brain, BarChart3 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useUIStore, type SectionId } from '@/stores/uiStore';
@@ -15,6 +15,7 @@ const items: NavItem[] = [
   { id: 'projects', label: 'Projects', icon: FolderGit2, available: true },
   { id: 'agents', label: 'Agents', icon: Bot, available: true },
   { id: 'lab', label: 'Lab', icon: FlaskConical, available: true },
+  { id: 'skills', label: 'Skills', icon: BarChart3, available: true },
   { id: 'memory', label: 'Memory', icon: Brain, available: true },
 ];
 
