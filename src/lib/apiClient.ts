@@ -1,3 +1,12 @@
+const LEGACY_API_BASE_URL = 'https://bao-os-api.vercel.app';
+
+type AttemptFailure = {
+  url: string;
+  status?: number;
+  body?: string;
+  error?: string;
+};
+
 export function getApiBaseUrl() {
   // Prefer same-origin `/api/*` by default so Vercel/Netlify deployments
   // with serverless functions "just work" without extra config.
@@ -9,53 +18,23 @@ export function getApiBaseUrl() {
 }
 
 export async function postJson<T>(path: string, body: unknown): Promise<T> {
-  const base = getApiBaseUrl();
-  const primaryUrl = base ? joinUrl(base, path) : path;
+  const configuredBase = getApiBaseUrl();
+  const primaryUrl = configuredBase ? joinUrl(configuredBase, path) : normalizeApiPath(path);
+  const failures: AttemptFailure[] = [];
 
-  try {
-    const r = await fetch(primaryUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+  const primary = await requestJson<T>(primaryUrl, body);
+  if (primary.ok) return primary.data;
 
-    // If we're on a static host and `/api/*` doesn't exist, it often returns
-    // an HTML 404/405. In that case, transparently retry the legacy API origin.
-    if (!base && (r.status === 404 || r.status === 405)) {
-      const ct = r.headers.get('content-type') ?? '';
-      if (ct.includes('text/html')) {
-        return await postJsonWithBase<T>('https://bao-os-api.vercel.app', path, body);
-      }
-    }
+  failures.push(primary.failure);
 
-    if (!r.ok) {
-      const t = await safeText(r);
-      throw new Error(
-        [
-          `API request failed`,
-          `- url: ${primaryUrl}`,
-          `- status: ${r.status}`,
-          t ? `- body: ${truncateOneLine(t, 300)}` : null,
-          base ? null : `- hint: set VITE_API_BASE_URL if hosting is static (no /api functions)`,
-        ]
-          .filter(Boolean)
-          .join('\n'),
-      );
-    }
-
-    return (await r.json()) as T;
-  } catch (e: any) {
-    // Network errors (DNS, TLS, blocked by CORS, offline) reject fetch with a TypeError.
-    const msg = e?.message ?? String(e);
-    throw new Error(
-      [
-        `Network error while calling API`,
-        `- url: ${primaryUrl}`,
-        `- error: ${msg}`,
-        `- hint: if this is a CORS error, ensure the API allows this site origin or use same-origin /api on Vercel`,
-      ].join('\n'),
-    );
+  if (!configuredBase && shouldRetryLegacyApi(primary.failure, path)) {
+    const legacyUrl = joinUrl(LEGACY_API_BASE_URL, normalizeApiPath(path));
+    const fallback = await requestJson<T>(legacyUrl, body);
+    if (fallback.ok) return fallback.data;
+    failures.push(fallback.failure);
   }
+
+  throw new Error(formatApiError(failures, configuredBase));
 }
 
 function joinUrl(base: string, path: string) {
@@ -64,27 +43,77 @@ function joinUrl(base: string, path: string) {
   return `${b}${p}`;
 }
 
-async function postJsonWithBase<T>(base: string, path: string, body: unknown): Promise<T> {
-  const url = joinUrl(base, path);
-  const r = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  if (!r.ok) {
-    const t = await safeText(r);
-    throw new Error(
-      [
-        `API request failed`,
-        `- url: ${url}`,
-        `- status: ${r.status}`,
-        t ? `- body: ${truncateOneLine(t, 300)}` : null,
-      ]
-        .filter(Boolean)
-        .join('\n'),
-    );
+function normalizeApiPath(path: string) {
+  return path.startsWith('/') ? path : `/${path}`;
+}
+
+function shouldRetryLegacyApi(failure: AttemptFailure, path: string) {
+  if (!normalizeApiPath(path).startsWith('/api/')) return false;
+  if (failure.status === 404 || failure.status === 405) return true;
+  return isHtmlBody(failure.body);
+}
+
+async function requestJson<T>(url: string, body: unknown): Promise<{ ok: true; data: T } | { ok: false; failure: AttemptFailure }> {
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    const contentType = r.headers.get('content-type') ?? '';
+    const text = await safeText(r);
+    const bodyText = truncateOneLine(text, 300);
+
+    if (!r.ok) {
+      return {
+        ok: false,
+        failure: {
+          url,
+          status: r.status,
+          body: bodyText,
+        },
+      };
+    }
+
+    if (contentType.includes('text/html') || isHtmlBody(bodyText)) {
+      return {
+        ok: false,
+        failure: {
+          url,
+          status: r.status,
+          body: bodyText,
+        },
+      };
+    }
+
+    return { ok: true, data: JSON.parse(text) as T };
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { ok: false, failure: { url, error: msg } };
   }
-  return (await r.json()) as T;
+}
+
+function formatApiError(failures: AttemptFailure[], configuredBase: string) {
+  const networkOnly = failures.every((failure) => failure.error && failure.status === undefined);
+  const lines = [networkOnly ? 'Network error while calling API' : 'API request failed'];
+
+  failures.forEach((failure, index) => {
+    lines.push(`- attempt ${index + 1}: ${failure.url}`);
+    if (failure.status !== undefined) lines.push(`  status: ${failure.status}`);
+    if (failure.body) lines.push(`  body: ${failure.body}`);
+    if (failure.error) lines.push(`  error: ${failure.error}`);
+  });
+
+  if (!configuredBase) {
+    lines.push(`- hint: set VITE_API_BASE_URL if hosting is static (no /api functions)`);
+  }
+
+  return lines.join('\n');
+}
+
+function isHtmlBody(body?: string) {
+  return Boolean(body && /<\/?(?:!doctype\s+html|html|body)\b/i.test(body));
 }
 
 async function safeText(r: Response) {
