@@ -1,8 +1,13 @@
 import { ArrowRight, Sparkles, ChevronDown } from 'lucide-react';
 import { profile } from '@/data/profile';
 import { cn } from '@/lib/cn';
+import { useUIStore } from '@/stores/uiStore';
 
 export function HeroBlock() {
+  const openTab = useUIStore((s) => s.openTab);
+  const setTerminalDocked = useUIStore((s) => s.setTerminalDocked);
+  const showTerminal = useUIStore((s) => s.showTerminal);
+
   return (
     <div className="relative flex flex-col gap-6">
       <p className="font-mono text-[12px] uppercase tracking-wider2 text-accent-cyan/85">
@@ -47,6 +52,10 @@ export function HeroBlock() {
       <div className="flex flex-wrap items-center gap-3 pt-2">
         <a
           href={profile.cta.primary.href}
+          onClick={(e) => {
+            e.preventDefault();
+            openTab('projects');
+          }}
           className={cn(
             'group inline-flex items-center gap-2 rounded-lg px-5 py-2.5',
             'bg-accent-purple/95 text-white font-medium text-sm',
@@ -63,6 +72,12 @@ export function HeroBlock() {
         </a>
         <a
           href={profile.cta.secondary.href}
+          onClick={(e) => {
+            e.preventDefault();
+            openTab('terminal');
+            setTerminalDocked(false);
+            showTerminal();
+          }}
           className={cn(
             'group inline-flex items-center gap-2 rounded-lg px-5 py-2.5',
             'glass text-ink-bright font-medium text-sm',
