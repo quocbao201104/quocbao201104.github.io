@@ -4,6 +4,13 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "vite",
+  "routes": [
+    {
+      "src": "^/$",
+      "methods": ["POST", "OPTIONS"],
+      "dest": "/api/v1/chat/completions"
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
