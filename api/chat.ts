@@ -19,7 +19,7 @@ export default async function handler(req: Request) {
 
   try {
     if (req.method !== 'POST') {
-      return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(req.headers.get('origin')) });
+      return new Response('Method Not Allowed', { status: 405, headers: corsHeaders() });
     }
     const body = (await req.json()) as ChatReq;
     const message = (body?.message ?? '').trim();
@@ -28,7 +28,7 @@ export default async function handler(req: Request) {
     if (!message) {
       return new Response(JSON.stringify({ error: 'Missing message' }), {
         status: 400,
-        headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
       });
     }
     const { answer, hits } = await runChat({ message, mode, persona });
@@ -37,12 +37,12 @@ export default async function handler(req: Request) {
         answer,
         hits,
       }),
-      { headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } },
+      { headers: { ...corsHeaders(), 'Content-Type': 'application/json' } },
     );
   } catch (e: any) {
     return new Response(JSON.stringify({ error: e?.message ?? 'Unknown error' }), {
       status: 500,
-      headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
     });
   }
 }

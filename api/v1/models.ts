@@ -11,7 +11,7 @@ function requireCompatAuth(req: Request) {
   if (!got || got !== expected) {
     return new Response(JSON.stringify({ error: { message: 'Unauthorized' } }), {
       status: 401,
-      headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
     });
   }
   return null;
@@ -25,7 +25,7 @@ export default async function handler(req: Request) {
   if (authErr) return authErr;
 
   if (req.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(req.headers.get('origin')) });
+    return new Response('Method Not Allowed', { status: 405, headers: corsHeaders() });
   }
 
   const created = Math.floor(Date.now() / 1000);
@@ -40,7 +40,7 @@ export default async function handler(req: Request) {
         { id: 'bao-os-memory', object: 'model', created, owned_by: 'bao-os' },
       ],
     }),
-    { headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } },
+    { headers: { ...corsHeaders(), 'Content-Type': 'application/json' } },
   );
 }
 

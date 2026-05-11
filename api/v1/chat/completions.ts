@@ -49,7 +49,7 @@ function requireCompatAuth(req: Request) {
   if (!got || got !== expected) {
     return new Response(JSON.stringify({ error: { message: 'Unauthorized' } }), {
       status: 401,
-      headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
     });
   }
   return null;
@@ -79,14 +79,14 @@ export default async function handler(req: Request) {
 
   try {
     if (req.method !== 'POST') {
-      return new Response('Method Not Allowed', { status: 405, headers: corsHeaders(req.headers.get('origin')) });
+      return new Response('Method Not Allowed', { status: 405, headers: corsHeaders() });
     }
 
     const body = (await req.json()) as OpenAIChatCompletionsRequest;
     if (body?.stream) {
       return new Response(JSON.stringify({ error: { message: 'stream not supported', type: 'invalid_request_error' } }), {
         status: 400,
-        headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
       });
     }
 
@@ -95,7 +95,7 @@ export default async function handler(req: Request) {
     if (!prompt) {
       return new Response(JSON.stringify({ error: { message: 'Missing messages', type: 'invalid_request_error' } }), {
         status: 400,
-        headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
       });
     }
 
@@ -123,12 +123,12 @@ export default async function handler(req: Request) {
           },
         ],
       }),
-      { headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' } },
+      { headers: { ...corsHeaders(), 'Content-Type': 'application/json' } },
     );
   } catch (e: any) {
     return new Response(JSON.stringify({ error: { message: e?.message ?? 'Unknown error', type: 'server_error' } }), {
       status: 500,
-      headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
     });
   }
 }

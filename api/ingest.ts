@@ -142,7 +142,7 @@ export default async function handler(req: Request) {
       req.headers.get('x-ingest-token') ??
       '';
     if (!token || token !== getEnv('INGEST_TOKEN')) {
-      return new Response('Unauthorized', { status: 401, headers: corsHeaders(req.headers.get('origin')) });
+      return new Response('Unauthorized', { status: 401, headers: corsHeaders() });
     }
 
     const body = (await req.json()) as IngestReq;
@@ -150,7 +150,7 @@ export default async function handler(req: Request) {
     if (!Array.isArray(files) || files.length === 0) {
       return new Response(JSON.stringify({ error: 'No files provided' }), {
         status: 400,
-        headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
       });
     }
 
@@ -206,12 +206,12 @@ export default async function handler(req: Request) {
     if (error) throw new Error(`Supabase upsert error: ${error.message}`);
 
     return new Response(JSON.stringify({ ok: true, chunks: rows.length }), {
-      headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
     });
   } catch (e: any) {
     return new Response(JSON.stringify({ error: e?.message ?? 'Unknown error' }), {
       status: 500,
-      headers: { ...corsHeaders(req.headers.get('origin')), 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
     });
   }
 }
