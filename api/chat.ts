@@ -1,11 +1,16 @@
 import { corsHeaders, handleCors } from './_cors.js';
 import { runChat, type Mode, type Persona } from './_chat_core.js';
+import type { ConsoleResponse } from '../src/types/console.js';
 
 export const config = {
   runtime: 'edge',
 };
 
 type ChatReq = {
+  command?: string;
+  userInput?: string;
+  intent?: string;
+  topK?: number;
   message: string;
   mode: Mode;
   sessionId?: string;
@@ -31,11 +36,26 @@ export default async function handler(req: Request) {
         headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
       });
     }
-    const { answer, hits } = await runChat({ message, mode, persona });
+    const consoleResponse: ConsoleResponse = await runChat({
+      command: body?.command ?? mode,
+      userInput: body?.userInput ?? message,
+      message,
+      mode,
+      persona,
+      intent: body?.intent,
+      topK: body?.topK,
+    });
     return new Response(
       JSON.stringify({
-        answer,
-        hits,
+        ...consoleResponse,
+        // legacy compatibility for older callers that still expect `answer`/`hits`
+        answer: consoleResponse.answer,
+        hits: (consoleResponse.sources ?? []).map((s) => ({
+          id: s.id,
+          title: s.title,
+          source: s.path,
+          similarity: s.similarity,
+        })),
       }),
       { headers: { ...corsHeaders(), 'Content-Type': 'application/json' } },
     );

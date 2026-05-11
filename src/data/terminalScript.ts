@@ -64,9 +64,9 @@ export interface QuickCommand {
 }
 
 export const quickCommands: QuickCommand[] = [
-  { cmd: 'ask recruiter <topic>', hint: 'Hiring perspective (real LLM)' },
-  { cmd: 'inspect architecture <system>', hint: 'System design review (real LLM)' },
-  { cmd: 'search memory <query>', hint: 'Search content/ memory (real RAG)' },
+  { cmd: 'ask recruiter <topic>', hint: 'Hiring perspective (agentic RAG)' },
+  { cmd: 'inspect architecture <system>', hint: 'System design review (agentic RAG)' },
+  { cmd: 'search memory <query>', hint: 'Search content/memory (agentic RAG)' },
   { cmd: 'llm <message>', hint: 'Direct LLM' },
   { cmd: 'rag <message>', hint: 'Direct RAG' },
   { cmd: 'help', hint: 'Show all commands' },

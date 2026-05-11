@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import type { AgentTraceStep, ConsoleMode, ConsoleResponse, SourceChunk } from '../src/types/console.js';
 
-export type Mode = 'llm' | 'rag';
+export type Mode = ConsoleMode;
 export type Persona = 'bao' | 'recruiter' | 'architect' | 'memory';
 
 export type ChunkHit = {
@@ -17,15 +18,16 @@ export type ChunkHit = {
 };
 
 export type RunChatInput = {
+  command: string;
+  userInput: string;
   message: string;
   mode: Mode;
   persona: Persona;
+  intent?: string;
+  topK?: number;
 };
 
-export type RunChatResult = {
-  answer: string;
-  hits: Pick<ChunkHit, 'id' | 'title' | 'source' | 'similarity'>[];
-};
+export type RunChatResult = ConsoleResponse;
 
 function getEnv(name: string) {
   const v = process.env[name];
@@ -144,7 +146,7 @@ export function compactContext(text: string, maxChars: number) {
   return t.slice(0, maxChars).trimEnd() + '\n…';
 }
 
-async function retrieve(query: string, allowPii: boolean): Promise<ChunkHit[]> {
+async function retrieve(query: string, allowPii: boolean, topK = 6): Promise<ChunkHit[]> {
   const supabaseUrl = getEnv('SUPABASE_URL');
   const supabaseKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
   const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -158,7 +160,7 @@ async function retrieve(query: string, allowPii: boolean): Promise<ChunkHit[]> {
   //     returns (id, content, source, title, similarity, path, type, subtype, status, contains_pii)
   const { data, error } = await supabase.rpc('match_chunks', {
     query_embedding: qvec,
-    match_count: 6,
+    match_count: topK,
     allow_pii: allowPii,
   });
   if (error) throw new Error(`Supabase rpc match_chunks error: ${error.message}`);
@@ -207,7 +209,7 @@ function buildSystemPrompt(mode: Mode, hits: ChunkHit[], persona: Persona) {
             ]
           : [];
 
-  if (mode !== 'rag') return [base, ...personaRules].join('\n');
+  if (mode === 'llm') return [base, ...personaRules].join('\n');
 
   const context =
     hits.length === 0
@@ -233,15 +235,74 @@ function buildSystemPrompt(mode: Mode, hits: ChunkHit[], persona: Persona) {
   ].join('\n');
 }
 
+function toSourceChunks(hits: ChunkHit[], allowPii: boolean): SourceChunk[] {
+  return hits.map((h) => {
+    const tags = [h.type, h.subtype].filter(Boolean) as string[];
+    const content = compactContext(h.content, 360);
+    const healthWarnings: string[] = [];
+    if (h.contains_pii) healthWarnings.push('contains_pii_flagged');
+    if (!allowPii && (content.includes('[redacted') || h.contains_pii)) {
+      healthWarnings.push('redaction_applied');
+    }
+
+    const source: SourceChunk = {
+      id: h.id,
+      title: h.title ?? h.source ?? h.id,
+      path: h.path ?? h.source ?? undefined,
+      content,
+      similarity: typeof h.similarity === 'number' ? h.similarity : undefined,
+      tags: tags.length > 0 ? tags : undefined,
+      containsPii: h.contains_pii ?? undefined,
+      healthWarnings: healthWarnings.length > 0 ? healthWarnings : undefined,
+    };
+    if (!allowPii && h.contains_pii) {
+      source.redactedContent = content;
+    }
+    return source;
+  });
+}
+
+function estimateConfidence(mode: Mode, sourceCount: number, answer: string) {
+  if (!answer.trim()) return 0.2;
+  if (mode === 'llm') return 0.7;
+  if (sourceCount === 0) return 0.45;
+  return Math.min(0.95, 0.55 + sourceCount * 0.08);
+}
+
 export async function runChat(input: RunChatInput): Promise<RunChatResult> {
   const message = input.message.trim();
   if (!message) throw new Error('Missing message');
 
   const mode = input.mode;
   const persona = input.persona;
+  const command = (input.command ?? mode).trim() || mode;
+  const userInput = (input.userInput ?? message).trim() || message;
+  const topK = Math.max(1, Math.min(20, input.topK ?? 6));
+  const intent = input.intent;
 
   const allowPii = isContactIntent(message);
-  const hits = mode === 'rag' ? await retrieve(message, allowPii) : [];
+  const trace: AgentTraceStep[] = [];
+  const shouldRetrieve = mode === 'rag' || mode === 'agentic_rag';
+
+  if (mode === 'agentic_rag') {
+    trace.push(
+      { label: 'Parse intent', status: 'completed', detail: intent ?? 'agentic_query' },
+      { label: 'Route execution', status: 'completed', detail: persona },
+      { label: 'Retrieve knowledge', status: 'running' },
+    );
+  }
+
+  const hits = shouldRetrieve ? await retrieve(message, allowPii, topK) : [];
+
+  if (mode === 'agentic_rag') {
+    trace[trace.length - 1] = {
+      label: 'Retrieve knowledge',
+      status: 'completed',
+      detail: `${hits.length} chunk(s)`,
+    };
+    trace.push({ label: 'Compose final response', status: 'running' });
+  }
+
   const model = process.env.LLM_MODEL ?? 'mimo-v2.5-pro';
 
   const r = await openaiFetch('/chat/completions', {
@@ -265,10 +326,27 @@ export async function runChat(input: RunChatInput): Promise<RunChatResult> {
 
   const j = JSON.parse(text);
   const answer = j?.choices?.[0]?.message?.content ?? '';
+  const sources = shouldRetrieve ? toSourceChunks(hits, allowPii) : undefined;
+  const usedTools = shouldRetrieve ? ['retrieve_chunks', 'llm_generate'] : ['llm_generate'];
+
+  if (mode === 'agentic_rag') {
+    trace[trace.length - 1] = { label: 'Compose final response', status: 'completed' };
+  }
 
   return {
+    mode,
+    command,
+    userInput,
     answer,
-    hits: hits.map((h) => ({ id: h.id, title: h.title, source: h.source, similarity: h.similarity })),
+    sources,
+    trace: trace.length > 0 ? trace : undefined,
+    metadata: {
+      intent,
+      topK,
+      model,
+      usedTools,
+      confidence: estimateConfidence(mode, sources?.length ?? 0, answer),
+    },
   };
 }
 

@@ -20,6 +20,32 @@ import { cn } from '@/lib/cn';
 import type { TerminalLine } from '@/data/terminalScript';
 import { runTerminalCommand } from '@/terminal/commandRouter';
 import { postJson } from '@/lib/apiClient';
+import type { AgentTraceStep, ConsoleResponse, SourceChunk } from '@/types/console';
+
+type ChatApiResponse = Partial<ConsoleResponse> & { answer?: string };
+
+function formatTrace(trace: AgentTraceStep[]) {
+  if (trace.length === 0) return '';
+  const compact = trace.slice(0, 4).map((step) => {
+    const marker =
+      step.status === 'completed' ? '[ok]' :
+      step.status === 'running' ? '[..]' :
+      step.status === 'failed' ? '[x]' :
+      '[ ]';
+    return `${marker} ${step.label}${step.detail ? ` - ${step.detail}` : ''}`;
+  });
+  return `Trace:\n${compact.join('\n')}`;
+}
+
+function formatSources(sources: SourceChunk[]) {
+  if (sources.length === 0) return '';
+  const lines = sources.slice(0, 3).map((src, idx) => {
+    const sim = typeof src.similarity === 'number' ? ` (${src.similarity.toFixed(3)})` : '';
+    const title = src.title ?? src.path ?? src.id;
+    return `${idx + 1}. ${title}${sim}`;
+  });
+  return `Sources:\n${lines.join('\n')}`;
+}
 
 export function TerminalWindow() {
   const collapsed = useUIStore((s) => s.terminalCollapsed);
@@ -176,24 +202,60 @@ export function TerminalWindow() {
       }));
 
       try {
-        const j = await postJson<{ answer: string }>(`/api/chat`, {
+        const j = await postJson<ChatApiResponse>(`/api/chat`, {
+          command: remote.command,
+          userInput: remote.userInput,
           message: remote.message,
           mode: remote.mode,
+          intent: remote.intent,
           sessionId,
           activeView: remote.activeView,
           persona: remote.persona,
         });
-        // Append answer as agent output
+
+        const answer = (j.answer ?? '').trim() || 'No response generated.';
+        const traceText = j.trace?.length ? formatTrace(j.trace) : '';
+        const sourcesText = j.sources?.length ? formatSources(j.sources) : '';
+        const metadataText = j.metadata?.intent
+          ? `Mode: ${j.mode ?? remote.mode} | Intent: ${j.metadata.intent}`
+          : `Mode: ${j.mode ?? remote.mode}`;
+
+        const lines: TerminalLine[] = [
+          {
+            kind: 'output',
+            speaker: remote.speaker,
+            speakerTone: remote.tone,
+            text: answer,
+          } as TerminalLine,
+        ];
+        if (sourcesText) {
+          lines.push({
+            kind: 'output',
+            speaker: remote.speaker,
+            speakerTone: 'muted',
+            text: sourcesText,
+          } as TerminalLine);
+        }
+        if (traceText) {
+          lines.push({
+            kind: 'output',
+            speaker: remote.speaker,
+            speakerTone: 'muted',
+            text: traceText,
+          } as TerminalLine);
+        }
+        lines.push({
+          kind: 'output',
+          speaker: remote.speaker,
+          speakerTone: 'muted',
+          text: metadataText,
+        } as TerminalLine);
+
         setHistoryBySession((prev) => ({
           ...prev,
           [sessionId]: [
             ...(prev[sessionId] ?? []).slice(0, -1),
-            {
-              kind: 'output',
-              speaker: remote.speaker,
-              speakerTone: remote.tone,
-              text: j.answer,
-            } as TerminalLine,
+            ...lines,
           ],
         }));
       } catch (e: any) {
@@ -269,9 +331,9 @@ export function TerminalWindow() {
                   <div><span className="text-ink-dim">clear</span> — clear screen</div>
                   <div><span className="text-ink-dim">llm &lt;message&gt;</span> — direct LLM</div>
                   <div><span className="text-ink-dim">rag &lt;message&gt;</span> — RAG answer</div>
-                  <div><span className="text-ink-dim">ask recruiter &lt;topic&gt;</span> — recruiter persona</div>
-                  <div><span className="text-ink-dim">inspect architecture &lt;system&gt;</span> — architect (RAG)</div>
-                  <div><span className="text-ink-dim">search memory &lt;query&gt;</span> — memory agent (RAG)</div>
+                  <div><span className="text-ink-dim">ask recruiter &lt;topic&gt;</span> — agentic recruiter</div>
+                  <div><span className="text-ink-dim">inspect architecture &lt;system&gt;</span> — agentic architecture</div>
+                  <div><span className="text-ink-dim">search memory &lt;query&gt;</span> — agentic memory search</div>
                 </div>
               </div>
             )}
