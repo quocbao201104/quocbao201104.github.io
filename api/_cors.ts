@@ -1,7 +1,8 @@
 export function corsHeaders(origin: string | null) {
   // If you want strict allowlisting, set ALLOWED_ORIGIN in Vercel env.
   const allow = process.env.ALLOWED_ORIGIN;
-  const allowOrigin = allow ?? origin ?? '*';
+  // Default to wildcard so static clients can call the API without CORS friction.
+  const allowOrigin = allow ?? '*';
 
   return {
     'Access-Control-Allow-Origin': allowOrigin,
