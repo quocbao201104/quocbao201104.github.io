@@ -15,7 +15,7 @@ The RAG corpus was refreshed to focus on Bao's three main projects:
 - TruyenVietHay.
 
 ## Why
-The portfolio assistant should answer from source-backed project facts instead of generic portfolio placeholders. The corpus now includes aliases, architecture, stack, data flow, engineering highlights, GitHub links, local source paths, and honest boundaries.
+The portfolio assistant should answer from source-backed project facts instead of generic portfolio placeholders. The corpus now includes aliases, architecture, stack, data flow, engineering highlights, public links, sanitized evidence notes, and honest boundaries.
 
 ## Retrieval Notes
 If the assistant is asked about Bao's strongest work, it should mention backend-heavy systems, AI translation pipelines, market research data pipelines, and content platform engineering.

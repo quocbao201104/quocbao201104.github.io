@@ -1,9 +1,13 @@
 ---
 title: "MarketGap VN and MarketGap"
 type: "project"
+subtype: "flagship"
 project_id: "marketgap-vn-marketgap"
 status: "active"
-priority: "primary"
+tags: ["data-pipeline", "saas", "nextjs", "python", "postgresql", "analytics"]
+aliases: ["MarketGap", "MarketGap VN", "Taobao to Shopee"]
+updated: "2026-05-11"
+contains_pii: false
 ---
 
 # MarketGap VN + MarketGap
@@ -20,12 +24,7 @@ Short answer: MarketGap finds products with strong signals on Chinese sources su
 Vietnam sellers need a faster way to spot product gaps: products that appear promising at the source market but are not yet saturated on Shopee Vietnam. MarketGap collects candidates, checks marketplace presence, classifies signal strength, and exposes the results through dashboards.
 
 ## Bao's Role
-Bao is actively developing both local repositories:
-
-- Data engine: `C:\Users\Admin\Downloads\Folders\MarketGap`.
-- SaaS dashboard: `C:\Users\Admin\Downloads\Folders\MarketGap VN`.
-
-Both source repositories are private, so the portfolio assistant should use `https://marketgap.com` as the public project link and should not provide GitHub repository links for MarketGap or MarketGap VN. The local repo evidence shows work across crawler orchestration, snapshot export, publisher integration, SaaS ingest contracts, PostgreSQL schema, dashboard queries, auth, billing, entitlement gates, and tests.
+Bao is actively developing both components: the data engine and the SaaS dashboard. The portfolio assistant should use `https://marketgap.com` as the public project link and avoid project repository links. Repository evidence shows work across crawler orchestration, snapshot export, publisher integration, SaaS ingest contracts, PostgreSQL schema, dashboard queries, auth, billing, entitlement gates, and tests.
 
 ## MarketGap Data Engine
 MarketGap is the internal crawler/data engine. Its README describes this flow:
@@ -82,20 +81,15 @@ Repeated ingest is idempotent: the service upserts the same snapshot UID and rep
 - Implemented entitlement-aware dashboard views: free preview, recent daily access for paid users, and monthly trend access for higher plan users.
 - Built payment checkout and webhook flow around provider references and subscription activation.
 
-## Source Evidence
-- MarketGap README: `C:\Users\Admin\Downloads\Folders\MarketGap\README.md`.
-- MarketGap export job: `C:\Users\Admin\Downloads\Folders\MarketGap\marketgap\export_job.py`.
-- MarketGap snapshot builder: `C:\Users\Admin\Downloads\Folders\MarketGap\marketgap\snapshot_builder.py`.
-- MarketGap VN README: `C:\Users\Admin\Downloads\Folders\MarketGap VN\README.md`.
-- MarketGap VN ingest contract: `C:\Users\Admin\Downloads\Folders\MarketGap VN\docs\architecture\data-ingest-contract.md`.
-- MarketGap VN Prisma schema: `C:\Users\Admin\Downloads\Folders\MarketGap VN\prisma\schema.prisma`.
-- Tests include ingest, dashboard, entitlement, payment webhook, auth, env, and theme CSS.
+## Public Evidence Snapshot
+- Public product domain: `https://marketgap.com`.
+- Internal docs and implementation cover crawler orchestration, snapshot generation, and export/publisher jobs.
+- SaaS documentation and schema define ingest contracts, subscription gating, and dashboard queries.
+- Tests cover ingest, dashboard, entitlement, payment webhook, auth, environment configuration, and UI behavior.
 
 ## Links
 - Domain: https://marketgap.com
-- Source: Private repositories; no public GitHub link should be shown for MarketGap or MarketGap VN.
-- Local SaaS path: `C:\Users\Admin\Downloads\Folders\MarketGap VN`
-- Local data engine path: `C:\Users\Admin\Downloads\Folders\MarketGap`
+- Source policy: use the product domain instead of project repository links.
 
 ## Best RAG Answer
 If asked "what is MarketGap?", answer: MarketGap is Bao's Taobao to Shopee Vietnam opportunity research system. The Python MarketGap engine crawls and analyzes product candidates, checks Shopee presence through Google Lens and marketplace signals, builds hourly/daily/monthly snapshots, and exports JSON/CSV. MarketGap VN is the SaaS dashboard that ingests those snapshots into PostgreSQL, provides dashboard views, and gates access through subscription plans and PayOS payment flow.

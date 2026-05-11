@@ -1,9 +1,13 @@
 ---
 title: "TruyenVietHay backend platform"
 type: "project"
+subtype: "flagship"
 project_id: "truyenviethay-backend-platform"
 status: "active"
-priority: "primary"
+tags: ["content-platform", "nodejs", "vue", "mysql", "redis", "socketio"]
+aliases: ["TruyenVietHay", "Truyen Viet Hay", "truyenviethay.id.vn"]
+updated: "2026-05-11"
+contains_pii: false
 ---
 
 # TruyenVietHay backend platform
@@ -20,7 +24,7 @@ Short answer: TruyenVietHay is Bao's production-style content platform with a No
 The platform is built for Vietnamese users who read serialized stories and listen to story audio on mobile. It needs fast content loading, personalized progress, social interaction, author tools, moderation, and scalable media delivery.
 
 ## Bao's Role
-Bao is actively developing TruyenVietHay in the local repository at `C:\Users\Admin\Downloads\Folders\web\truyenviethay_new`. The source repository is private, so the portfolio assistant should use `https://truyenviethay.id.vn/` as the public project link and should not provide a GitHub repository link for TruyenVietHay.
+Bao is actively developing TruyenVietHay. The portfolio assistant should use `https://truyenviethay.id.vn/` as the public project link and avoid project repository links.
 
 Repo evidence shows backend-heavy ownership across Express routes, controllers, services, MySQL models, Redis cache, Socket.io realtime, cron jobs, migrations, admin workflows, tests, deployment docs, and frontend integration work. Do not claim verified public traffic, revenue, or team size because the RAG corpus does not contain those metrics.
 
@@ -73,18 +77,16 @@ Author-facing features include public author profiles, author follow, author ran
 - Added SEO-related sitemap, canonical/robots planning, and performance indexes for story listings.
 - Used a deployment shape with separate frontend, backend API, audio CDN, and content CDN domains.
 
-## Source Evidence
-- README: `C:\Users\Admin\Downloads\Folders\web\truyenviethay_new\README.md`.
-- Architecture doc: `C:\Users\Admin\Downloads\Folders\web\truyenviethay_new\.agent\ARCHITECTURE.md`.
-- Backend app routes: `C:\Users\Admin\Downloads\Folders\web\truyenviethay_new\backend\app.js`.
-- Startup jobs and Socket.io init: `C:\Users\Admin\Downloads\Folders\web\truyenviethay_new\backend\index.js`.
-- Audio service: `C:\Users\Admin\Downloads\Folders\web\truyenviethay_new\backend\services\storyAudio.service.js`.
-- Roadmaps: `docs\GAMIFICATION_ROADMAP.md`, `docs\SHOP_INVENTORY_ROADMAP.md`, `docs\CHAT_NOTIFICATION_ROADMAP.md`, `docs\PHASES_ROADMAP.md`.
+## Public Evidence Snapshot
+- Public product domain: `https://truyenviethay.id.vn/`.
+- Internal docs and implementation cover backend architecture, route/service layering, startup jobs, and realtime systems.
+- Audio delivery behavior is documented and implemented through dedicated media service modules.
+- Roadmaps track gamification, shop/inventory, chat-notification, and phased delivery milestones.
 
 ## Links
 - Domain: https://truyenviethay.id.vn/
 - Live app: https://truyenviethay.id.vn/
-- Source: Private repository; no public GitHub link should be shown for TruyenVietHay.
+- Source policy: use the product domain instead of a project repository link.
 - Referenced API domain: https://api.truyenviethay.id.vn/
 - Referenced content CDN: https://cdn.truyenviethay.id.vn/
 - Referenced audio CDN: https://audio.truyenviethay.id.vn/

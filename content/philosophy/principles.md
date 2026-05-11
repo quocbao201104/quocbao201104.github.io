@@ -19,7 +19,7 @@ status: "active"
 - For realtime systems, socket identity must come from verified auth, not client-supplied user IDs.
 
 ## Clear boundaries
-- Keep data engines separate from SaaS user/billing logic. MarketGap crawler remains the private engine; MarketGap VN is the product shell and subscription dashboard.
+- Keep data engines separate from SaaS user/billing logic. MarketGap crawler remains the internal engine; MarketGap VN is the product shell and subscription dashboard.
 - Use layered backend architecture: route -> controller -> service -> model/store. TruyenVietHay follows this pattern for many domains.
 - Put shared contracts in docs or schema files. MarketGap VN has a snapshot ingest contract; Arbitext keeps prompt/rule registries and database migrations repo-authored.
 - Keep AI stages explicit. Arbitext separates analyzer, draft, deterministic gate, arbiter, recheck, review, and export so each stage can be tested and debugged.
@@ -28,4 +28,4 @@ status: "active"
 - Build admin and ops surfaces early when the system has queues, payments, provider calls, or ingest jobs.
 - Capture evidence for readiness: git status, migration status, tests, launch checks, and environment validation.
 - Prefer structured logs and health endpoints for background work.
-- Treat RAG content as production data: use factual chunks, source paths, aliases, and honest boundaries so the assistant retrieves truth instead of vibes.
+- Treat RAG content as production data: use factual chunks, evidence notes, aliases, and honest boundaries so the assistant retrieves truth instead of vibes.

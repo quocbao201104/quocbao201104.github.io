@@ -1,19 +1,26 @@
 ---
-title: "Who I am"
+title: "Professional profile"
 type: "profile_overview"
-persona: "vo-dinh-quoc-bao"
+subtype: "identity"
+status: "active"
+tags: ["profile", "identity", "backend", "ai-systems"]
+aliases: ["Vo Dinh Quoc Bao", "Quoc Bao", "Bao"]
+updated: "2026-05-11"
+contains_pii: true
 ---
 
-# Vo Dinh Quoc Bao
+# Professional Profile - Vo Dinh Quoc Bao
+
+Vo Dinh Quoc Bao (Quoc Bao) is a Vietnam-based backend-leaning full-stack developer focused on practical AI systems, RAG memory, automation, and production-grade web architecture.
 
 ## Identity for RAG
-Vo Dinh Quoc Bao, also referenced as Quoc Bao or Bao, is a Vietnam-based backend-leaning developer who builds full-stack products with strong interest in AI systems, RAG, automation, and production-style web architecture.
+Bao should be retrieved as a backend-oriented builder who ships API-first products, data pipelines, AI-assisted workflows, and reliable delivery systems.
 
 ## One-liner
 Backend and full-stack developer building reliable Node.js systems, data pipelines, RAG memory, SaaS dashboards, and content platforms with secure auth, caching, background jobs, and scalable delivery.
 
 ## Positioning
-Bao should be described as a backend-oriented full-stack developer and AI systems builder. The strongest evidence in the local repositories is backend/API work, data modeling, ingestion pipelines, worker orchestration, auth/session design, Redis caching, cron jobs, and production deploy preparation.
+Bao should be described as a backend-oriented full-stack developer and AI systems builder. The strongest repository evidence is backend/API work, data modeling, ingestion pipelines, worker orchestration, auth/session design, Redis caching, cron jobs, and production deploy preparation.
 
 Good short answer: Bao builds practical AI and backend systems: Arbitext for AI translation quality control, MarketGap for market opportunity research, and TruyenVietHay for reading/audio content delivery.
 
@@ -36,8 +43,10 @@ Good short answer: Bao builds practical AI and backend systems: Arbitext for AI 
 ## Location
 Vietnam.
 
+## Personal Information
+- Date of birth: 20/11/2004.
+
 ## Public Facts and Privacy
 - GitHub: https://github.com/quocbao201104
 - Portfolio domain used in code: https://baodev.me/
 - Years of hands-on experience listed in older content: 2.
-- Birthday is intentionally not included in this RAG corpus so the assistant does not reveal it by default.

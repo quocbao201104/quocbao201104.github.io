@@ -18,7 +18,7 @@ BAO.OS memory uses Markdown files as long-term facts for Supabase pgvector. The 
 
 ## Retrieval Rules
 - Repeat aliases near the top of each important file. Example: Arbitext should also include Arbitex because users may type the path name.
-- Add source paths and GitHub links so retrieved chunks can ground answers.
+- Add public links and sanitized repository evidence so retrieved chunks can ground answers safely.
 - Keep sections short enough that one chunk carries a complete answer.
 - Avoid unresolved placeholder markers because the assistant may retrieve and repeat them.
 - If metrics are not verified, explicitly say the corpus does not include verified metrics.

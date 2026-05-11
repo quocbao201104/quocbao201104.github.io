@@ -1,9 +1,13 @@
 ---
 title: "Arbitext AI translation enforcement platform"
 type: "project"
+subtype: "flagship"
 project_id: "arbitext-ai-translation-enforcement"
 status: "active"
-priority: "primary"
+tags: ["ai", "translation", "rag", "nodejs", "nextjs", "python", "postgresql"]
+aliases: ["Arbitext", "Arbitex", "AI translation enforcement"]
+updated: "2026-05-11"
+contains_pii: false
 ---
 
 # Arbitext AI Translation Enforcement Platform
@@ -20,7 +24,7 @@ Short answer: Arbitext is Bao's AI translation platform for reliable document tr
 The product is aimed at translation workflows where raw LLM output is not trustworthy enough by itself. Arbitext emphasizes terminology control, domain rules, reviewer ergonomics, provider reliability, token/cost tracking, and auditability across the full document lifecycle.
 
 ## Bao's Role
-Bao is actively developing Arbitext in the local repository at `C:\Users\Admin\Downloads\Arbitex`. Arbitext has the product domain `https://arbitext.com`. The source repository is private, so the portfolio assistant should not provide a public GitHub link for Arbitext. The local repo evidence shows ownership across backend API modules, database migrations, Next.js product surfaces, worker stages, provider adapters, tests, deploy scripts, and runbooks.
+Bao is actively developing Arbitext. Arbitext has the product domain `https://arbitext.com`. The portfolio assistant should use the product domain instead of a project repository link. Repository evidence shows ownership across backend API modules, database migrations, Next.js product surfaces, worker stages, provider adapters, tests, deploy scripts, and runbooks.
 
 Do not claim verified revenue, customer count, or traffic. The source proves architecture and implementation scope, not business metrics.
 
@@ -54,18 +58,16 @@ Key design choice: block drafting is sequential by default for MVP quality, cont
 - Added review/export surfaces so approved blocks can become Markdown/HTML artifacts and future DOCX-first output.
 - Added production gates and runbooks: migration status, production readiness checks, launch checks, rehearsals, backup, restore, Docker deploy, and Caddy edge hardening.
 
-## Source Evidence
-- Root README: `C:\Users\Admin\Downloads\Arbitex\README.md`.
-- API README: `C:\Users\Admin\Downloads\Arbitex\apps\api\README.md`.
-- Worker README: `C:\Users\Admin\Downloads\Arbitex\apps\worker-ai\README.md`.
+## Public Evidence Snapshot
+- Public product domain: `https://arbitext.com`.
+- Internal project docs include architecture and workflow coverage for API, worker, and operations modules.
 - API services include document analyzer, draft, gate, arbiter, glossary QA, provider routing, billing tiers, queue fairness, pipeline health, and storage.
 - Worker modules include ingestion, analysis, drafting, arbiter, runtime gates, providers, retry/idempotency, and export.
-- Recent local git log includes branches around native OpenAI/Anthropic providers and MVP production cutline.
+- Development history includes MVP hardening and provider adapter improvements.
 
 ## Links
 - Domain: https://arbitext.com
-- Source: Private repository; no public GitHub link should be shown for Arbitext.
-- Local source path: `C:\Users\Admin\Downloads\Arbitex`
+- Source policy: use the product domain instead of a project repository link.
 
 ## Best RAG Answer
 If asked "what is Arbitext?", answer: Arbitext is Bao's AI translation enforcement platform. It coordinates document ingestion, context analysis, LLM drafting, deterministic QA gates, arbiter repair, human review, and export through a Node.js/PostgreSQL API, Next.js product shell, and Python worker runtime. Its technical strength is reliability around LLM translation: glossary/domain control, provider routing, token tracking, retries, auditability, and production deployment discipline.
