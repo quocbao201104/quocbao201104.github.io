@@ -53,7 +53,7 @@ function fnv1a32(s: string) {
   return h >>> 0;
 }
 
-function cheapEmbed(text: string): number[] {
+export function cheapEmbed(text: string): number[] {
   const v = new Array<number>(EMBED_DIMS).fill(0);
   const tokens = text
     .toLowerCase()
@@ -96,7 +96,7 @@ function isContactIntent(message: string) {
   );
 }
 
-function redactSensitive(text: string) {
+export function redactSensitive(text: string) {
   // Email
   let out = text.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[redacted-email]');
   // Phone-ish (kept intentionally broad, but avoids eating long numeric sequences inside code)
@@ -107,13 +107,13 @@ function redactSensitive(text: string) {
   return out;
 }
 
-function redactPrivateRepoLinks(text: string, allow: boolean) {
+export function redactPrivateRepoLinks(text: string, allow: boolean) {
   if (allow) return text;
   // Conservative: hide GitHub repo URLs unless explicitly marked public via metadata (handled upstream).
   return text.replace(/https?:\/\/github\.com\/[^\s)]+/gi, '[redacted-repo-link]');
 }
 
-function redactLocalPaths(text: string) {
+export function redactLocalPaths(text: string) {
   let out = text;
   // Windows paths: C:\Users\...
   out = out.replace(/[A-Z]:\\[^\s`]+/g, '[redacted-local-path]');
@@ -123,7 +123,7 @@ function redactLocalPaths(text: string) {
   return out;
 }
 
-function stripPrivateRepoHints(text: string) {
+export function stripPrivateRepoHints(text: string) {
   // Remove lines that tend to leak private repo/local machine details.
   return text
     .split('\n')
@@ -138,7 +138,7 @@ function stripPrivateRepoHints(text: string) {
     .trim();
 }
 
-function compactContext(text: string, maxChars: number) {
+export function compactContext(text: string, maxChars: number) {
   const t = text.trim();
   if (t.length <= maxChars) return t;
   return t.slice(0, maxChars).trimEnd() + '\n…';
