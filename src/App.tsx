@@ -37,10 +37,19 @@ export default function App() {
             <div className="flex flex-1 min-h-0 overflow-hidden">
               <div
                 id="center-scroll"
-                className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden"
+                className="relative flex-1 min-w-0 overflow-y-auto overflow-x-hidden"
                 style={{ paddingBottom: terminalVisible ? dockH : 0 }}
               >
-                <MainArea />
+                {/* Fixed corner glow (stays put while content scrolls) */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none fixed inset-0 z-0 center-panel-bg
+                    lg:left-[220px] xl:right-[300px]"
+                />
+                {/* Dot-grid scrolls with content */}
+                <div className="relative z-[1] bg-dot-grid">
+                  <MainArea />
+                </div>
               </div>
               <RightPanels />
             </div>
