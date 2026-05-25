@@ -269,6 +269,12 @@ function estimateConfidence(mode: Mode, sourceCount: number, answer: string) {
   return Math.min(0.95, 0.55 + sourceCount * 0.08);
 }
 
+function toErrorMessage(e: unknown) {
+  return e instanceof Error ? e.message : String(e);
+}
+
+const RETRIEVAL_UNAVAILABLE_DETAIL = 'retrieval unavailable; answering without memory context';
+
 export async function runChat(input: RunChatInput): Promise<RunChatResult> {
   const message = input.message.trim();
   if (!message) throw new Error('Missing message');
@@ -283,6 +289,7 @@ export async function runChat(input: RunChatInput): Promise<RunChatResult> {
   const allowPii = isContactIntent(message);
   const trace: AgentTraceStep[] = [];
   const shouldRetrieve = mode === 'rag' || mode === 'agentic_rag';
+  let retrievalError: string | undefined;
 
   if (mode === 'agentic_rag') {
     trace.push(
@@ -292,15 +299,29 @@ export async function runChat(input: RunChatInput): Promise<RunChatResult> {
     );
   }
 
-  const hits = shouldRetrieve ? await retrieve(message, allowPii, topK) : [];
+  let hits: ChunkHit[] = [];
+  if (shouldRetrieve) {
+    try {
+      hits = await retrieve(message, allowPii, topK);
+    } catch (e: unknown) {
+      retrievalError = toErrorMessage(e);
+      console.error('Knowledge retrieval failed:', retrievalError);
+    }
+  }
 
   if (mode === 'agentic_rag') {
     trace[trace.length - 1] = {
       label: 'Retrieve knowledge',
-      status: 'completed',
-      detail: `${hits.length} chunk(s)`,
+      status: retrievalError ? 'failed' : 'completed',
+      detail: retrievalError ? RETRIEVAL_UNAVAILABLE_DETAIL : `${hits.length} chunk(s)`,
     };
     trace.push({ label: 'Compose final response', status: 'running' });
+  } else if (retrievalError) {
+    trace.push({
+      label: 'Retrieve knowledge',
+      status: 'failed',
+      detail: RETRIEVAL_UNAVAILABLE_DETAIL,
+    });
   }
 
   const model = process.env.LLM_MODEL ?? 'mimo-v2.5-pro';
@@ -327,7 +348,7 @@ export async function runChat(input: RunChatInput): Promise<RunChatResult> {
   const j = JSON.parse(text);
   const answer = j?.choices?.[0]?.message?.content ?? '';
   const sources = shouldRetrieve ? toSourceChunks(hits, allowPii) : undefined;
-  const usedTools = shouldRetrieve ? ['retrieve_chunks', 'llm_generate'] : ['llm_generate'];
+  const usedTools = shouldRetrieve && !retrievalError ? ['retrieve_chunks', 'llm_generate'] : ['llm_generate'];
 
   if (mode === 'agentic_rag') {
     trace[trace.length - 1] = { label: 'Compose final response', status: 'completed' };
@@ -345,6 +366,7 @@ export async function runChat(input: RunChatInput): Promise<RunChatResult> {
       topK,
       model,
       usedTools,
+      warnings: retrievalError ? ['retrieval_unavailable'] : undefined,
       confidence: estimateConfidence(mode, sources?.length ?? 0, answer),
     },
   };

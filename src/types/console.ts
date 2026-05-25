@@ -32,6 +32,7 @@ export interface ConsoleResponse {
     topK?: number;
     model?: string;
     usedTools?: string[];
+    warnings?: string[];
     confidence?: number;
   };
 }
