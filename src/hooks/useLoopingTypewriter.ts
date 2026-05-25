@@ -34,13 +34,6 @@ export function useLoopingTypewriter(
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (timeoutRef.current != null) window.clearTimeout(timeoutRef.current);
-    return () => {
-      if (timeoutRef.current != null) window.clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  useEffect(() => {
     if (!enabled || safePhrases.length === 0) return;
 
     if (timeoutRef.current != null) {
@@ -82,6 +75,13 @@ export function useLoopingTypewriter(
       setPhraseIndex((i) => (i + 1) % safePhrases.length);
       setPhase('typing');
     });
+
+    return () => {
+      if (timeoutRef.current != null) {
+        window.clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
   }, [
     enabled,
     safePhrases,
