@@ -142,17 +142,18 @@ function WorkspaceHeader({ active }: { active: SectionId }) {
               <span className="inline-flex items-center gap-2">
                 {t.label}
                 {t.id !== 'home' && (
-                  <span
-                    role="button"
-                    aria-label="Close tab"
+                  <button
+                    type="button"
+                    aria-label={`Close ${t.label}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       closeTab(t.id);
                     }}
-                    className="inline-flex h-4 w-4 items-center justify-center rounded hover:bg-white/[0.06] text-ink-dim hover:text-ink-bright"
+                    className="inline-flex h-4 w-4 items-center justify-center rounded
+                      hover:bg-white/[0.06] text-ink-dim hover:text-ink-bright transition-colors"
                   >
-                    ×
-                  </span>
+                    <span aria-hidden className="text-[14px] leading-none">&times;</span>
+                  </button>
                 )}
               </span>
               {isActive && (
@@ -185,7 +186,7 @@ function TerminalWorkspace() {
   }, [setTerminalDocked, showTerminal]);
 
   return (
-    <div className="h-[calc(100vh-56px-48px)] min-h-[520px] border-t border-white/[0.04] bg-bg-base/70 overflow-hidden">
+    <div className="h-[calc(100vh-44px-48px)] min-h-[520px] border-t border-white/[0.04] bg-bg-base/70 overflow-hidden">
       <TerminalWindow />
     </div>
   );

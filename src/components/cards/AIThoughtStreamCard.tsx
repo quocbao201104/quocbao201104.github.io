@@ -1,5 +1,5 @@
 import { Lightbulb } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { CardShell } from './CardShell';
 import { useTypewriter } from '@/hooks/useTypewriter';
 
@@ -66,6 +66,7 @@ function ThinkingDot() {
 }
 
 function ThinkingWave({ active }: { active: boolean }) {
+  const gradId = useId();
   return (
     <svg
       width="86"
@@ -75,7 +76,7 @@ function ThinkingWave({ active }: { active: boolean }) {
       style={{ opacity: active ? 1 : 0.55 }}
     >
       <defs>
-        <linearGradient id="waveGrad" x1="0%" x2="100%">
+        <linearGradient id={gradId} x1="0%" x2="100%">
           <stop offset="0%" stopColor="#7c3aed" />
           <stop offset="50%" stopColor="#a855f7" />
           <stop offset="100%" stopColor="#67e8f9" />
@@ -84,7 +85,7 @@ function ThinkingWave({ active }: { active: boolean }) {
       <path
         d="M0,10 Q5,4 10,10 T20,10 T30,10 T40,10 T50,10 T60,10 T70,10 T86,10"
         fill="none"
-        stroke="url(#waveGrad)"
+        stroke={`url(#${gradId})`}
         strokeWidth="1.2"
         strokeOpacity="0.7"
       >

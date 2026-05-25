@@ -21,15 +21,6 @@ interface Edge {
   delay?: number;
 }
 
-interface Particle {
-  id: string;
-  fromId: string;
-  toId: string;
-  duration: number;
-  delay: number;
-  color: 'purple' | 'cyan' | 'white';
-}
-
 const VIEW_W = 800;
 const VIEW_H = 600;
 const CX = 400;
@@ -40,7 +31,7 @@ function polar(cx: number, cy: number, r: number, deg: number) {
   return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
 }
 
-function buildGraph(): { nodes: Node[]; edges: Edge[]; particles: Particle[] } {
+function buildGraph(): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [
     { id: 'core', x: CX, y: CY, r: 5, tier: 'core' },
   ];
@@ -106,11 +97,7 @@ function buildGraph(): { nodes: Node[]; edges: Edge[]; particles: Particle[] } {
     edges.push({ from: `m${m}`, to: `o${i}`, pulse: i % 4 === 1, delay: i * 0.3 + 2.4 });
   });
 
-  // Traveling data-packet particles — flow ONLY along strongest paths.
-  // Each particle animates from its fromId node to its toId node (or reverse).
-  const particles: Particle[] = [];
-
-  return { nodes, edges, particles };
+  return { nodes, edges };
 }
 
 export function NeuralGraph() {

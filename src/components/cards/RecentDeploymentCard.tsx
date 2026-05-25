@@ -1,4 +1,5 @@
 import { Rocket } from 'lucide-react';
+import { useId } from 'react';
 import { CardShell } from './CardShell';
 import { StatusDot } from '@/components/common/StatusDot';
 
@@ -26,6 +27,7 @@ export function RecentDeploymentCard() {
 }
 
 function MiniLine({ data }: { data: number[] }) {
+  const gradId = useId();
   const w = 90;
   const h = 26;
   const max = Math.max(...data);
@@ -36,12 +38,12 @@ function MiniLine({ data }: { data: number[] }) {
   return (
     <svg width={w} height={h} className="shrink-0 opacity-90">
       <defs>
-        <linearGradient id="depFill" x1="0%" y1="0%" x2="0%" y2="100%">
+        <linearGradient id={gradId} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor="rgba(103,232,249,0.4)" />
           <stop offset="100%" stopColor="rgba(103,232,249,0)" />
         </linearGradient>
       </defs>
-      <polygon points={`0,${h} ${points} ${w},${h}`} fill="url(#depFill)" />
+      <polygon points={`0,${h} ${points} ${w},${h}`} fill={`url(#${gradId})`} />
       <polyline
         points={points}
         fill="none"

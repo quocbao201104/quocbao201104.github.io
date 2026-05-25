@@ -121,12 +121,9 @@ export function HeroBlock() {
 
       {/* CTAs — refined, less marketing-y */}
       <div className="flex flex-wrap items-center gap-3 pt-2">
-        <a
-          href={profile.cta.primary.href}
-          onClick={(e) => {
-            e.preventDefault();
-            openTab('projects');
-          }}
+        <button
+          type="button"
+          onClick={() => openTab('projects')}
           className={cn(
             'group inline-flex items-center gap-2 rounded-lg px-5 py-2.5',
             'bg-accent-purple/95 text-white font-medium text-sm',
@@ -140,11 +137,10 @@ export function HeroBlock() {
             size={15}
             className="transition-transform duration-300 ease-out group-hover:translate-x-0.5"
           />
-        </a>
-        <a
-          href={profile.cta.secondary.href}
-          onClick={(e) => {
-            e.preventDefault();
+        </button>
+        <button
+          type="button"
+          onClick={() => {
             openTab('terminal');
             setTerminalDocked(false);
             showTerminal();
@@ -158,7 +154,7 @@ export function HeroBlock() {
         >
           <Sparkles size={13} className="text-accent-cyan" />
           {profile.cta.secondary.label}
-        </a>
+        </button>
       </div>
 
       {/* Scroll cue */}
