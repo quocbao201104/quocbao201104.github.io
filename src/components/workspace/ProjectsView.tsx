@@ -27,36 +27,72 @@ export function ProjectsView() {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+      <div className="flex flex-col gap-4">
         {projects.map((p) => (
           <article
             key={p.id}
             className={cn(
-              'panel-soft rounded-2xl p-6 lg:p-7 overflow-hidden',
-              'border border-white/[0.05] hover:border-white/[0.07]',
-              'transition-[border-color,transform,box-shadow] duration-500 ease-out',
-              'hover:-translate-y-0.5 hover:shadow-[0_18px_50px_-30px_rgba(168,85,247,0.35)]',
+              'group relative panel-soft rounded-xl overflow-hidden',
+              'border border-white/[0.05] hover:border-white/[0.08]',
+              'transition-[border-color,box-shadow] duration-400 ease-out',
+              'hover:shadow-[0_8px_30px_-12px_rgba(168,85,247,0.2)]',
             )}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-2">
+            {/* Top accent line */}
+            <span
+              aria-hidden
+              className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent-purple/30 to-transparent
+                opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            />
+
+            <div className="flex flex-col lg:flex-row">
+              {/* Left: icon + meta */}
+              <div className="flex items-center gap-3 lg:flex-col lg:items-start lg:gap-4
+                px-5 pt-5 pb-3 lg:py-6 lg:px-6 lg:w-[200px] lg:shrink-0
+                border-b lg:border-b-0 lg:border-r border-white/[0.04]">
                 <ProjectIcon kind={p.icon} />
                 <span className="text-2xs font-mono uppercase tracking-wider2 text-accent-purple-soft/80">
                   {p.eyebrow}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Center: content */}
+              <div className="flex-1 min-w-0 px-5 py-5 lg:px-7 lg:py-6">
+                <h3 className="text-lg font-semibold text-ink-bright tracking-tight">
+                  {p.title}
+                </h3>
+                <p className="mt-2 text-[13px] leading-relaxed text-ink-muted/90 max-w-[80ch]">
+                  {p.description}
+                </p>
+
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {p.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="inline-flex items-center rounded px-2 py-0.5
+                        border border-white/[0.06] bg-white/[0.02]
+                        text-[11px] font-mono text-ink-dim"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right: links */}
+              <div className="flex items-center gap-2 px-5 py-3 lg:py-6 lg:px-5 lg:flex-col lg:items-end lg:justify-start lg:gap-2
+                border-t lg:border-t-0 lg:border-l border-white/[0.04]">
                 {p.links.map((l) => (
                   <a
                     key={l.label}
                     href={l.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md px-2 py-1
+                    className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5
                       border border-white/[0.06] bg-white/[0.02]
                       text-2xs font-mono text-ink-dim hover:text-ink-bright
-                      hover:border-white/[0.10] transition-colors"
+                      hover:border-accent-purple/25 hover:bg-accent-purple/[0.04]
+                      transition-colors"
                   >
                     {l.label}
                     {l.label.toLowerCase().includes('git') ? (
@@ -68,26 +104,6 @@ export function ProjectsView() {
                 ))}
               </div>
             </div>
-
-            <h3 className="mt-5 text-xl font-semibold text-ink-bright tracking-tight">
-              {p.title}
-            </h3>
-            <p className="mt-3 text-[13px] leading-relaxed text-ink-muted/90 max-w-[70ch]">
-              {p.description}
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              {p.tags.map((t) => (
-                <span
-                  key={t}
-                  className="inline-flex items-center rounded-md px-2 py-1
-                    border border-white/[0.06] bg-bg-raised/60
-                    text-2xs font-mono text-ink-dim"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
           </article>
         ))}
       </div>
@@ -98,8 +114,9 @@ export function ProjectsView() {
 function ProjectIcon({ kind }: { kind: keyof typeof icons }) {
   const Icon = icons[kind];
   return (
-    <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.02]">
-      <Icon size={14} className="text-accent-purple-soft" />
+    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg
+      border border-white/[0.06] bg-white/[0.02] shrink-0">
+      <Icon size={15} className="text-accent-purple-soft" />
     </span>
   );
 }
