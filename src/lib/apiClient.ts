@@ -17,19 +17,19 @@ export function getApiBaseUrl() {
   return envUrl ? envUrl.replace(/\/+$/, '') : '';
 }
 
-export async function postJson<T>(path: string, body: unknown): Promise<T> {
+export async function postJson<T>(path: string, body: unknown, signal?: AbortSignal): Promise<T> {
   const configuredBase = getApiBaseUrl();
   const primaryUrl = configuredBase ? joinUrl(configuredBase, path) : normalizeApiPath(path);
   const failures: AttemptFailure[] = [];
 
-  const primary = await requestJson<T>(primaryUrl, body);
+  const primary = await requestJson<T>(primaryUrl, body, signal);
   if (primary.ok) return primary.data;
 
   failures.push(primary.failure);
 
   if (!configuredBase && shouldRetryLegacyApi(primary.failure, path)) {
     const legacyUrl = joinUrl(LEGACY_API_BASE_URL, normalizeApiPath(path));
-    const fallback = await requestJson<T>(legacyUrl, body);
+    const fallback = await requestJson<T>(legacyUrl, body, signal);
     if (fallback.ok) return fallback.data;
     failures.push(fallback.failure);
   }
@@ -53,12 +53,13 @@ function shouldRetryLegacyApi(failure: AttemptFailure, path: string) {
   return isHtmlBody(failure.body);
 }
 
-async function requestJson<T>(url: string, body: unknown): Promise<{ ok: true; data: T } | { ok: false; failure: AttemptFailure }> {
+async function requestJson<T>(url: string, body: unknown, signal?: AbortSignal): Promise<{ ok: true; data: T } | { ok: false; failure: AttemptFailure }> {
   try {
     const r = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+      signal,
     });
 
     const contentType = r.headers.get('content-type') ?? '';
@@ -89,6 +90,7 @@ async function requestJson<T>(url: string, body: unknown): Promise<{ ok: true; d
 
     return { ok: true, data: JSON.parse(text) as T };
   } catch (e: unknown) {
+    if (e instanceof DOMException && e.name === 'AbortError') throw e;
     const msg = e instanceof Error ? e.message : String(e);
     return { ok: false, failure: { url, error: msg } };
   }
