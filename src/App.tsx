@@ -53,7 +53,7 @@ export default function App() {
           className="
             fixed bottom-0 z-40
             left-0 right-0
-            lg:left-[260px]
+            lg:left-[220px]
             xl:right-[300px]
           "
         >
