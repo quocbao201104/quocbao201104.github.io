@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import {
   Plus,
   Search,
@@ -49,6 +49,7 @@ function formatSources(sources: SourceChunk[]) {
 
 export function TerminalWindow() {
   const collapsed = useUIStore((s) => s.terminalCollapsed);
+  const terminalVisible = useUIStore((s) => s.terminalVisible);
   const toggle = useUIStore((s) => s.toggleTerminal);
   const hideTerminal = useUIStore((s) => s.hideTerminal);
   const terminalDocked = useUIStore((s) => s.terminalDocked);
@@ -57,7 +58,8 @@ export function TerminalWindow() {
   const sessionId = useUIStore((s) => s.terminalSession);
   const setSession = useUIStore((s) => s.setTerminalSession);
 
-  const [shownCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
   const [historyBySession, setHistoryBySession] = useState<Record<string, TerminalLine[]>>(
     () => ({
       session_01: [
@@ -95,12 +97,56 @@ export function TerminalWindow() {
     });
   }, [sessionId]);
 
-  useEffect(() => {
+  const scrollToBottom = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    // keep pinned near bottom
     el.scrollTop = el.scrollHeight;
-  }, [shownCount, history.length, collapsed, sessionId]);
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [history.length, collapsed, sessionId, loading, scrollToBottom]);
+
+  // Auto-scroll during loading (typewriter streaming)
+  useEffect(() => {
+    if (!loading) return;
+    const id = window.setInterval(scrollToBottom, 80);
+    return () => window.clearInterval(id);
+  }, [loading, scrollToBottom]);
+
+  // Auto-focus input when terminal becomes visible
+  useEffect(() => {
+    if (terminalVisible && !collapsed) {
+      window.setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [terminalVisible, collapsed]);
+
+  const cancelRequest = useCallback(() => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setLoading(false);
+    setHistoryBySession((prev) => ({
+      ...prev,
+      [sessionId]: [
+        ...(prev[sessionId] ?? []).slice(0, -1),
+        {
+          kind: 'output',
+          speaker: 'BAO.OS',
+          speakerTone: 'warn',
+          text: 'Cancelled.',
+        } as TerminalLine,
+      ],
+    }));
+  }, [sessionId]);
+
+  const clearSession = useCallback(() => {
+    setHistoryBySession((prev) => ({ ...prev, [sessionId]: [] }));
+  }, [sessionId]);
+
+  const closeSession = useCallback(() => {
+    setHistoryBySession((prev) => ({ ...prev, [sessionId]: [] }));
+    setSession(sessions[0]!.id);
+  }, [sessionId, setSession]);
 
   const onSubmit = () => {
     void submitAsync();
@@ -113,8 +159,16 @@ export function TerminalWindow() {
   };
 
   const applyTabSuggestion = () => {
-    if (input.trim().length > 0) return;
+    const trimmed = input.trim().toLowerCase();
     const opts = tabSuggestions(sessionId);
+    if (trimmed.length > 0) {
+      const match = opts.find((o) => o.startsWith(trimmed));
+      if (match) {
+        setInput(match);
+        window.setTimeout(() => inputRef.current?.focus(), 0);
+        return;
+      }
+    }
     const i = tabCycleRef.current[sessionId] ?? 0;
     const next = opts[i % opts.length]!;
     tabCycleRef.current[sessionId] = (i + 1) % opts.length;
@@ -200,6 +254,10 @@ export function TerminalWindow() {
         ...prev,
         [sessionId]: [...(prev[sessionId] ?? []), pendingLine],
       }));
+      setLoading(true);
+
+      const controller = new AbortController();
+      abortRef.current = controller;
 
       try {
         const j = await postJson<ChatApiResponse>(`/api/chat`, {
@@ -211,7 +269,7 @@ export function TerminalWindow() {
           sessionId,
           activeView: remote.activeView,
           persona: remote.persona,
-        });
+        }, controller.signal);
 
         const answer = (j.answer ?? '').trim() || 'No response generated.';
         const traceText = j.trace?.length ? formatTrace(j.trace) : '';
@@ -259,6 +317,12 @@ export function TerminalWindow() {
           ],
         }));
       } catch (e: any) {
+        if (e?.name === 'AbortError') return;
+        const msg = e?.message?.includes('Network error')
+          ? 'Connection failed — check your network and try again.'
+          : e?.message?.includes('API request failed')
+            ? 'Server error — please try again later.'
+            : 'Something went wrong. Please try again.';
         setHistoryBySession((prev) => ({
           ...prev,
           [sessionId]: [
@@ -267,10 +331,13 @@ export function TerminalWindow() {
               kind: 'output',
               speaker: 'BAO.OS',
               speakerTone: 'warn',
-              text: e?.message ?? 'Request failed',
+              text: msg,
             } as TerminalLine,
           ],
         }));
+      } finally {
+        setLoading(false);
+        abortRef.current = null;
       }
     } else if (res.lines.length) {
       setHistoryBySession((prev) => ({
@@ -294,6 +361,8 @@ export function TerminalWindow() {
         collapsed={collapsed}
         onToggle={toggle}
         onClose={hideTerminal}
+        onClear={clearSession}
+        onCloseSession={closeSession}
         docked={terminalDocked}
         onExpand={() => {
           setTerminalDocked(false);
@@ -334,6 +403,8 @@ export function TerminalWindow() {
                   <div><span className="text-ink-dim">ask recruiter &lt;topic&gt;</span> — agentic recruiter</div>
                   <div><span className="text-ink-dim">inspect architecture &lt;system&gt;</span> — agentic architecture</div>
                   <div><span className="text-ink-dim">search memory &lt;query&gt;</span> — agentic memory search</div>
+                  <div><span className="text-ink-dim">&lt;any text&gt;</span> — chat (uses session default)</div>
+                  <div className="text-ink-dim/60 mt-1">Ctrl+C or Esc — cancel request</div>
                 </div>
               </div>
             )}
@@ -354,8 +425,9 @@ export function TerminalWindow() {
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                disabled={loading}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') onSubmit();
+                  if (e.key === 'Enter' && !loading) onSubmit();
                   else if (e.key === 'Tab') {
                     e.preventDefault();
                     applyTabSuggestion();
@@ -366,16 +438,44 @@ export function TerminalWindow() {
                     e.preventDefault();
                     historyDown();
                   } else if (e.key === 'Escape') {
-                    setHelpOpen(false);
+                    if (helpOpen) setHelpOpen(false);
+                    else if (loading) cancelRequest();
+                  } else if (e.key === 'c' && e.ctrlKey && loading) {
+                    e.preventDefault();
+                    cancelRequest();
                   }
                 }}
-                placeholder='Type "help"...'
-                className="flex-1 bg-transparent outline-none border-none text-ink-bright placeholder:text-ink-dim"
+                placeholder={loading ? 'Processing...' : 'Type "help"...'}
+                className="flex-1 bg-transparent outline-none border-none text-ink-bright placeholder:text-ink-dim disabled:opacity-50"
                 spellCheck={false}
                 autoCapitalize="none"
                 autoCorrect="off"
               />
-              <span className="inline-block h-3 w-1.5 -mb-[2px] bg-accent-purple animate-cursor-blink align-middle" />
+              {loading ? (
+                <span className="inline-block h-3 w-1.5 -mb-[2px] bg-status-warn animate-cursor-blink align-middle" />
+              ) : (
+                <span className="inline-block h-3 w-1.5 -mb-[2px] bg-accent-purple animate-cursor-blink align-middle" />
+              )}
+            </div>
+
+            {/* Mobile quick commands */}
+            <div className="flex lg:hidden flex-wrap gap-1.5 pt-2 mt-1 border-t border-white/[0.04]">
+              {quickCommands.map((q) => (
+                <button
+                  key={q.cmd}
+                  type="button"
+                  onClick={() => {
+                    const seed = q.cmd.replace(/<[^>]+>/g, '').trimEnd() + ' ';
+                    setInput(seed);
+                    window.setTimeout(() => inputRef.current?.focus(), 0);
+                  }}
+                  className="px-2 py-0.5 rounded text-[11px] font-mono text-accent-purple-soft
+                    bg-white/[0.03] hover:bg-white/[0.06] hover:text-accent-purple transition-colors truncate"
+                  title={q.cmd}
+                >
+                  {q.cmd}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -415,6 +515,8 @@ function Header({
   collapsed,
   onToggle,
   onClose,
+  onClear,
+  onCloseSession,
   docked,
   onExpand,
   onDock,
@@ -424,6 +526,8 @@ function Header({
   collapsed: boolean;
   onToggle: () => void;
   onClose: () => void;
+  onClear: () => void;
+  onCloseSession: () => void;
   docked: boolean;
   onExpand: () => void;
   onDock: () => void;
@@ -473,11 +577,18 @@ function Header({
                 />
               )}
               {active && (
-                <X
-                  size={10}
-                  className="text-ink-dim hover:text-ink-bright ml-1"
-                  aria-hidden
-                />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCloseSession();
+                  }}
+                  className="ml-1 inline-flex items-center justify-center rounded p-0.5
+                    text-ink-dim hover:text-ink-bright hover:bg-white/[0.06] transition-colors"
+                  aria-label="Close session"
+                >
+                  <X size={10} />
+                </button>
               )}
             </button>
           );
@@ -487,7 +598,7 @@ function Header({
       <div className="ml-auto flex items-center gap-1">
         <HeaderIconBtn label="New tab"><Plus size={12} /></HeaderIconBtn>
         <HeaderIconBtn label="Search"><Search size={12} /></HeaderIconBtn>
-        <HeaderIconBtn label="Clear"><Trash2 size={12} /></HeaderIconBtn>
+        <HeaderIconBtn label="Clear" onClick={onClear}><Trash2 size={12} /></HeaderIconBtn>
         <HeaderIconBtn label="More"><MoreHorizontal size={12} /></HeaderIconBtn>
         <HeaderIconBtn label="Close terminal" onClick={onClose}><X size={12} /></HeaderIconBtn>
         {docked ? (
