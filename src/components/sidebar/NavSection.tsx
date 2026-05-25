@@ -7,41 +7,34 @@ interface NavItem {
   id: SectionId;
   label: string;
   icon: LucideIcon;
-  available: boolean;
 }
 
 const items: NavItem[] = [
-  { id: 'home', label: 'Home', icon: Home, available: true },
-  { id: 'projects', label: 'Projects', icon: FolderGit2, available: true },
-  { id: 'agents', label: 'Agents', icon: Bot, available: true },
-  { id: 'lab', label: 'Lab', icon: FlaskConical, available: true },
-  { id: 'skills', label: 'Skills', icon: BarChart3, available: true },
-  { id: 'memory', label: 'Memory', icon: Brain, available: true },
+  { id: 'home', label: 'Home', icon: Home },
+  { id: 'projects', label: 'Projects', icon: FolderGit2 },
+  { id: 'agents', label: 'Agents', icon: Bot },
+  { id: 'lab', label: 'Lab', icon: FlaskConical },
+  { id: 'skills', label: 'Skills', icon: BarChart3 },
+  { id: 'memory', label: 'Memory', icon: Brain },
 ];
 
 export function NavSection() {
   const active = useUIStore((s) => s.activeSection);
   const openTab = useUIStore((s) => s.openTab);
 
-  const handleClick = (id: SectionId) => (e: React.MouseEvent) => {
-    e.preventDefault();
-    openTab(id);
-  };
-
   return (
     <nav className="flex flex-col gap-0.5">
-      <div className="label-eyebrow px-3 mb-3">Navigation</div>
       {items.map((item) => {
         const Icon = item.icon;
         const isActive = active === item.id;
         return (
-          <a
+          <button
             key={item.id}
-            href="#"
-            onClick={handleClick(item.id)}
+            type="button"
+            onClick={() => openTab(item.id)}
             className={cn(
-              'group relative flex items-center gap-3 rounded-lg px-3 py-2',
-              'text-sm transition-all duration-200',
+              'group relative flex items-center gap-2.5 rounded-lg px-3 py-2',
+              'text-[13px] transition-all duration-200 text-left',
               isActive
                 ? 'text-ink-bright bg-white/[0.04] border border-line-strong'
                 : 'text-ink-muted hover:text-ink-bright hover:bg-white/[0.02] border border-transparent',
@@ -54,14 +47,14 @@ export function NavSection() {
               />
             )}
             <Icon
-              size={16}
+              size={15}
               className={cn(
-                'transition-colors',
+                'shrink-0 transition-colors',
                 isActive ? 'text-accent-purple' : 'text-ink-dim group-hover:text-ink-muted',
               )}
             />
-            <span className="font-medium">{item.label}</span>
-          </a>
+            <span className="font-medium truncate">{item.label}</span>
+          </button>
         );
       })}
     </nav>
