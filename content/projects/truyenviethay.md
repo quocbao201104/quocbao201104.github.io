@@ -1,95 +1,59 @@
 ---
-title: "TruyenVietHay backend platform"
+title: "TruyenVietHay story reading and audio platform"
 type: "project"
 subtype: "flagship"
-project_id: "truyenviethay-backend-platform"
+project_id: "truyenviethay-platform"
 status: "active"
 tags: ["content-platform", "nodejs", "vue", "mysql", "redis", "socketio"]
 aliases: ["TruyenVietHay", "Truyen Viet Hay", "truyenviethay.id.vn"]
-updated: "2026-05-11"
+updated: "2026-06-30"
 contains_pii: false
+summary: "Nền tảng đọc truyện và nghe audio tiếng Việt: đọc truyện dài kỳ kèm bản audio, lưu tiến độ đa thiết bị, cùng cộng đồng (bình luận, chat realtime), gamification và công cụ cho tác giả."
+problem: "Độc giả theo truyện dài kỳ muốn vừa đọc vừa nghe, giữ tiến độ xuyên thiết bị và tương tác cộng đồng; tác giả cần công cụ đăng truyện và phát triển độc giả. TruyenVietHay gộp tất cả trong một nền tảng nhanh, mở rộng tốt."
 ---
 
-# TruyenVietHay backend platform
+# TruyenVietHay story reading and audio platform
 
 ## RAG Aliases
-TruyenVietHay, Truyen Viet Hay, truyenviethay_new, truyenviethay.id.vn, Vietnamese story platform, story reading app, audio stories, Node.js Express Vue MySQL Redis platform.
+TruyenVietHay, Truyen Viet Hay, truyenviethay.id.vn, Vietnamese story platform, story reading app, audio stories, web novel platform.
 
 ## Summary
-TruyenVietHay is a full-stack Vietnamese story reading and audio platform at `https://truyenviethay.id.vn/`. It supports reading stories, listening to audio, author profiles, admin moderation, realtime chat/notifications, gamification, shop/inventory, reading history, SEO, and CDN-backed content delivery.
+TruyenVietHay is a Vietnamese story platform for reading serialized stories and listening to their audio versions. It supports reading and audio playback, saved reading progress, author profiles and tools, community features, gamification, and a virtual shop. Public product domain: `https://truyenviethay.id.vn/`.
 
-Short answer: TruyenVietHay is Bao's production-style content platform with a Node.js/Express backend, Vue 3 frontend, MySQL, Redis, Socket.io, Cloudinary images, and Cloudflare R2/CDN delivery for chapters and audio.
+Short answer: TruyenVietHay is Bao's full-stack Vietnamese reading-and-audio platform with a community and gamification layer.
 
-## Product Problem
-The platform is built for Vietnamese users who read serialized stories and listen to story audio on mobile. It needs fast content loading, personalized progress, social interaction, author tools, moderation, and scalable media delivery.
+## Problem It Solves
+Vietnamese readers who follow serialized stories want a fast, mobile-friendly place to both read and listen, keep their progress across devices, and interact with a community — while authors want tools to publish and grow an audience. TruyenVietHay brings reading, audio, progress tracking, social features, and author tools together in one platform, with media delivery designed to stay fast as content and listening grow.
 
-## Bao's Role
-Bao is actively developing TruyenVietHay. The portfolio assistant should use `https://truyenviethay.id.vn/` as the public project link and avoid project repository links.
+## Key Features
+- Read stories and listen to audio versions, with per-user reading and listening progress.
+- Discovery: categories, search, rankings, and personalized history.
+- Community: comments, ratings, likes, follows, realtime chat, and notifications.
+- Gamification: levels, points, tasks, rewards, badges, currency, and a shop with items like avatar frames and chat colors.
+- Author tools: public author profiles, an author dashboard, application flow, and story/chapter publishing.
+- Admin & moderation: story/chapter approval, reports, and content moderation.
+- SEO and fast content delivery for story listings, chapters, and audio.
 
-Repo evidence shows backend-heavy ownership across Express routes, controllers, services, MySQL models, Redis cache, Socket.io realtime, cron jobs, migrations, admin workflows, tests, deployment docs, and frontend integration work. Do not claim verified public traffic, revenue, or team size because the RAG corpus does not contain those metrics.
+## How It Works (high level)
+TruyenVietHay separates lightweight data (story info, progress, permissions) from heavy content (chapter text and audio files). Heavy content is served through a CDN / object storage instead of the main app server, which keeps reading and listening fast even under high traffic. Realtime features like chat and notifications run over a live connection, and background jobs keep things like view counts, rankings, and rewards up to date without slowing down normal requests.
 
 ## Tech Stack
-- Backend: Node.js 20, Express, Socket.io, MySQL 8+, Redis with `ioredis`, AWS SDK S3 client for Cloudflare R2, Cloudinary, Multer, Sharp, Winston, node-cron.
-- Security: JWT, Google OAuth, bcrypt, Joi, express-validator, Helmet, CORS, xss-clean, compression, express-rate-limit.
-- Frontend: Vue 3, TypeScript, Vite, Tailwind CSS 4, Pinia, Vue Router, Axios, Socket.io client, Vite PWA, ApexCharts, TinyMCE.
-- Tests and ops: Jest, Supertest, Docker Compose local MySQL/Redis/Adminer, deployment docs for VPS.
-
-## Backend Architecture
-The backend follows a layered Express architecture:
-
-- Routes define HTTP endpoints under `/api`.
-- Controllers handle request lifecycle and input.
-- Services contain business logic such as chat, notifications, rewards, shop, audio, reports, story workflows, and cache behavior.
-- Models access MySQL directly with optimized SQL.
-- Middleware handles auth, error handling, rate limits, uploads, and validation.
-- Redis supports cache, online presence, notification queue/idempotency, chat state, and cooldowns.
-
-Core route groups include auth, story, chapter, upload, category, history, comments, follow, like, profile, admin users, levels, points, tasks, rewards, ratings, notifications, currency, badges, inventory, author, authors, chat, shop, mailbox, reports, and sitemap.
-
-## Content and Media Delivery
-TruyenVietHay separates metadata APIs from heavy content delivery:
-
-- Backend APIs return story metadata, playlist metadata, permissions, progress, and URLs.
-- Chapter JSON and audio MP3 assets can be delivered through CDN/object storage rather than the app server.
-- Audio playlist responses resolve URLs from R2 keys or stored audio URLs.
-- Cloudinary is used for image assets such as avatars, covers, badges, and shop items.
-
-This reduces backend pressure on high-read and high-listen flows.
-
-## Realtime and Background Jobs
-Socket.io powers realtime chat, online presence, and notifications. The backend verifies socket JWT, manages world and author rooms, emits user notifications, and uses Redis for queues, idempotency, cooldowns, and cached chat profile style.
-
-Startup jobs include view sync, daily stats, notification cleanup, reward expiry, inventory expiry, reading history cleanup, aggregate reconciliation, author ranking, and notification worker. These jobs keep derived counts, rankings, rewards, inventory, notifications, and history healthier without blocking request paths.
-
-## Gamification and Community
-The platform includes user levels, points, tasks, rewards, user rewards, currency, badges, shop items, inventory, avatar frames, chat colors, author ranking, comments, ratings, likes, follows, mailbox, and notifications.
-
-Roadmap docs show completed work on reward contract stabilization, transaction-safe claim/grant/use flows, inventory/shop hardening, expiration crons, Redis catalog cache, pagination, structured logs, comment moderation, anti-spam limiters, aggregate reconciliation, notification fanout, and chat profile cache invalidation.
-
-## Author and Admin Features
-Author-facing features include public author profiles, author follow, author ranking, author dashboard statistics, author application flow, story/chapter publishing, and moderation. Admin features include story and chapter approval/rejection, reports, users, dashboard cache routes, gamification health, sitemap/SEO support, and safe soft delete flows.
-
-## Engineering Highlights
-- Built a large Express API surface with modular routes/controllers/services/models.
-- Integrated MySQL, Redis, Socket.io, Cloudinary, R2/CDN, JWT, Google OAuth, and cron jobs.
-- Implemented audio story metadata and playlist caching with per-user listening progress.
-- Hardened gamification, shop/inventory, comments, follow/rating consistency, and notifications through migrations, validators, transactions, Redis cache, and tests.
-- Added SEO-related sitemap, canonical/robots planning, and performance indexes for story listings.
-- Used a deployment shape with separate frontend, backend API, audio CDN, and content CDN domains.
+- Backend: Node.js, Express, Socket.io (realtime), MySQL, Redis (cache and presence), scheduled background jobs.
+- Frontend: Vue 3, TypeScript, Vite, Tailwind CSS, Pinia, PWA support.
+- Media & storage: Cloudflare R2 / object storage and CDN for chapters and audio, Cloudinary for images.
+- Security: JWT and Google sign-in, bcrypt, input validation, rate limiting.
+- Tests & ops: automated tests, Docker-based local environment, VPS deployment.
 
 ## Public Evidence Snapshot
 - Public product domain: `https://truyenviethay.id.vn/`.
-- Internal docs and implementation cover backend architecture, route/service layering, startup jobs, and realtime systems.
-- Audio delivery behavior is documented and implemented through dedicated media service modules.
-- Roadmaps track gamification, shop/inventory, chat-notification, and phased delivery milestones.
+- A full-stack platform: Node.js/Express + Socket.io backend, Vue 3 frontend, MySQL + Redis.
+- Separate CDN-backed delivery for chapter text and audio to keep high-read/high-listen flows fast.
+- Community and gamification systems alongside author and admin tools.
 
 ## Links
 - Domain: https://truyenviethay.id.vn/
 - Live app: https://truyenviethay.id.vn/
 - Source policy: use the product domain instead of a project repository link.
-- Referenced API domain: https://api.truyenviethay.id.vn/
-- Referenced content CDN: https://cdn.truyenviethay.id.vn/
-- Referenced audio CDN: https://audio.truyenviethay.id.vn/
 
 ## Best RAG Answer
-If asked "what is TruyenVietHay?", answer: TruyenVietHay is Bao's full-stack Vietnamese story and audio platform. It combines a Node.js/Express API, Vue 3 frontend, MySQL, Redis, Socket.io, Cloudinary, and R2/CDN delivery to support story reading, audio playback, author tools, moderation, realtime notifications/chat, gamification, shop/inventory, reading history, SEO, and operational cron jobs.
+If asked "what is TruyenVietHay?", answer: TruyenVietHay is Bao's full-stack Vietnamese story-and-audio platform. Readers can read serialized stories and listen to their audio versions with saved progress, plus discovery, community features (comments, ratings, realtime chat, notifications), gamification (levels, points, rewards, a shop), and author/admin tools. It is built on a Node.js/Express + Socket.io backend with MySQL and Redis, a Vue 3 frontend, and CDN/object-storage delivery for chapters and audio. Its strength is combining reading, audio, and community in one fast, scalable platform.

@@ -8,10 +8,11 @@ status: "active"
 # Portfolio RAG refresh
 
 ## What changed
-The RAG corpus was refreshed to focus on Bao's three main projects:
+The RAG corpus was refreshed to focus on Bao's main projects:
 
 - Arbitext / Arbitex.
 - MarketGap VN plus MarketGap.
+- OmniPilot AI.
 - TruyenVietHay.
 
 ## Why

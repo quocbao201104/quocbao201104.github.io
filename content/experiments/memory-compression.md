@@ -16,4 +16,4 @@ The memory compression experiment is the process of turning large source reposit
 - Keep chunks retrieval-friendly by repeating project names and query terms.
 
 ## Result
-The first compression pass covers Arbitext, MarketGap VN plus MarketGap, and TruyenVietHay.
+The current compression pass covers Arbitext, MarketGap VN plus MarketGap, OmniPilot AI, and TruyenVietHay.

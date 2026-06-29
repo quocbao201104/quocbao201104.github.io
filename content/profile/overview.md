@@ -22,7 +22,7 @@ Backend and full-stack developer building reliable Node.js systems, data pipelin
 ## Positioning
 Bao should be described as a backend-oriented full-stack developer and AI systems builder. The strongest repository evidence is backend/API work, data modeling, ingestion pipelines, worker orchestration, auth/session design, Redis caching, cron jobs, and production deploy preparation.
 
-Good short answer: Bao builds practical AI and backend systems: Arbitext for AI translation quality control, MarketGap for market opportunity research, and TruyenVietHay for reading/audio content delivery.
+Good short answer: Bao builds practical AI and backend systems: Arbitext for AI translation quality control, MarketGap for 1688-to-Shopee market opportunity research, OmniPilot AI for autonomous Shopee customer-chat handling, and TruyenVietHay for reading/audio content delivery.
 
 ## Current Focus
 - RAG and agent memory for a portfolio assistant called BAO.OS.
@@ -32,9 +32,10 @@ Good short answer: Bao builds practical AI and backend systems: Arbitext for AI 
 - Background processing: queue workers, cron jobs, retries, idempotency, provider routing, ingest/export pipelines.
 
 ## Main Projects
-- Arbitext / Arbitex: AI translation enforcement platform with API control plane, Next.js product shell, Python worker pipeline, deterministic quality gates, LLM provider routing, review, and export.
-- MarketGap VN + MarketGap: Taobao to Shopee Vietnam market-gap research system with Python crawler/export engine and a Next.js SaaS dashboard with subscriptions and snapshot ingest.
-- TruyenVietHay: Vietnamese story reading and audio platform with Node.js backend, Vue frontend, MySQL, Redis, Socket.io, gamification, author tools, CDN/R2 audio and chapter delivery, and admin moderation.
+- Arbitext / Arbitex: AI translation platform for documents — translates with LLMs, then enforces quality with automatic checks, glossary/terminology rules, automatic repair, and a human review-and-approve step before export. Node.js + PostgreSQL backend, Next.js web app, Python worker, multiple LLM providers.
+- MarketGap VN + MarketGap: 1688-to-Shopee-Vietnam market opportunity research tool. A Python engine finds and scores product opportunities (demand, competition, margin, risk) using image-search market checks; a Next.js + PostgreSQL SaaS dashboard shows a ranked opportunity board, competitor analysis, and a market radar, with subscription plans and payOS payments.
+- OmniPilot AI: an AI agent that handles a Shopee shop's customer chat 24/7 — reads buyer messages, retrieves the shop's product/policy knowledge, and drafts/auto-sends grounded replies with safety controls. Chrome MV3 extension (Vue 3) plus a Fastify backend.
+- TruyenVietHay: Vietnamese story reading and audio platform — reading and audio playback with saved progress, community, gamification, and author/admin tools. Node.js/Express + Socket.io backend, Vue 3 frontend, MySQL, Redis, CDN/object-storage media delivery.
 
 ## Languages
 - Vietnamese: native.
