@@ -1,4 +1,5 @@
 import { corsHeaders, handleCors } from './_cors.js';
+import { cheapEmbed } from './_chat_core.js';
 import { createClient } from '@supabase/supabase-js';
 
 export const config = {
@@ -16,41 +17,6 @@ function getEnv(name: string) {
 }
 
 const ALLOWED_TYPES = new Set(['profile', 'project', 'research', 'experiment', 'note', 'timeline']);
-
-// Xiaomi MiMo token-plan endpoint is chat-completions focused; embeddings may not be available.
-// Use a lightweight, deterministic local embedding for RAG so ingestion doesn't depend on /embeddings.
-const EMBED_DIMS = 1536;
-
-function fnv1a32(s: string) {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
-  }
-  return h >>> 0;
-}
-
-function cheapEmbed(text: string): number[] {
-  const v = new Array<number>(EMBED_DIMS).fill(0);
-  const tokens = text
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}\s_-]+/gu, ' ')
-    .split(/\s+/g)
-    .filter(Boolean);
-
-  for (const tok of tokens) {
-    const h = fnv1a32(tok);
-    const idx = h % EMBED_DIMS;
-    const sign = (h & 1) === 0 ? 1 : -1;
-    v[idx] += sign * Math.min(3, 1 + tok.length / 6);
-  }
-
-  let norm = 0;
-  for (let i = 0; i < v.length; i++) norm += v[i] * v[i];
-  norm = Math.sqrt(norm) || 1;
-  for (let i = 0; i < v.length; i++) v[i] = v[i] / norm;
-  return v;
-}
 
 function chunkText(text: string, maxChars = 1100, overlap = 180) {
   const t = text.replace(/\r\n/g, '\n');

@@ -6,10 +6,10 @@ type: "timeline"
 # Timeline
 
 ## 2026-05 → Present — MarketGap VN SaaS
-- Built a Next.js/React/TypeScript SaaS dashboard for MarketGap snapshots.
-- Modeled PostgreSQL data with Prisma for users, plans, subscriptions, payments, ingest runs, snapshots, and snapshot items.
-- Implemented idempotent snapshot ingest from the Python MarketGap data engine using stable snapshot UIDs.
-- Added auth, entitlement logic, PayOS checkout/webhook flow, dashboard queries, and tests for ingest, auth, dashboard, payments, and env validation.
+- Built a Next.js/React/TypeScript SaaS dashboard for MarketGap's product opportunity data.
+- Modeled PostgreSQL data with Prisma for users, plans, subscriptions, payments, and the opportunity/competitor/radar data the engine produces.
+- Implemented idempotent ingest of the data engine's results so re-syncing the same data updates cleanly instead of duplicating it.
+- Added auth, subscription/entitlement logic, payOS checkout/webhook flow, the opportunity board and detail/competitor/radar views, and tests.
 
 ## 2026-04 → Present — Arbitext AI Translation Platform
 - Built a monorepo with Node.js API control plane, Next.js product shell, and Python worker runtime.
@@ -24,9 +24,14 @@ type: "timeline"
 - Added migrations, tests, validators, transactions, cache invalidation, SEO/sitemap planning, and deployment docs.
 
 ## 2026-04 → Present — MarketGap Data Engine
-- Developed a Python crawler and reporting pipeline for Taobao to Shopee Vietnam opportunity research.
-- Built scheduled flow stages for session health, crawling, candidate normalization, Google Lens/Shopee discovery, market signal classification, snapshot generation, export, and publish.
-- Exported hourly, daily, and monthly JSON/CSV snapshots for downstream dashboards.
+- Developed a Python data engine for 1688-to-Shopee-Vietnam product opportunity research.
+- Built scheduled stages for crawling sources, grouping duplicate listings, checking the Shopee market with image search, scoring opportunities (demand, competition, margin, risk), and publishing finished results to the dashboard.
+- Kept the data engine separate from the user-facing app so the dashboard reads only finished, normalized results.
+
+## 2026-06 → Present — OmniPilot AI Shopee Agent
+- Built an AI agent that handles a Shopee shop's customer chat 24/7, delivered as a Chrome MV3 extension (Vue 3) plus a Fastify backend.
+- Implemented knowledge-grounded (retrieval-augmented) replies from the shop's product specs, policies, and FAQs, with seller-controlled auto-send and a kill-switch.
+- Added safety handling for risky buyers, off-platform requests, and customer reviews, and a client/server split that keeps AI credentials and customer data protected.
 
 ## 2022-09 → Present — Information Technology Student
 - Focused on software engineering, databases, web architecture, backend systems, and applied AI tooling.

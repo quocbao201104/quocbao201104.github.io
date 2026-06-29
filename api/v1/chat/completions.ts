@@ -70,6 +70,17 @@ function getTranscriptMessage(messages: OpenAIChatMessage[]): string {
     .join('\n');
 }
 
+function getLatestUserMessage(messages: OpenAIChatMessage[]): string {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i];
+    if (m && m.role === 'user') {
+      const c = parseContent(m.content).trim();
+      if (c) return c;
+    }
+  }
+  return '';
+}
+
 export default async function handler(req: Request) {
   const cors = handleCors(req);
   if (cors) return cors;
@@ -91,13 +102,15 @@ export default async function handler(req: Request) {
     }
 
     const messages = Array.isArray(body?.messages) ? body.messages : [];
-    const prompt = getTranscriptMessage(messages).trim();
-    if (!prompt) {
+    const transcript = getTranscriptMessage(messages).trim();
+    if (!transcript) {
       return new Response(JSON.stringify({ error: { message: 'Missing messages', type: 'invalid_request_error' } }), {
         status: 400,
         headers: { ...corsHeaders(), 'Content-Type': 'application/json' },
       });
     }
+
+    const prompt = getLatestUserMessage(messages) || transcript;
 
     const requestedModel = body?.model ?? 'bao-os-rag';
     const mode = pickMode(requestedModel);

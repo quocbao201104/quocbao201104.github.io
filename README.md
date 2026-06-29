@@ -1,376 +1,104 @@
-# Developer Portfolio Website
-
-A modern, responsive portfolio website built with Vue 3, TypeScript, and TailwindCSS. This is a production-ready portfolio site perfect for showcasing your projects, skills, and experience.
-
-## 🚀 Features
-
-- **Modern Tech Stack**: Vue 3 with Composition API, TypeScript, Vite
-- **Tech Dashboard Design**: Split-layout authentic "developer" interface
-- **Glassmorphism**: Premium frosted glass effects
-- **Fully Responsive**: Optimized for desktop "dashboard" and mobile readability
-- **Smooth Animations**: "In-your-face" tech transitions and interactions
-- **SEO Optimized**: Meta tags and semantic HTML
-- **Fast Performance**: Optimized build with Vite
-
-## 📋 Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js** (version 18 or higher) - [Download](https://nodejs.org/)
-- **npm** (comes with Node.js) or **yarn** or **pnpm**
-- **Git** - [Download](https://git-scm.com/)
-
-## 🛠️ Installation
-
-1. **Clone or download this repository**
-   ```bash
-   cd CV
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-   or
-   ```bash
-   yarn install
-   ```
-   or
-   ```bash
-   pnpm install
-   ```
-
-## 🏃 Running Locally
-
-1. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-2. **Open your browser**
-   - The site will be available at `http://localhost:5173`
-   - The page will automatically reload when you make changes
-
-3. **Build for production**
-   ```bash
-   npm run build
-   ```
-   - This creates an optimized production build in the `dist` folder
-
-4. **Preview production build**
-   ```bash
-   npm run preview
-   ```
-
-## 📝 Customization
-
-### Update Your Information
-
-1. **Personal Information**
-   - Edit `src/data/contact.ts` - Update email and social links
-   - Edit `index.html` - Update meta tags and title
-   - Edit `src/components/Header.vue` - Update your name in the header
-   - Edit `src/components/Footer.vue` - Update copyright name
-
-2. **About Section**
-   - Edit `src/views/About.vue` - Update your bio and quick facts
-
-3. **Projects**
-   - Edit `src/data/projects.ts` - Add/update your projects
-   - Replace placeholder URLs with your actual project links
-
-4. **Skills**
-   - Edit `src/data/skills.ts` - Update your skills and proficiency levels
-
-5. **Experience**
-   - Edit `src/data/experience.ts` - Update your work experience and education
-
-6. **Colors & Styling**
-   - Edit `tailwind.config.js` - Change the primary color theme
-   - Currently using green (`primary`), you can change to cyan, purple, or any color
-
-### Change Color Theme
-
-To change from green to another color (e.g., cyan or purple):
-
-1. Open `tailwind.config.js`
-2. Replace the `primary` color values with your preferred color
-3. Example for cyan:
-   ```js
-   primary: {
-     400: '#22d3ee',
-     500: '#06b6d4',
-     600: '#0891b2',
-     // ... etc
-   }
-   ```
-
-## 📦 Project Structure
- 
- ```
- CV/
- ├── public/              # Static assets (including resume.pdf)
- ├── src/
- ├── components/      # UI Components
- │   ├── SideProfile.vue
- │   └── SkillsGrid.vue
- ├── data/           # Data files (projects, skills, etc.)
- │   ├── projects.ts
- │   ├── skills.ts
- │   ├── experience.ts
- │   ├── personal.ts
- │   └── contact.ts
- ├── router/         # Vue Router configuration
- │   └── index.ts
- ├── types/          # TypeScript type definitions
- │   └── index.ts
- ├── views/          # Page components
- │   └── Home.vue        # Main Dashboard
- ├── App.vue         # Root component
- ├── main.ts         # Application entry point
- └── style.css       # Global styles (Tailwind + Custom)
- ├── index.html
- ├── package.json
- ├── vite.config.ts
- ├── tailwind.config.js
- ├── tsconfig.json
- └── README.md
- ```
-
-## 🚢 Deployment
-
-### Option 1: Deploy to Vercel (Recommended)
-
-Vercel offers free hosting with automatic deployments from GitHub.
-
-#### Step 1: Prepare Your Repository
-
-1. **Initialize Git** (if not already done)
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   ```
-
-2. **Create a GitHub repository**
-   - Go to [GitHub](https://github.com) and create a new repository
-   - Don't initialize it with a README (you already have one)
-
-3. **Push your code to GitHub**
-   ```bash
-   git remote add origin https://github.com/yourusername/your-repo-name.git
-   git branch -M main
-   git push -u origin main
-   ```
-
-#### Step 2: Deploy to Vercel
-
-1. **Sign up/Login to Vercel**
-   - Go to [vercel.com](https://vercel.com)
-   - Sign up with your GitHub account (recommended)
-
-2. **Import Your Project**
-   - Click "Add New Project"
-   - Select your GitHub repository
-   - Vercel will auto-detect Vite settings
-   - Click "Deploy"
-
-3. **Wait for Deployment**
-   - Vercel will build and deploy your site
-   - You'll get a URL like: `your-project.vercel.app`
-
-4. **Automatic Deployments**
-   - Every push to `main` branch will automatically deploy
-   - You can also set up preview deployments for pull requests
-
-#### Step 3: Add Custom Domain (Optional)
-
-See the **Domain Setup Guide** section below.
-
----
-
-### Option 2: Deploy to Netlify
-
-Netlify also offers free hosting with automatic deployments.
-
-#### Step 1: Prepare Your Repository
-
-Same as Vercel - push your code to GitHub.
-
-#### Step 2: Deploy to Netlify
-
-1. **Sign up/Login to Netlify**
-   - Go to [netlify.com](https://netlify.com)
-   - Sign up with your GitHub account
-
-2. **Import Your Project**
-   - Click "Add new site" → "Import an existing project"
-   - Select your GitHub repository
-   - Build settings:
-     - Build command: `npm run build`
-     - Publish directory: `dist`
-   - Click "Deploy site"
-
-3. **Wait for Deployment**
-   - Netlify will build and deploy your site
-   - You'll get a URL like: `your-project.netlify.app`
-
-4. **Automatic Deployments**
-   - Every push to `main` branch will automatically deploy
-
-#### Step 3: Add Custom Domain (Optional)
-
-See the **Domain Setup Guide** section below.
-
----
-
-## 🌐 Domain Setup Guide
-
-### Buying a Domain
-
-1. **Choose a Domain Registrar**
-   - Popular options: Namecheap, Google Domains, GoDaddy, Cloudflare
-   - Search for your desired domain name
-   - Purchase the domain (usually $10-15/year)
-
-2. **Recommended**: Use **Cloudflare** or **Namecheap** for better DNS management
-
-### Connecting Domain to Vercel
-
-1. **In Vercel Dashboard**
-   - Go to your project → Settings → Domains
-   - Enter your domain (e.g., `yourname.com`)
-   - Click "Add"
-
-2. **Configure DNS Records**
-   - Vercel will show you the DNS records to add
-   - Go to your domain registrar's DNS settings
-   - Add the following records:
-
-   **Option A: Root Domain (yourname.com)**
-   ```
-   Type: A
-   Name: @
-   Value: 76.76.21.21
-   ```
-
-   **Option B: Subdomain (www.yourname.com)**
-   ```
-   Type: CNAME
-   Name: www
-   Value: cname.vercel-dns.com
-   ```
-
-   **Recommended: Add both A and CNAME for www**
-
-3. **Wait for Propagation**
-   - DNS changes can take 24-48 hours (usually much faster)
-   - Vercel will automatically detect when DNS is configured
-   - SSL certificate will be automatically provisioned
-
-### Connecting Domain to Netlify
-
-1. **In Netlify Dashboard**
-   - Go to your site → Domain settings → Custom domains
-   - Click "Add custom domain"
-   - Enter your domain
-
-2. **Configure DNS Records**
-   - Netlify will show you the DNS records to add
-   - Go to your domain registrar's DNS settings
-   - Add the following records:
-
-   **For Root Domain (yourname.com)**
-   ```
-   Type: A
-   Name: @
-   Value: 75.2.60.5
-   ```
-
-   **For www Subdomain**
-   ```
-   Type: CNAME
-   Name: www
-   Value: your-site-name.netlify.app
-   ```
-
-3. **Wait for Propagation**
-   - DNS changes can take 24-48 hours
-   - Netlify will automatically provision SSL certificate
-
-### DNS Record Types Explained
-
-- **A Record**: Points a domain to an IP address (for root domain)
-- **CNAME Record**: Points a domain to another domain (for subdomains)
-- **TTL**: Time to live (how long DNS is cached) - usually 3600 seconds
-
-### Testing Your Domain
-
-1. After adding DNS records, wait a few minutes
-2. Use online tools to check DNS propagation:
-   - [whatsmydns.net](https://www.whatsmydns.net)
-   - [dnschecker.org](https://dnschecker.org)
-3. Once DNS is propagated, your site should be accessible via your custom domain
-
-## ✅ Pre-Deployment Checklist
-
-Before sharing your portfolio link:
-
-- [ ] Update all personal information (name, email, social links)
-- [ ] Replace placeholder project data with your real projects
-- [ ] Update skills list with your actual skills
-- [ ] Add your real work experience and education
-- [ ] Update the About section with your bio
-- [ ] Test all links (GitHub, LinkedIn, project demos)
-- [ ] Test on mobile devices (responsive design)
-- [ ] Check all pages load correctly
-- [ ] Verify contact form works (or remove if not connected to backend)
-- [ ] Update meta tags in `index.html` for SEO
-- [ ] Test the site on different browsers
-- [ ] Ensure all images/assets load correctly
-- [ ] Check that the site is fast (use Lighthouse in Chrome DevTools)
-
-## 🐛 Troubleshooting
-
-### Build Errors
-
-- **TypeScript errors**: Run `npm run build` to see detailed error messages
-- **Missing dependencies**: Delete `node_modules` and `package-lock.json`, then run `npm install` again
-
-### Deployment Issues
-
-- **Build fails on Vercel/Netlify**: Check build logs, ensure all dependencies are in `package.json`
-- **404 errors on routes**: Ensure you have the redirect configuration (`vercel.json` or `netlify.toml`)
-
-### DNS Issues
-
-- **Domain not working**: Wait 24-48 hours for DNS propagation
-- **SSL certificate not issued**: Wait a few hours after DNS is configured
-
-## 📚 Additional Resources
-
-- [Vue 3 Documentation](https://vuejs.org/)
-- [TypeScript Documentation](https://www.typescriptlang.org/)
-- [TailwindCSS Documentation](https://tailwindcss.com/)
-- [Vite Documentation](https://vitejs.dev/)
-- [Vercel Documentation](https://vercel.com/docs)
-- [Netlify Documentation](https://docs.netlify.com/)
-
-## 📄 License
-
-This project is open source and available for personal and commercial use.
-
-## 🙏 Credits
-
-Built with:
-- Vue 3
-- TypeScript
-- Vite
-- TailwindCSS
-- Lucide Icons
-
----
-
-**Need Help?** If you encounter any issues, check the troubleshooting section or refer to the documentation links above.
-
-**Good luck with your portfolio! 🚀**
+# BAO.OS — Developer Portfolio
+
+An interactive "developer operating system" portfolio for **Quoc Bao** (baodev.me). The centerpiece is an in-browser terminal that talks to a RAG (retrieval-augmented generation) backend grounded in a personal markdown knowledge base.
+
+Built with **React 18 + TypeScript + Vite + Zustand + TailwindCSS + framer-motion**, with **Vercel Edge functions** + **Supabase (pgvector)** powering the chat/RAG layer.
+
+## Quick start
+
+```bash
+npm install
+npm run dev        # Vite dev server at http://localhost:5173
+```
+
+> **Note:** `npm run dev` serves the frontend only. The `/api` routes are Vercel Edge functions and do not run under Vite. Chat/RAG in local dev falls back to the deployed API (see [API configuration](#api-configuration)).
+
+## Scripts
+
+```bash
+npm run dev        # Vite dev server (frontend only)
+npm run build      # tsc type-check + vite build → dist/
+npm run preview    # serve the production build locally
+npm run lint       # eslint --fix across .js/.jsx/.ts/.tsx
+npm test           # node --test api/*.test.mjs (API logic tests)
+```
+
+Run a single test file:
+
+```bash
+node --test api/_chat_core.test.mjs
+```
+
+## Architecture
+
+A single-page app with no router — "navigation" is `activeSection` state in a Zustand store.
+
+### Frontend (`src/`)
+
+- `App.tsx` — fixed dashboard chrome (top bar, left sidebar, main area, right panels, bottom terminal).
+- `src/stores/uiStore.ts` — the single global store (active section, opened tabs, terminal state, command palette).
+- `src/components/layout/MainArea.tsx` — switches between workspace views (`home`, `projects`, `agents`, `lab`, `skills`, `memory`, `terminal`) with a VSCode-style tab bar.
+- Path alias `@/` → `src/` (set in both `vite.config.ts` and `tsconfig.json`).
+
+### Content-driven projects
+
+Projects are **not hardcoded**. `src/lib/projects/markdownProjects.ts` loads `content/projects/*.md` at build time via `import.meta.glob`, parses frontmatter, and infers tags/icon/links. `content/projects/project-index.md` (a bullet list of slugs) controls ordering.
+
+### Terminal command pipeline
+
+Typed terminal input flows through three stages before hitting the API:
+
+1. `src/terminal/commandParser.ts` — parses raw input (`help`, `clear`, `llm`, `rag`, `ask recruiter`, `inspect architecture`, `search memory`, or plain text).
+2. `src/terminal/intentRouter.ts` — maps the command + current session to a plan: which **mode** (`llm` / `rag` / `agentic_rag`) and **persona** (`bao` / `recruiter` / `architect` / `memory`).
+3. `src/terminal/commandRouter.ts` — returns local UI actions or a remote plan to POST to the API.
+
+### API (`api/` — Vercel Edge functions)
+
+- `api/_chat_core.ts` — the shared brain. `runChat()` retrieves context (RAG modes), builds the persona/mode prompt, calls the LLM, and assembles the response. Both `api/chat.ts` and the OpenAI-compatible `api/v1/chat/completions.ts` delegate to it.
+- **Embeddings are local.** `cheapEmbed()` is a deterministic FNV-1a hashed bag-of-words → 1536-dim vector (the LLM backend is chat-completions only). Ingest and retrieval must use the **same** embedding function — changing it requires re-ingesting all content.
+- **Retrieval** calls a Supabase RPC `match_chunks(query_embedding, match_count, allow_pii)` against a `chunks` table.
+- **Redaction is enforced server-side.** Emails, phones, local paths, and private repo links are stripped from retrieved chunks unless the chunk is marked `status: public` (or the message is a contact intent).
+- `api/v1/chat/completions.ts` + `api/v1/models.ts` expose an OpenAI-compatible surface; the requested `model` name encodes the mode/persona.
+
+### Content corpus (`content/`)
+
+Markdown files (`profile/`, `projects/`, `research/`, `experiments/`, `notes/`, `timeline/`) form the RAG knowledge base. Write retrieval-friendly facts, never invent metrics, mark inferred facts as inferred, and preserve Vietnamese accents exactly. Frontmatter flags `contains_pii` and `status` drive the redaction layer. See `content/README.md`.
+
+Ingest the corpus into Supabase (requires `API_BASE_URL` + `INGEST_TOKEN`):
+
+```bash
+node scripts/ingest-content.mjs
+```
+
+## API configuration
+
+The frontend (`src/lib/apiClient.ts`) calls same-origin `/api/*` by default, so Vercel deployments work with no extra config. For static hosting (e.g. GitHub Pages, where serverless functions don't exist), set `VITE_API_BASE_URL` to your API deployment.
+
+Required API env vars (set in Vercel):
+
+| Variable | Purpose |
+| --- | --- |
+| `LLM_BASE_URL` | Chat-completions endpoint (OpenAI-compatible) |
+| `LLM_API_KEY` | LLM API key |
+| `LLM_MODEL` | Model name (default `mimo-v2.5-pro`) |
+| `SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key |
+| `INGEST_TOKEN` | Shared secret gating `/api/ingest` |
+| `OPENAI_COMPAT_TOKEN` | _(optional)_ gates the `/v1/*` endpoints |
+| `ALLOWED_ORIGIN` | _(optional)_ CORS allowlist (defaults to `*`) |
+
+## Deployment
+
+### Vercel (primary)
+
+`vercel.json` rewrites `/api/*`, `/v1`, and `/v1/*` to the edge functions and SPA-falls-back everything else to `index.html`. Import the repo into Vercel, set the env vars above, and deploy. Auto-detects Vite settings (build `npm run build`, output `dist`).
+
+### GitHub Pages (static)
+
+`.github/workflows/deploy-pages.yml` builds and deploys `dist/` on push to `main`. There are no serverless functions here, so set `VITE_API_BASE_URL` to point at the live API (see `.env.production`).
+
+## Tech stack
+
+- **Frontend:** React 18, TypeScript, Vite, Zustand, TailwindCSS, framer-motion, lucide-react, cmdk
+- **Backend:** Vercel Edge functions, Supabase (pgvector)
+- **Hosting:** Vercel (with API) and/or GitHub Pages (static)

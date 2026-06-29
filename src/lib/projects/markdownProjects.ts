@@ -3,13 +3,21 @@ export interface MarkdownProjectLink {
   href: string;
 }
 
+export interface MarkdownProjectDemo {
+  src: string | null;
+  caption: string;
+}
+
 export interface MarkdownProject {
   id: string;
   slug: string;
   title: string;
   description: string;
+  summary: string;
+  problem: string;
   tags: string[];
   links: MarkdownProjectLink[];
+  demos: MarkdownProjectDemo[];
   eyebrow: string;
   icon: 'heart' | 'shield' | 'brain' | 'spark';
   markdown: string;
@@ -101,6 +109,79 @@ function stripMd(s: string): string {
     .replace(/[`*_~]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+// Returns the first prose paragraph under a "## <heading>" section (case-insensitive),
+// skipping any nested sub-headings. Returns '' when the section is absent or empty.
+function sectionFirstParagraph(markdown: string, heading: string): string {
+  const lines = markdown.split('\n');
+  const headingRe = new RegExp(`^##\\s+${heading}\\b`, 'i');
+  let inSection = false;
+  const collected: string[] = [];
+
+  for (const line of lines) {
+    if (headingRe.test(line)) {
+      inSection = true;
+      continue;
+    }
+    if (!inSection) continue;
+    if (/^##\s+/.test(line)) break;
+
+    const trimmed = line.trim();
+    if (!trimmed) {
+      if (collected.length > 0) break;
+      continue;
+    }
+    if (/^[-*]\s/.test(trimmed) || trimmed.startsWith('>')) break;
+    collected.push(trimmed);
+  }
+
+  return stripMd(collected.join(' '));
+}
+
+function pickSummary(markdown: string, fm: Record<string, FrontmatterValue>): string {
+  const fmSummary = fm.summary;
+  if (typeof fmSummary === 'string' && fmSummary.trim()) return stripMd(fmSummary);
+
+  const fromSection = sectionFirstParagraph(markdown, 'Summary');
+  if (fromSection) return fromSection;
+
+  return firstParagraph(markdown);
+}
+
+function pickProblem(markdown: string, fm: Record<string, FrontmatterValue>): string {
+  const fmProblem = fm.problem;
+  if (typeof fmProblem === 'string' && fmProblem.trim()) return stripMd(fmProblem);
+
+  return sectionFirstParagraph(markdown, 'Problem It Solves');
+}
+
+// Demo slides shown when the card is swiped past the intro page. Reads frontmatter
+// `demos:` (list of strings or {src, caption} objects). When none are declared we
+// emit a single placeholder slide (src: null) so the gradient fallback renders.
+function extractDemos(fm: Record<string, FrontmatterValue>, title: string): MarkdownProjectDemo[] {
+  const raw = fm.demos;
+  const demos: MarkdownProjectDemo[] = [];
+
+  if (Array.isArray(raw)) {
+    for (const item of raw) {
+      if (typeof item === 'string') {
+        const src = item.trim();
+        if (src) demos.push({ src, caption: '' });
+      } else if (item && typeof item === 'object') {
+        const o = item as { [k: string]: FrontmatterValue };
+        const src = typeof o.src === 'string' ? o.src.trim() : typeof o.image === 'string' ? o.image.trim() : '';
+        const caption = typeof o.caption === 'string' ? o.caption.trim() : typeof o.label === 'string' ? o.label.trim() : '';
+        if (src) demos.push({ src, caption });
+      }
+    }
+  }
+
+  if (demos.length === 0) {
+    demos.push({ src: null, caption: `${title} · demo coming soon` });
+  }
+
+  return demos;
 }
 
 function extractLinks(markdown: string, fm: Record<string, FrontmatterValue>): MarkdownProjectLink[] {
@@ -261,9 +342,12 @@ export function getMarkdownProjects(): MarkdownProject[] {
       const { frontmatter, body } = parseFrontmatter(raw);
 
       const title = (typeof frontmatter.title === 'string' && frontmatter.title.trim()) ? frontmatter.title.trim() : firstH1Title(body) ?? slug;
-      const description = firstParagraph(body);
+      const summary = pickSummary(body, frontmatter);
+      const problem = pickProblem(body, frontmatter);
+      const description = summary || firstParagraph(body);
       const tags = inferTags(body, frontmatter);
       const links = extractLinks(body, frontmatter);
+      const demos = extractDemos(frontmatter, title);
       const eyebrow = inferEyebrow(tags, body, frontmatter);
       const icon = inferIcon(body, frontmatter);
 
@@ -272,8 +356,11 @@ export function getMarkdownProjects(): MarkdownProject[] {
         slug,
         title,
         description,
+        summary,
+        problem,
         tags,
         links,
+        demos,
         eyebrow,
         icon,
         markdown: body,

@@ -5,91 +5,55 @@ subtype: "flagship"
 project_id: "marketgap-vn-marketgap"
 status: "active"
 tags: ["data-pipeline", "saas", "nextjs", "python", "postgresql", "analytics"]
-aliases: ["MarketGap", "MarketGap VN", "Taobao to Shopee"]
-updated: "2026-05-11"
+aliases: ["MarketGap", "MarketGap VN", "Taobao to Shopee", "1688 to Shopee"]
+updated: "2026-06-30"
 contains_pii: false
+summary: "Công cụ nghiên cứu cơ hội thị trường cho người bán nguồn hàng 1688 (Trung Quốc) sang Shopee VN: tìm sản phẩm cầu cao - cạnh tranh thấp, chấm điểm và đề xuất nhập-thử / theo dõi / bỏ qua."
+problem: "Nhìn một sản phẩm 1688, người bán khó biết có nên nhập: ai đang bán trên Shopee, giá, lượt bán, mức cạnh tranh, thị trường bão hòa hay còn khe hở. MarketGap trả lời tự động và đưa khuyến nghị rõ ràng."
 ---
 
 # MarketGap VN + MarketGap
 
 ## RAG Aliases
-MarketGap, MarketGap VN, MarketGap-VN, Taobao to Shopee, Shopee Vietnam opportunity dashboard, market gap crawler, product opportunity SaaS, hourly daily monthly snapshots.
+MarketGap, MarketGap VN, MarketGap-VN, 1688 to Shopee, Taobao to Shopee, Shopee Vietnam opportunity dashboard, market gap finder, product opportunity SaaS, opportunity board.
 
 ## Summary
-MarketGap is Bao's market opportunity research system for Taobao to Shopee Vietnam. The public product domain is `https://marketgap.com`. The system has two connected parts: a Python crawler/data engine called MarketGap, and a Next.js SaaS dashboard called MarketGap VN.
+MarketGap is a market opportunity research tool for sellers who source products from 1688 (China) to sell on Shopee Vietnam. It finds products that have strong demand on Shopee but little or early competition, scores how good each opportunity is, and shows the results in a dashboard. Public product domain: `https://marketgap.com`.
 
-Short answer: MarketGap finds products with strong signals on Chinese sources such as Taobao and weak or early competition on Shopee Vietnam, then turns crawler output into subscription-gated dashboard snapshots.
+The product has two parts: a data engine (MarketGap) that gathers and scores opportunities, and a SaaS dashboard (MarketGap VN) where users browse and act on them.
 
-## Product Problem
-Vietnam sellers need a faster way to spot product gaps: products that appear promising at the source market but are not yet saturated on Shopee Vietnam. MarketGap collects candidates, checks marketplace presence, classifies signal strength, and exposes the results through dashboards.
+Short answer: MarketGap helps Vietnam sellers decide which 1688 products are worth importing to Shopee.
 
-## Bao's Role
-Bao is actively developing both components: the data engine and the SaaS dashboard. The portfolio assistant should use `https://marketgap.com` as the public project link and avoid project repository links. Repository evidence shows work across crawler orchestration, snapshot export, publisher integration, SaaS ingest contracts, PostgreSQL schema, dashboard queries, auth, billing, entitlement gates, and tests.
+## Problem It Solves
+A seller looking at a 1688 product cannot easily tell whether it is worth importing: is anyone already selling it on Shopee, how many shops, what are the prices, sold counts, ratings, and competition, and is this a saturated market or a real gap. MarketGap answers those questions automatically and gives a clear recommendation — test-import, watch, or skip — so sellers spend less time on manual research.
 
-## MarketGap Data Engine
-MarketGap is the internal crawler/data engine. Its README describes this flow:
+## Key Features
+- Opportunity board: a ranked list of product opportunities with price, sold, rating, competition, and an opportunity score.
+- A clear decision per product (for example import-test, watchlist, or skip) with the reasons behind it.
+- Product detail pages combining the 1688 source side and the Shopee market side.
+- Competitor analysis showing which shops already sell similar products and how strong they are.
+- A market radar with alerts such as rising trends, new hot listings, price drops, and early gaps.
+- User actions: save, take notes, watch for changes, and (on the Pro plan) reserve an item.
+- Subscription plans (Free / Starter / Pro) with account, login, and online payment.
 
-1. `session_health` checks the Taobao browser profile.
-2. `crawler_job` crawls Taobao categories and sources.
-3. `analyzer_job` normalizes candidates.
-4. `lens_discovery_job` uses Google Lens to find Shopee links and matching shops.
-5. `market_check_job` classifies market signals.
-6. `snapshot_job` builds hourly, daily, and monthly snapshots.
-7. `export_job` writes CSV/JSON reports.
-8. `publisher_job` can post exported snapshots to MarketGap VN.
-
-The engine is Python 3.10+ with `scrapling`, `patchright`, `lxml`, and `Pillow`. It uses a SQLite-style internal database through the `marketgap.db` layer and exports current/archive report artifacts.
-
-## MarketGap VN SaaS
-MarketGap VN is a separate Next.js App Router SaaS app backed by PostgreSQL and Prisma. It receives exported snapshots from the Python data engine, stores them as queryable rows, handles login, billing, and unlocks dashboard access by plan.
-
-V1 product scope from the repo:
-
-- Public landing page.
-- Register/login with bcrypt password hashing and signed session cookies.
-- Shared dashboard for latest/hourly data.
-- Month/Standard and Year/Pro style paid access.
-- Payment creation and webhook unlock, with PayOS as implemented provider.
-- Admin import and payment overview.
-
-## Data Contract
-MarketGap exports JSON files such as:
-
-- `reports/current/hourly.json`
-- `reports/current/daily.json`
-- `reports/current/monthly.json`
-- archived snapshots under `reports/archive/...`
-
-MarketGap VN maps `snapshot.scope`, `slot_date`, `slot`, `month`, `generated_at`, and `rows[]` into PostgreSQL models. Stable snapshot UIDs look like:
-
-- `marketgap:hourly:YYYY-MM-DD:SLOT`
-- `marketgap:daily:YYYY-MM-DD`
-- `marketgap:monthly:YYYY-MM`
-
-Repeated ingest is idempotent: the service upserts the same snapshot UID and replaces rows cleanly instead of duplicating results.
+## How It Works (high level)
+The data engine crawls product sources, groups duplicate listings together, checks the Shopee market with image search, and scores each opportunity from demand, competition, estimated margin, and risk signals. It then publishes the finished results to the dashboard. The dashboard only reads these finished results — it does not crawl or recompute — which keeps it fast and keeps the heavy data work separate from the user-facing app.
 
 ## Tech Stack
-- Python data engine: Python 3.10+, Scrapling, Patchright, lxml, Pillow, pytest, SQLite-style local database, static dashboard utilities, scheduled shell pipeline.
-- SaaS dashboard: Next.js 15, React 19, TypeScript, Prisma, PostgreSQL, Zod, bcryptjs, PayOS adapter, Recharts, Tailwind CSS, Vitest.
-- Key storage models: User, Plan, Subscription, Payment, IngestRun, Snapshot, SnapshotItem.
-
-## Engineering Highlights
-- Separated crawler/data collection from SaaS billing and user access logic so the production crawler DB stays internal.
-- Designed a stable ingest contract between Python exports and the SaaS PostgreSQL schema.
-- Built idempotent snapshot ingest using payload hash and source/snapshot UID uniqueness.
-- Converted crawler-friendly values into app-safe types: boolean-like integers, JSON Shopee links, date-only fields, enum scopes.
-- Implemented entitlement-aware dashboard views: free preview, recent daily access for paid users, and monthly trend access for higher plan users.
-- Built payment checkout and webhook flow around provider references and subscription activation.
+- Data engine: Python, image search and visual matching, scheduled crawling pipeline.
+- SaaS dashboard: Next.js, React, TypeScript, Prisma, PostgreSQL.
+- Accounts & payments: custom email/password and Google sign-in, payOS online payments, email notifications.
+- Infrastructure: Redis (rate limiting), error monitoring, automated tests.
 
 ## Public Evidence Snapshot
 - Public product domain: `https://marketgap.com`.
-- Internal docs and implementation cover crawler orchestration, snapshot generation, and export/publisher jobs.
-- SaaS documentation and schema define ingest contracts, subscription gating, and dashboard queries.
-- Tests cover ingest, dashboard, entitlement, payment webhook, auth, environment configuration, and UI behavior.
+- A two-part system: a Python data/scoring engine and a Next.js SaaS dashboard.
+- Opportunity scoring with explainable decisions, competitor analysis, and a market radar.
+- Subscription tiers with online payment.
 
 ## Links
 - Domain: https://marketgap.com
 - Source policy: use the product domain instead of project repository links.
 
 ## Best RAG Answer
-If asked "what is MarketGap?", answer: MarketGap is Bao's Taobao to Shopee Vietnam opportunity research system. The Python MarketGap engine crawls and analyzes product candidates, checks Shopee presence through Google Lens and marketplace signals, builds hourly/daily/monthly snapshots, and exports JSON/CSV. MarketGap VN is the SaaS dashboard that ingests those snapshots into PostgreSQL, provides dashboard views, and gates access through subscription plans and PayOS payment flow.
+If asked "what is MarketGap?", answer: MarketGap is Bao's 1688-to-Shopee-Vietnam opportunity research tool. A Python engine gathers product candidates, checks the Shopee market with image search, and scores each opportunity by demand, competition, margin, and risk; the MarketGap VN dashboard (Next.js + PostgreSQL) then shows a ranked opportunity board, product detail and competitor views, and a market radar, with save/watch/reserve actions and subscription plans paid through payOS. Its strength is turning messy sourcing research into a clear, scored, actionable recommendation for sellers.
