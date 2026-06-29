@@ -79,22 +79,22 @@ export function cheapEmbed(text: string): number[] {
 
 function isContactIntent(message: string) {
   const m = message.toLowerCase();
-  // English + Vietnamese + common variants
+  // Only genuine "how do I reach you" intents unlock PII (email/phone).
+  // Deliberately narrow: ambiguous tokens like 'mail', 'number', or a bare '@'
+  // must NOT open redaction (e.g. "what's the version number?" stays redacted).
+  // English + Vietnamese (accented and unaccented) contact terms.
   return (
     m.includes('contact') ||
     m.includes('email') ||
     m.includes('e-mail') ||
-    m.includes('mail') ||
+    m.includes('gmail') ||
     m.includes('phone') ||
-    m.includes('number') ||
     m.includes('telegram') ||
     m.includes('zalo') ||
     m.includes('liên hệ') ||
     m.includes('lien he') ||
     m.includes('số điện thoại') ||
-    m.includes('so dien thoai') ||
-    m.includes('gmail') ||
-    m.includes('@')
+    m.includes('so dien thoai')
   );
 }
 
@@ -111,8 +111,11 @@ export function redactSensitive(text: string) {
 
 export function redactPrivateRepoLinks(text: string, allow: boolean) {
   if (allow) return text;
-  // Conservative: hide GitHub repo URLs unless explicitly marked public via metadata (handled upstream).
-  return text.replace(/https?:\/\/github\.com\/[^\s)]+/gi, '[redacted-repo-link]');
+  // Conservative: hide repo-host URLs unless explicitly marked public via metadata (handled upstream).
+  return text.replace(
+    /https?:\/\/(?:github\.com|gitlab\.com|bitbucket\.org)\/[^\s)]+/gi,
+    '[redacted-repo-link]',
+  );
 }
 
 export function redactLocalPaths(text: string) {
@@ -146,6 +149,30 @@ export function compactContext(text: string, maxChars: number) {
   return t.slice(0, maxChars).trimEnd() + '\n…';
 }
 
+// cheapEmbed is bag-of-words, so off-topic queries still pull back low-similarity
+// junk. Drop hits below this floor. Hits with a missing similarity field are kept
+// (we don't penalize chunks the RPC didn't score).
+//
+// Assumes match_chunks returns cosine similarity in [0,1] (higher = better). If the
+// RPC is ever changed to return a distance metric, this floor must be re-tuned — set
+// RAG_MIN_SIMILARITY to override without a code change.
+function getMinSimilarity() {
+  const raw = process.env.RAG_MIN_SIMILARITY;
+  if (raw === undefined) return 0.2;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : 0.2;
+}
+
+function applyRedaction(content: string, isPublic: boolean, allowPii: boolean) {
+  // Email/phone are the only things a contact intent may unlock.
+  const piiSafe = allowPii ? content : redactSensitive(content);
+  // Local paths and private-repo links/hints are ALWAYS redacted, regardless of
+  // intent — they are never something a chat reply should leak. Repo links are
+  // only kept when the chunk is explicitly marked public via metadata.
+  const safe = stripPrivateRepoHints(redactLocalPaths(piiSafe));
+  return redactPrivateRepoLinks(safe, isPublic);
+}
+
 async function retrieve(query: string, allowPii: boolean, topK = 6): Promise<ChunkHit[]> {
   const supabaseUrl = getEnv('SUPABASE_URL');
   const supabaseKey = getEnv('SUPABASE_SERVICE_ROLE_KEY');
@@ -164,23 +191,25 @@ async function retrieve(query: string, allowPii: boolean, topK = 6): Promise<Chu
     allow_pii: allowPii,
   });
   if (error) throw new Error(`Supabase rpc match_chunks error: ${error.message}`);
-  const hits = (data ?? []) as ChunkHit[];
+  const rawHits = (data ?? []) as ChunkHit[];
+
+  // Filter out low-similarity noise. Keep hits without a similarity score.
+  const minSimilarity = getMinSimilarity();
+  const hits = rawHits.filter(
+    (h) => typeof h.similarity !== 'number' || h.similarity >= minSimilarity,
+  );
 
   // Server-side enforcement outside prompt: even if ingest/frontmatter is wrong,
-  // we prevent sensitive info from entering normal context.
-  if (!allowPii) {
-    return hits.map((h) => {
-      const status = (h.status ?? '').toLowerCase();
-      const isPublic = status === 'public';
-      const safe = stripPrivateRepoHints(redactLocalPaths(redactSensitive(h.content)));
-      return {
-        ...h,
-        content: redactPrivateRepoLinks(safe, isPublic),
-      };
-    });
-  }
-
-  return hits;
+  // we prevent sensitive info from entering normal context. Redaction is layered —
+  // a contact intent only relaxes email/phone, never local paths or repo links.
+  return hits.map((h) => {
+    const status = (h.status ?? '').toLowerCase();
+    const isPublic = status === 'public';
+    return {
+      ...h,
+      content: applyRedaction(h.content, isPublic, allowPii),
+    };
+  });
 }
 
 function buildSystemPrompt(mode: Mode, hits: ChunkHit[], persona: Persona) {
@@ -241,7 +270,9 @@ function toSourceChunks(hits: ChunkHit[], allowPii: boolean): SourceChunk[] {
     const content = compactContext(h.content, 360);
     const healthWarnings: string[] = [];
     if (h.contains_pii) healthWarnings.push('contains_pii_flagged');
-    if (!allowPii && (content.includes('[redacted') || h.contains_pii)) {
+    // Redaction now runs even under a contact intent (local paths / repo links
+    // are always stripped), so flag it whenever the marker is present.
+    if (content.includes('[redacted') || (!allowPii && h.contains_pii)) {
       healthWarnings.push('redaction_applied');
     }
 
@@ -262,11 +293,23 @@ function toSourceChunks(hits: ChunkHit[], allowPii: boolean): SourceChunk[] {
   });
 }
 
-function estimateConfidence(mode: Mode, sourceCount: number, answer: string) {
+function estimateConfidence(mode: Mode, hits: ChunkHit[], answer: string) {
   if (!answer.trim()) return 0.2;
   if (mode === 'llm') return 0.7;
-  if (sourceCount === 0) return 0.45;
-  return Math.min(0.95, 0.55 + sourceCount * 0.08);
+  if (hits.length === 0) return 0.45;
+
+  // Base confidence on retrieval quality, not raw count: 6 weakly-matching
+  // chunks should not read as high confidence. Use the strongest hit, blended
+  // with the mean so a single lucky match doesn't dominate.
+  const scores = hits
+    .map((h) => h.similarity)
+    .filter((s): s is number => typeof s === 'number');
+  if (scores.length === 0) return 0.55;
+
+  const max = Math.max(...scores);
+  const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+  const quality = 0.6 * max + 0.4 * mean;
+  return Math.max(0.3, Math.min(0.95, 0.3 + quality * 0.65));
 }
 
 function toErrorMessage(e: unknown) {
@@ -345,8 +388,16 @@ export async function runChat(input: RunChatInput): Promise<RunChatResult> {
   const text = await r.text();
   if (!r.ok) throw new Error(`LLM error ${r.status}: ${text}`);
 
-  const j = JSON.parse(text);
-  const answer = j?.choices?.[0]?.message?.content ?? '';
+  let j: unknown;
+  try {
+    j = JSON.parse(text);
+  } catch {
+    throw new Error(
+      `LLM returned non-JSON response (status ${r.status}): ${text.slice(0, 200)}`,
+    );
+  }
+  const answer = (j as { choices?: { message?: { content?: string } }[] })
+    ?.choices?.[0]?.message?.content ?? '';
   const sources = shouldRetrieve ? toSourceChunks(hits, allowPii) : undefined;
   const usedTools = shouldRetrieve && !retrievalError ? ['retrieve_chunks', 'llm_generate'] : ['llm_generate'];
 
@@ -367,7 +418,7 @@ export async function runChat(input: RunChatInput): Promise<RunChatResult> {
       model,
       usedTools,
       warnings: retrievalError ? ['retrieval_unavailable'] : undefined,
-      confidence: estimateConfidence(mode, sources?.length ?? 0, answer),
+      confidence: estimateConfidence(mode, hits, answer),
     },
   };
 }
