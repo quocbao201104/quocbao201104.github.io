@@ -1,40 +1,43 @@
 ---
-title: "GraphRAG notes"
+title: "GraphRAG design notes"
 type: "research"
 subtype: "rag-architecture"
-status: "active"
+status: "concept"
 tags: ["rag", "graphrag", "retrieval", "knowledge-graph"]
 aliases: ["graph rag", "knowledge graph retrieval"]
-updated: "2026-05-11"
+updated: "2026-08-21"
 contains_pii: false
 ---
 
-# GraphRAG notes
+# GraphRAG Design Notes
 
-## Definition
-GraphRAG combines vector retrieval with an explicit graph of entities and relationships. For Bao's portfolio, useful entities are Person, Project, Repository, Technology, Domain, Feature, Architecture Component, Data Flow, Source File, and Link.
+## Status
+GraphRAG is a **design/research note, not a claim about the current public BAO.OS deployment**. BAO.OS source currently demonstrates vector-style retrieval with deterministic local embeddings and Supabase pgvector when the AI backend is enabled; live AI/RAG is disabled on the public deployment.
 
-## When Vector RAG Is Enough
-Vector-only RAG is enough for direct questions such as "What is Arbitext?", "What stack does MarketGap VN use?", or "What did Bao build in TruyenVietHay?" A well-written Markdown fact file can retrieve the right chunk.
+## When Vector Retrieval Is Enough
+Vector retrieval is sufficient for direct project questions such as:
+- What is OmniPilot?
+- What stack does TruyenVietHay use?
+- What is the current status of MarketGap?
+- What is Trustworthy Agentic Systems researching?
 
-## When GraphRAG Helps
-GraphRAG helps when questions need relationships across files:
+Well-written project files with current status and aliases are more valuable than adding a graph purely for complexity.
 
-- Which projects use Redis?
-- Which projects involve payment or billing?
-- Which projects have Python workers or crawlers?
-- Which systems use background jobs?
-- How are Bao's AI/RAG interests connected to actual projects?
+## When a Graph Could Help
+A graph becomes useful for relationship-heavy questions:
+- Which projects use Redis or background jobs?
+- Which systems have explicit authorization/effect boundaries?
+- Which projects are public versus private?
+- Which engineering patterns recur across product and research work?
 
-## Proposed Graph Schema
-- Person: Vo Dinh Quoc Bao.
-- Project: Arbitext, MarketGap, MarketGap VN, OmniPilot AI, TruyenVietHay, BAO.OS.
-- Repository: public product domains and sanitized repository evidence references.
-- Technology: Node.js, Express, Fastify, Next.js, Vue, Python, PostgreSQL, MySQL, Redis, Socket.io, Prisma, Docker, R2, Cloudinary, Chrome MV3, OpenAI, Anthropic, OpenRouter, xAI.
-- Relationship examples: `Bao BUILDS Arbitext`, `Arbitext USES Python worker`, `MarketGap PRODUCES opportunity data`, `MarketGap VN CONSUMES opportunity data`, `OmniPilot USES RAG`, `OmniPilot RUNS_ON Chrome MV3`, `TruyenVietHay USES Redis`, `TruyenVietHay DELIVERS audio via CDN`.
+## Proposed Entity Model
+- Person: Quoc Bao.
+- Project: OmniPilot, TruyenVietHay, Trustworthy Agentic Systems, MarketGap, BAO.OS.
+- Public Artifact: CD1-2, Marketing Practitioner, Audio Ingest.
+- Technology: TypeScript, Node.js, Fastify, Express, Vue, Next.js, Python, PostgreSQL, MySQL, Redis, Docker, R2, Cloudinary, Chrome MV3.
+- Concept: durable state, idempotency, provenance, authorization, temporal correctness, retrieval, bounded effects, recovery.
+
+Example relationships: `OmniPilot USES durable local state`, `TruyenVietHay DELIVERS media via CDN`, `MarketGap PRODUCES engine_sync_v3 read models`, `Trustworthy Agentic Systems STUDIES action-to-effect binding`, `BAO.OS IMPLEMENTS vector retrieval architecture`.
 
 ## Pitfalls
-- Do not turn inferred links into hard employment claims.
-- Do not duplicate stale placeholder content into graph nodes.
-- Keep graph nodes source-backed with public links or sanitized repository evidence.
-- Use graph retrieval for relationship questions, and vector retrieval for detailed project descriptions.
+Do not present proposed graph nodes as implemented infrastructure. Do not turn technical relationships into employment, scale, novelty, or performance claims.

@@ -1,59 +1,61 @@
 ---
-title: "TruyenVietHay story reading and audio platform"
+title: "TruyenVietHay — Reading & Audio Platform"
 type: "project"
-subtype: "flagship"
+subtype: "shipped"
 project_id: "truyenviethay-platform"
-status: "active"
-tags: ["content-platform", "nodejs", "vue", "mysql", "redis", "socketio"]
+status: "completed"
+eyebrow: "SHIPPED · PUBLIC SOURCE"
+icon: "spark"
+tags: ["vue", "nodejs", "mysql", "redis", "socketio", "cdn", "pwa"]
 aliases: ["TruyenVietHay", "Truyen Viet Hay", "truyenviethay.id.vn"]
-updated: "2026-06-30"
+updated: "2026-08-21"
 contains_pii: false
-summary: "Nền tảng đọc truyện và nghe audio tiếng Việt: đọc truyện dài kỳ kèm bản audio, lưu tiến độ đa thiết bị, cùng cộng đồng (bình luận, chat realtime), gamification và công cụ cho tác giả."
-problem: "Độc giả theo truyện dài kỳ muốn vừa đọc vừa nghe, giữ tiến độ xuyên thiết bị và tương tác cộng đồng; tác giả cần công cụ đăng truyện và phát triển độc giả. TruyenVietHay gộp tất cả trong một nền tảng nhanh, mở rộng tốt."
+summary: "Completed full-stack Vietnamese reading/audio platform with CDN-backed content delivery, realtime community features, background jobs, gamification, and author/admin tooling."
+problem: "Media-heavy reading/listening products need to keep application state, realtime interaction, and background work responsive without forcing chapter JSON and audio traffic through the main API server."
 ---
 
-# TruyenVietHay story reading and audio platform
+# TruyenVietHay — Reading & Audio Platform
 
 ## RAG Aliases
-TruyenVietHay, Truyen Viet Hay, truyenviethay.id.vn, Vietnamese story platform, story reading app, audio stories, web novel platform.
+TruyenVietHay, Truyen Viet Hay, Vietnamese story platform, reading app, audio stories, web novel platform.
+
+## Current Status
+**Completed system. Public source.** TruyenVietHay is the clearest inspectable example of a shipped full-stack product in Bao's portfolio.
 
 ## Summary
-TruyenVietHay is a Vietnamese story platform for reading serialized stories and listening to their audio versions. It supports reading and audio playback, saved reading progress, author profiles and tools, community features, gamification, and a virtual shop. Public product domain: `https://truyenviethay.id.vn/`.
+TruyenVietHay combines serialized story reading, audio playback, saved progress, discovery, community interaction, gamification, author tooling, and admin moderation in one Vue/Node application.
 
-Short answer: TruyenVietHay is Bao's full-stack Vietnamese reading-and-audio platform with a community and gamification layer.
+## Architecture
+- **Frontend:** Vue 3, TypeScript, Vite, Tailwind CSS, Pinia, PWA support.
+- **Backend:** Node.js 20, Express, Socket.io, MySQL, Redis.
+- **Content delivery:** story/audio metadata comes from the application API while chapter JSON and MP3 assets are delivered from object storage/CDN paths; images use Cloudinary.
+- **Background work:** node-cron + Redis support batched view updates, daily statistics, aggregate reconciliation, cleanup, rewards, and ranking tasks.
 
-## Problem It Solves
-Vietnamese readers who follow serialized stories want a fast, mobile-friendly place to both read and listen, keep their progress across devices, and interact with a community — while authors want tools to publish and grow an audience. TruyenVietHay brings reading, audio, progress tracking, social features, and author tools together in one platform, with media delivery designed to stay fast as content and listening grow.
+This separation is an architectural choice to reduce application-server pressure from content-heavy read/listen flows; the corpus does not claim a verified public traffic level.
 
-## Key Features
-- Read stories and listen to audio versions, with per-user reading and listening progress.
-- Discovery: categories, search, rankings, and personalized history.
-- Community: comments, ratings, likes, follows, realtime chat, and notifications.
-- Gamification: levels, points, tasks, rewards, badges, currency, and a shop with items like avatar frames and chat colors.
-- Author tools: public author profiles, an author dashboard, application flow, and story/chapter publishing.
-- Admin & moderation: story/chapter approval, reports, and content moderation.
-- SEO and fast content delivery for story listings, chapters, and audio.
+## Product Surface
+- Reading preferences, continue-reading state, prefetch, and audio progress.
+- Search/categories/rankings and user history.
+- Comments, ratings, follows, realtime chat, and notifications.
+- Levels, EXP/currencies, missions, rewards, badges, inventory, and shop items.
+- Author profiles/dashboard and story management.
+- Admin approval/moderation and reporting flows.
 
-## How It Works (high level)
-TruyenVietHay separates lightweight data (story info, progress, permissions) from heavy content (chapter text and audio files). Heavy content is served through a CDN / object storage instead of the main app server, which keeps reading and listening fast even under high traffic. Realtime features like chat and notifications run over a live connection, and background jobs keep things like view counts, rankings, and rewards up to date without slowing down normal requests.
+## Security and Operations
+JWT auth, Google OAuth, bcrypt, validation, Helmet, CORS, rate limiting, structured logging, Docker-based local services, tests, migrations, and VPS deployment documentation.
 
-## Tech Stack
-- Backend: Node.js, Express, Socket.io (realtime), MySQL, Redis (cache and presence), scheduled background jobs.
-- Frontend: Vue 3, TypeScript, Vite, Tailwind CSS, Pinia, PWA support.
-- Media & storage: Cloudflare R2 / object storage and CDN for chapters and audio, Cloudinary for images.
-- Security: JWT and Google sign-in, bcrypt, input validation, rate limiting.
-- Tests & ops: automated tests, Docker-based local environment, VPS deployment.
+## Public Evidence
+- Source: https://github.com/quocbao201104/TruyenVietHay
+- Live/product domain: https://truyenviethay.id.vn/
 
-## Public Evidence Snapshot
-- Public product domain: `https://truyenviethay.id.vn/`.
-- A full-stack platform: Node.js/Express + Socket.io backend, Vue 3 frontend, MySQL + Redis.
-- Separate CDN-backed delivery for chapter text and audio to keep high-read/high-listen flows fast.
-- Community and gamification systems alongside author and admin tools.
+The public repository includes backend/frontend source, migrations, tests, environment examples, Docker local setup, and deployment documentation.
+
+## Honest Boundaries
+TruyenVietHay demonstrates completed engineering scope. Public repository evidence does not establish verified user counts, revenue, or production request volume.
 
 ## Links
-- Domain: https://truyenviethay.id.vn/
-- Live app: https://truyenviethay.id.vn/
-- Source policy: use the product domain instead of a project repository link.
+- [GitHub source](https://github.com/quocbao201104/TruyenVietHay)
+- [Live app](https://truyenviethay.id.vn/)
 
 ## Best RAG Answer
-If asked "what is TruyenVietHay?", answer: TruyenVietHay is Bao's full-stack Vietnamese story-and-audio platform. Readers can read serialized stories and listen to their audio versions with saved progress, plus discovery, community features (comments, ratings, realtime chat, notifications), gamification (levels, points, rewards, a shop), and author/admin tools. It is built on a Node.js/Express + Socket.io backend with MySQL and Redis, a Vue 3 frontend, and CDN/object-storage delivery for chapters and audio. Its strength is combining reading, audio, and community in one fast, scalable platform.
+TruyenVietHay is Bao's completed full-stack Vietnamese reading/audio platform. It uses Vue 3 on the frontend, Node.js/Express + Socket.io on the backend, MySQL/Redis for state and cache/realtime support, background jobs for operational workloads, and object storage/CDN delivery for chapter/audio assets. Its source is publicly inspectable on GitHub.

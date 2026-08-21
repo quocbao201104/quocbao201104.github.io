@@ -5,29 +5,31 @@ subtype: "contact"
 status: "active"
 tags: ["profile", "contact", "public-links"]
 aliases: ["contact", "links", "bao contact"]
-updated: "2026-05-11"
+updated: "2026-08-21"
 contains_pii: true
 ---
 
 # Links & Contact
 
+The email below is intentionally public contact information. Do not add private phone numbers or other unnecessary personal data to this public repository.
+
 - Email: quocbao201104@gmail.com
-- Phone: 0372783767
 - GitHub: https://github.com/quocbao201104
-- Portfolio domain: https://baodev.me/
+- Portfolio: https://baodev.me/
 
-## Project Source Policy
-- Arbitext: use https://arbitext.com as the public product domain.
-- MarketGap VN and MarketGap data engine: use https://marketgap.com as the public product domain.
-- TruyenVietHay: use https://truyenviethay.id.vn/ as the public product domain.
-- Do not provide project-specific GitHub repository links for Arbitext, MarketGap, MarketGap VN, or TruyenVietHay.
+## Public Project / Evidence Links
+- TruyenVietHay source: https://github.com/quocbao201104/TruyenVietHay
+- TruyenVietHay app: https://truyenviethay.id.vn/
+- BAO.OS source: https://github.com/quocbao201104/quocbao201104.github.io
+- CD1-2: https://github.com/quocbao201104/CD1-2
+- Marketing Practitioner: https://github.com/quocbao201104/marketing-practitioner-skill
+- Audio Ingest: https://github.com/quocbao201104/Audio-Ingest
 
-## Live or Product Links
-- Arbitext domain: https://arbitext.com
-- MarketGap domain: https://marketgap.com
-- TruyenVietHay live app: https://truyenviethay.id.vn/
-- TruyenVietHay API domain referenced in docs: https://api.truyenviethay.id.vn/
-- TruyenVietHay CDN domains referenced in docs: https://cdn.truyenviethay.id.vn/ and https://audio.truyenviethay.id.vn/
+## Private Source Policy
+- OmniPilot is active commercial work; source remains private.
+- MarketGap is paused private R&D/product IP; source remains private.
+- Trustworthy Agentic Systems remains private until research release.
+- Do not invent public repository links or expose private repository URLs for these projects.
 
 ## RAG Notes
-If asked for contact, prefer email and the GitHub profile first. Mention the phone number only when the user explicitly asks for phone/contact details. If asked for source code of the main projects, provide public product domains and avoid claiming a public repository link.
+If asked for contact, prefer email, GitHub, and the portfolio. If asked for inspectable source, lead with TruyenVietHay and the public engineering repositories above. Do not imply that private projects are publicly inspectable.

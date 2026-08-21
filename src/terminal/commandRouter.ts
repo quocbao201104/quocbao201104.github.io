@@ -13,6 +13,12 @@ function out(
   return { kind: 'output', speaker, speakerTone: tone as any, text } as TerminalLine;
 }
 
+function liveAiEnabled(): boolean {
+  const raw = (import.meta as any).env?.VITE_AI_ENABLED;
+  if (raw === undefined || raw === null || raw === '') return true;
+  return !['0', 'false', 'off', 'no'].includes(String(raw).trim().toLowerCase());
+}
+
 export interface CommandResult {
   lines: TerminalLine[];
   clear?: boolean;
@@ -46,6 +52,18 @@ export function runTerminalCommand(opts: {
   if (routed.kind === 'clear') return { lines: [], clear: true };
   if (routed.kind === 'error') return { lines: [out('', routed.message, 'muted')] };
 
+  if (!liveAiEnabled()) {
+    return {
+      lines: [
+        out(
+          'BAO.OS',
+          'Live LLM/RAG is intentionally offline on this public deployment. The routing, retrieval, redaction, and API implementation remain available in the public source; enable VITE_AI_ENABLED with the backend environment to run the interactive AI modes.',
+          'warn',
+        ),
+      ],
+    };
+  }
+
   return {
     lines: [],
     remote: {
@@ -61,4 +79,3 @@ export function runTerminalCommand(opts: {
     },
   };
 }
-

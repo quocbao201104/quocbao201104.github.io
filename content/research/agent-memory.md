@@ -1,27 +1,35 @@
 ---
-title: "Agent memory notes"
+title: "BAO.OS memory and retrieval notes"
 type: "research"
+subtype: "rag-architecture"
 status: "active"
+updated: "2026-08-21"
+contains_pii: false
 ---
 
-# Agent memory notes
+# BAO.OS Memory and Retrieval Notes
 
-## Portfolio RAG Strategy
-BAO.OS memory uses Markdown files as long-term facts for Supabase pgvector. The current ingest script sends each Markdown file as raw UTF-8 text and the API chunks content by roughly 1100 characters with overlap. Because frontmatter is not parsed into separate metadata during ingest, useful retrieval terms must appear in the visible Markdown body too.
+## Current Deployment Reality
+BAO.OS implements an LLM/RAG backend, retrieval modes, personas, deterministic local embeddings, Supabase pgvector retrieval, server-side redaction, and OpenAI-compatible endpoints. The **public deployment currently disables live AI/RAG**. The source architecture and tests remain inspectable, and the Markdown corpus remains versioned so the backend can be re-enabled later without rebuilding project knowledge from scratch.
+
+## Corpus Strategy
+The ingestion path treats Markdown as retrieval data and chunks raw text into overlapping sections. Important aliases and project names therefore need to appear in the visible body, not only in frontmatter.
 
 ## Memory Types
-- Profile memory: stable facts about Bao, positioning, contact, language, location, and current focus.
-- Project memory: source-backed facts about architecture, stack, role, data flow, highlights, links, and honest boundaries.
-- Timeline memory: chronological evidence across active projects.
-- Research memory: how Bao thinks about RAG, GraphRAG, agent workflows, and system design.
-- Notes memory: dated updates that explain why the corpus changed.
+- Profile memory: public-safe positioning, current focus, and public contact links.
+- Project memory: current status, architecture, data flow, stack, verified evidence, public links, and honest boundaries.
+- Timeline memory: chronological engineering evidence with active/completed/paused distinctions.
+- Research memory: BAO.OS retrieval architecture and Trustworthy Agentic Systems methodology/status.
+- Notes memory: dated corpus changes that prevent old project status from silently surviving.
 
 ## Retrieval Rules
-- Repeat aliases near the top of each important file. Example: Arbitext should also include Arbitex because users may type the path name.
-- Add public links and sanitized repository evidence so retrieved chunks can ground answers safely.
-- Keep sections short enough that one chunk carries a complete answer.
-- Avoid unresolved placeholder markers because the assistant may retrieve and repeat them.
-- If metrics are not verified, explicitly say the corpus does not include verified metrics.
+- Prefer the current project index when status conflicts with older notes.
+- Repeat aliases near the top of important files.
+- Keep one chunk capable of answering one coherent question.
+- Distinguish **implemented in source** from **currently enabled on the public deployment**.
+- Distinguish private-source evidence from public inspectable evidence.
+- If metrics are not verified, say the corpus does not contain verified metrics.
+- Never use the RAG redaction layer as an excuse to store sensitive data in the public Git repository.
 
-## Safety and Accuracy
-The assistant should not invent traffic, users, revenue, team size, or employment claims. It can say "repository evidence shows" for stack, modules, routes, migrations, docs, tests, and architecture.
+## Current Main Entities
+OmniPilot, TruyenVietHay, Trustworthy Agentic Systems, MarketGap, and BAO.OS. Public supporting evidence also includes CD1-2, Marketing Practitioner, and Audio Ingest.

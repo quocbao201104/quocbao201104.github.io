@@ -1,59 +1,51 @@
 ---
-title: "MarketGap VN and MarketGap"
+title: "MarketGap — Product Opportunity Intelligence"
 type: "project"
-subtype: "flagship"
+subtype: "explored"
 project_id: "marketgap-vn-marketgap"
-status: "active"
-tags: ["data-pipeline", "saas", "nextjs", "python", "postgresql", "analytics"]
-aliases: ["MarketGap", "MarketGap VN", "Taobao to Shopee", "1688 to Shopee"]
-updated: "2026-06-30"
+status: "paused"
+eyebrow: "EXPLORED · PAUSED"
+icon: "spark"
+tags: ["python", "data-pipeline", "nextjs", "postgresql", "vision", "analytics"]
+aliases: ["MarketGap", "MarketGap VN", "MarketGap-VN", "1688 to Shopee"]
+updated: "2026-08-21"
 contains_pii: false
-summary: "Công cụ nghiên cứu cơ hội thị trường cho người bán nguồn hàng 1688 (Trung Quốc) sang Shopee VN: tìm sản phẩm cầu cao - cạnh tranh thấp, chấm điểm và đề xuất nhập-thử / theo dõi / bỏ qua."
-problem: "Nhìn một sản phẩm 1688, người bán khó biết có nên nhập: ai đang bán trên Shopee, giá, lượt bán, mức cạnh tranh, thị trường bão hòa hay còn khe hở. MarketGap trả lời tự động và đưa khuyến nghị rõ ràng."
+summary: "Paused private R&D/product track that turns 1688 source signals and Shopee market evidence into explainable opportunity decisions through a headless Python engine and separate SaaS read-model layer."
+problem: "Sourcing decisions combine messy source listings, duplicate products, visual market matching, margin assumptions, competition, demand, and risk. The system was designed to normalize those signals into evidence-backed decisions instead of a single opaque score."
 ---
 
-# MarketGap VN + MarketGap
+# MarketGap — Product Opportunity Intelligence
 
 ## RAG Aliases
-MarketGap, MarketGap VN, MarketGap-VN, 1688 to Shopee, Taobao to Shopee, Shopee Vietnam opportunity dashboard, market gap finder, product opportunity SaaS, opportunity board.
+MarketGap, MarketGap VN, 1688 to Shopee, Shopee Vietnam opportunity research, product opportunity engine, market gap finder.
 
-## Summary
-MarketGap is a market opportunity research tool for sellers who source products from 1688 (China) to sell on Shopee Vietnam. It finds products that have strong demand on Shopee but little or early competition, scores how good each opportunity is, and shows the results in a dashboard. Public product domain: `https://marketgap.com`.
+## Current Status
+**Paused. Private source.** MarketGap is not a current live-product claim. It remains substantial reusable product/R&D IP and is useful as evidence of data-pipeline, scoring, contract, SaaS, auth, and billing engineering.
 
-The product has two parts: a data engine (MarketGap) that gathers and scores opportunities, and a SaaS dashboard (MarketGap VN) where users browse and act on them.
+## System Split
+MarketGap intentionally separates computation from presentation:
 
-Short answer: MarketGap helps Vietnam sellers decide which 1688 products are worth importing to Shopee.
+### Headless Python engine
+Pipeline stages include source crawling, pHash/title deduplication, Chinese-title translation, Shopee image/market matching, source-supply enrichment, summary/scoring, and publication of a versioned SaaS payload.
 
-## Problem It Solves
-A seller looking at a 1688 product cannot easily tell whether it is worth importing: is anyone already selling it on Shopee, how many shops, what are the prices, sold counts, ratings, and competition, and is this a saturated market or a real gap. MarketGap answers those questions automatically and gives a clear recommendation — test-import, watch, or skip — so sellers spend less time on manual research.
+The scoring layer keeps multiple signals separate: demand, visual gap, estimated margin, local gap, data confidence, competition pressure, risk, spam/fake-sold suspicion, price-war indicators, and supply quality evidence. Velocity is used for trend classification rather than blindly boosting the opportunity score. Outputs include decision labels, reasons, risks, next actions, and evidence.
 
-## Key Features
-- Opportunity board: a ranked list of product opportunities with price, sold, rating, competition, and an opportunity score.
-- A clear decision per product (for example import-test, watchlist, or skip) with the reasons behind it.
-- Product detail pages combining the 1688 source side and the Shopee market side.
-- Competitor analysis showing which shops already sell similar products and how strong they are.
-- A market radar with alerts such as rising trends, new hot listings, price drops, and early gaps.
-- User actions: save, take notes, watch for changes, and (on the Pro plan) reserve an item.
-- Subscription plans (Free / Starter / Pro) with account, login, and online payment.
+### MarketGap VN SaaS
+A separate Next.js/React/TypeScript application consumes normalized engine read models rather than raw crawler APIs. It uses Prisma/PostgreSQL for opportunity/detail/competitor/radar data plus user state.
 
-## How It Works (high level)
-The data engine crawls product sources, groups duplicate listings together, checks the Shopee market with image search, and scores each opportunity from demand, competition, estimated margin, and risk signals. It then publishes the finished results to the dashboard. The dashboard only reads these finished results — it does not crawl or recompute — which keeps it fast and keeps the heavy data work separate from the user-facing app.
+The SaaS includes custom auth/session handling, save/note/watch/reserve workflows, subscription entitlements, admin controls, Redis-backed rate limiting with fallback, audit logging, Sentry integration, and payOS billing. Payment activation is based on verified webhook truth rather than browser return URLs.
+
+## Data Contract
+The engine publishes `engine_sync_v3`; the SaaS validates and upserts it idempotently. Stable identifiers are derived for radar/competitor records where upstream IDs are missing so repeated syncs do not create duplicates.
 
 ## Tech Stack
-- Data engine: Python, image search and visual matching, scheduled crawling pipeline.
-- SaaS dashboard: Next.js, React, TypeScript, Prisma, PostgreSQL.
-- Accounts & payments: custom email/password and Google sign-in, payOS online payments, email notifications.
-- Infrastructure: Redis (rate limiting), error monitoring, automated tests.
+Python, SQLite for engine state, pHash/vision-assisted matching, scheduled jobs, Next.js, React, TypeScript, Prisma, PostgreSQL, Redis, Zod, payOS, Vitest.
 
-## Public Evidence Snapshot
-- Public product domain: `https://marketgap.com`.
-- A two-part system: a Python data/scoring engine and a Next.js SaaS dashboard.
-- Opportunity scoring with explainable decisions, competitor analysis, and a market radar.
-- Subscription tiers with online payment.
+## Honest Boundaries
+The corpus does not assert that MarketGap is currently operating as a public service, has paying users, or has validated predictive accuracy. It should be described as a paused but technically serious product/R&D track.
 
 ## Links
-- Domain: https://marketgap.com
-- Source policy: use the product domain instead of project repository links.
+Source remains private. Do not invent or expose private repository links as public evidence.
 
 ## Best RAG Answer
-If asked "what is MarketGap?", answer: MarketGap is Bao's 1688-to-Shopee-Vietnam opportunity research tool. A Python engine gathers product candidates, checks the Shopee market with image search, and scores each opportunity by demand, competition, margin, and risk; the MarketGap VN dashboard (Next.js + PostgreSQL) then shows a ranked opportunity board, product detail and competitor views, and a market radar, with save/watch/reserve actions and subscription plans paid through payOS. Its strength is turning messy sourcing research into a clear, scored, actionable recommendation for sellers.
+MarketGap is Bao's paused 1688-to-Shopee product-opportunity R&D track. A headless Python engine crawls, deduplicates, visually matches, enriches, scores, and explains opportunities, then publishes a versioned read-model contract to a separate Next.js/PostgreSQL SaaS that handles user workflows, entitlements, and billing. Its value in the portfolio is the separation of evidence, scoring, data contracts, and product-shell concerns—not a claim that the service is currently live.

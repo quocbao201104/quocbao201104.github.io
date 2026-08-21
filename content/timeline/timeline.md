@@ -1,39 +1,37 @@
 ---
-title: "Timeline"
+title: "Engineering timeline"
 type: "timeline"
+status: "active"
+updated: "2026-08-21"
+contains_pii: false
 ---
 
-# Timeline
+# Engineering Timeline
 
-## 2026-05 → Present — MarketGap VN SaaS
-- Built a Next.js/React/TypeScript SaaS dashboard for MarketGap's product opportunity data.
-- Modeled PostgreSQL data with Prisma for users, plans, subscriptions, payments, and the opportunity/competitor/radar data the engine produces.
-- Implemented idempotent ingest of the data engine's results so re-syncing the same data updates cleanly instead of duplicating it.
-- Added auth, subscription/entitlement logic, payOS checkout/webhook flow, the opportunity board and detail/competitor/radar views, and tests.
+## 2026-08 → Present — Trustworthy Agentic Systems
+- Started/continued a research track on durable agent-state integrity, provenance, temporal correctness, authority, and effect governance.
+- Used adversarial review and strong null hypotheses to discard or narrow weak formal ideas instead of forcing novelty.
+- Current A0.3 work freezes benchmark semantics, implementation, held-out population, and adjudication rules before authoritative evaluation.
+- As of 2026-08-21, authoritative held-out results remain unseen.
 
-## 2026-04 → Present — Arbitext AI Translation Platform
-- Built a monorepo with Node.js API control plane, Next.js product shell, and Python worker runtime.
-- Implemented document ingestion, parsing, cleaning, segmentation, context analysis, LLM drafting, deterministic gates, arbiter repair, review, export, and provider routing.
-- Added production readiness checks, migration status tools, launch rehearsal scripts, Docker/Caddy deployment shape, storage abstraction, and runbooks.
-- Worked on provider ops for OpenAI, Anthropic, OpenRouter, and xAI with DB-backed credential resolution and usage tracking.
+## 2026-06 → Present — OmniPilot
+- Building a seller-controlled Shopee AI sales agent as a Chrome MV3 extension + Fastify backend.
+- Added local-first durable state, retry/recovery paths, idempotent decisions, a durable send queue, stale-send protection, RAG/knowledge ingestion, deterministic compliance/risk gates, observability, and kill-switches.
+- Source remains private because it is active commercial work.
 
-## 2025-06 → Present — TruyenVietHay Platform
-- Built and maintained Node.js services for story delivery, audio workflows, user activity features, gamification, shop/inventory, reports, and author tools.
-- Separated metadata APIs from CDN-served chapter and audio assets to reduce backend pressure on high-read and high-listen flows.
-- Implemented JWT, Google OAuth, role-based authorization, Redis caching, Socket.io realtime, notification queues, and cron automation.
-- Added migrations, tests, validators, transactions, cache invalidation, SEO/sitemap planning, and deployment docs.
+## 2026 — TruyenVietHay — Completed
+- Completed a full-stack Vietnamese reading/audio platform with Vue 3, Node.js/Express, MySQL, Redis, Socket.io, PWA support, gamification, author/admin tooling, and background jobs.
+- Separated application metadata/state from CDN/object-storage delivery for chapter JSON and audio assets.
+- Source was made public in August 2026 for inspectable engineering evidence: https://github.com/quocbao201104/TruyenVietHay
 
-## 2026-04 → Present — MarketGap Data Engine
-- Developed a Python data engine for 1688-to-Shopee-Vietnam product opportunity research.
-- Built scheduled stages for crawling sources, grouping duplicate listings, checking the Shopee market with image search, scoring opportunities (demand, competition, margin, risk), and publishing finished results to the dashboard.
-- Kept the data engine separate from the user-facing app so the dashboard reads only finished, normalized results.
+## 2026-04 → Paused — MarketGap
+- Built a Python headless engine for 1688-to-Shopee product-opportunity research: crawl, dedupe, translation, visual/market matching, source enrichment, explainable scoring, and versioned read-model publication.
+- Built a separate Next.js/PostgreSQL SaaS for auth, opportunity exploration, saved/watch/reserve actions, subscriptions, audit, and payOS billing.
+- The product/R&D track is paused; private source remains reusable IP rather than a current live-product claim.
 
-## 2026-06 → Present — OmniPilot AI Shopee Agent
-- Built an AI agent that handles a Shopee shop's customer chat 24/7, delivered as a Chrome MV3 extension (Vue 3) plus a Fastify backend.
-- Implemented knowledge-grounded (retrieval-augmented) replies from the shop's product specs, policies, and FAQs, with seller-controlled auto-send and a kill-switch.
-- Added safety handling for risky buyers, off-platform requests, and customer reviews, and a client/server split that keeps AI credentials and customer data protected.
+## 2026-05 → Present — BAO.OS
+- Built an interactive React/TypeScript portfolio with command parsing/routing, multiple AI/RAG modes, deterministic local embeddings, Supabase pgvector retrieval, server-side redaction, and an OpenAI-compatible API surface.
+- The public deployment currently disables live LLM/RAG to avoid maintaining always-on AI/database infrastructure for portfolio traffic; the implementation remains in source for inspection or later reactivation.
 
-## 2022-09 → Present — Information Technology Student
-- Focused on software engineering, databases, web architecture, backend systems, and applied AI tooling.
-- Used side projects to practice production thinking around auth, persistence, caching, queues, deployment, testing, and maintainability.
-- University name, major details, GPA, and coursework are not included in the current RAG corpus.
+## Ongoing Pattern
+Across these systems, the recurring focus is explicit state, recovery, idempotency, trust boundaries, observability, evidence, and bounded automation rather than framework-specific demos.

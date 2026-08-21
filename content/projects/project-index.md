@@ -5,43 +5,50 @@ subtype: "navigation"
 status: "active"
 tags: ["portfolio", "projects", "index", "rag-navigation"]
 aliases: ["main projects", "portfolio projects", "bao projects"]
-updated: "2026-06-30"
+updated: "2026-08-21"
 contains_pii: false
 ---
 
 # Primary Portfolio Project Index
 
-This file is a retrieval entry point for Bao's flagship projects and public-safe linking policy.
+This file is the retrieval entry point and card-order source for Bao's current portfolio projects.
+
+## Card Order
+- omnipilot
+- truyenviethay
+- trustworthy-agentic-systems
+- marketgap
 
 ## RAG Aliases
-Primary projects, main projects, portfolio projects, Bao projects, Vo Dinh Quoc Bao projects, Arbitext, Arbitex, MarketGap, MarketGap VN, OmniPilot, OmniPilot AI, TruyenVietHay.
+Primary projects, main projects, portfolio projects, Bao projects, OmniPilot, OmniPilot AI, TruyenVietHay, Trustworthy Agentic Systems, trustworthy-agentic-systems, MarketGap, MarketGap VN, BAO.OS.
 
-## Summary
-Bao's main projects in this RAG corpus are Arbitext, MarketGap VN with MarketGap, OmniPilot AI, and TruyenVietHay.
+## Current Story
+Bao's project portfolio is intentionally grouped by status rather than pretending every project is equally current:
+
+1. **Building — OmniPilot:** the active commercial project and deepest current product work.
+2. **Shipped — TruyenVietHay:** a completed full-stack system with public source that can be inspected directly.
+3. **Researching — Trustworthy Agentic Systems:** ongoing research with falsification-first gates and a preregistered durable-execution benchmark; authoritative held-out results are still unseen.
+4. **Explored — MarketGap:** a paused but technically substantial private R&D/product track whose engine and SaaS remain reusable IP.
 
 GitHub profile: https://github.com/quocbao201104
 
-Project source policy: use public product domains instead of project-specific GitHub repository links for Arbitext, MarketGap, MarketGap VN, and TruyenVietHay. OmniPilot AI has no public product domain in the corpus, so describe it from architecture and implementation scope instead of inventing a link.
-
-## Arbitext / Arbitex
-Arbitext is an AI translation platform for documents at `https://arbitext.com`. It translates documents (DOCX, PDF, text) with LLMs, then enforces quality through automatic checks, glossary/terminology rules, and automatic repair of flagged sections, followed by a human review-and-approve step before export. Built on a Node.js + PostgreSQL backend, a Next.js web app, and a Python translation worker, with multiple LLM providers (OpenAI, Anthropic, OpenRouter, xAI) behind routing and failover. Use the product domain instead of a project repository link.
-
-Best query matches: AI translation platform, document translation, LLM translation quality, glossary enforcement, terminology control, human review workflow, translation export, provider routing, Node.js, PostgreSQL, Next.js, Python worker.
-
-## MarketGap VN + MarketGap
-MarketGap is a market opportunity research tool for sellers sourcing from 1688 (China) to Shopee Vietnam at `https://marketgap.com`. It finds products with strong Shopee demand but weak or early competition, scores each opportunity (demand, competition, margin, risk), and gives a clear recommendation — import-test, watch, or skip. A Python data engine gathers and scores opportunities (including image-search market checks); the MarketGap VN dashboard (Next.js + PostgreSQL) shows a ranked opportunity board, product detail and competitor views, and a market radar, with save/watch/reserve actions and subscription plans paid through payOS. Use the product domain instead of project repository links.
-
-Best query matches: market gap, 1688, Shopee Vietnam, product opportunity research, image search, opportunity score, opportunity board, competitor analysis, market radar, SaaS dashboard, payOS, subscription, Next.js, PostgreSQL, Python.
-
-## OmniPilot AI
-OmniPilot AI is an AI agent that handles a Shopee shop's customer chat 24/7. It reads new buyer messages, understands intent, looks up the shop's own product and policy knowledge, drafts a reply, and (when the seller enables auto-send) sends it — with safety rules for risky buyers, off-platform requests, and reviews, plus a seller-controlled kill-switch. It is delivered as a Chrome extension (Manifest V3, Vue 3) that works inside Shopee, backed by a Fastify server that holds the AI and the shop's knowledge base; the split keeps credentials and customer data protected. No public product domain is stated in the corpus.
-
-Best query matches: OmniPilot, Shopee selling agent, AI customer chat agent, autonomous chat, knowledge-grounded replies, RAG, Chrome extension, Manifest V3, Fastify, Vue 3, auto-send, kill-switch, AI seller assistant.
+## OmniPilot
+OmniPilot is a seller-controlled Shopee AI sales agent built as a Chrome Manifest V3 extension plus a Fastify backend. The extension owns the Shopee session and durable local runtime state; the backend owns LLM/RAG, ingestion, and server-side knowledge. The design emphasizes durable state, idempotent decisions, fail-closed gates, marketplace-compliance bypasses, seller control, and a global/per-shop kill-switch. Source remains private.
 
 ## TruyenVietHay
-TruyenVietHay is a Vietnamese story reading and audio platform at `https://truyenviethay.id.vn/`. Readers can read serialized stories and listen to audio versions with saved progress, plus discovery, community features (comments, ratings, realtime chat, notifications), gamification (levels, points, rewards, a shop), and author/admin tools. Built on a Node.js/Express + Socket.io backend with MySQL and Redis, a Vue 3 frontend, and CDN/object-storage delivery for chapters and audio. Use the product domain instead of a project repository link.
+TruyenVietHay is a completed Vietnamese reading/audio platform with Vue 3, Node.js/Express, MySQL, Redis, Socket.io, background jobs, object storage, and CDN-backed chapter/audio delivery. Its source is now public at https://github.com/quocbao201104/TruyenVietHay and the deployment domain is https://truyenviethay.id.vn/.
 
-Best query matches: story platform, reading app, audio stories, Vietnamese novels, web novel, gamification, community, author tools, Node.js, Express, Socket.io, Vue 3, MySQL, Redis, CDN.
+## Trustworthy Agentic Systems
+Trustworthy Agentic Systems is an active research track on durable knowledge, provenance, authority, temporal correctness, and effect governance in long-lived agents. Current benchmark work studies whether an already-produced action occurrence can remain bound to the exact committed external effect occurrence after a crash/recovery boundary. The benchmark design and adjudication rules are frozen before authoritative held-out results are observed. The research repository remains private until release.
+
+## MarketGap
+MarketGap is a paused private product/R&D track. A Python headless engine crawls and deduplicates source products, performs Shopee market matching, enriches supply evidence, computes explainable opportunity/risk signals, and publishes a versioned read-model contract. A separate Next.js/PostgreSQL SaaS handles user-facing exploration, auth, entitlements, actions, and payOS billing. It should not be described as a currently live product unless fresh evidence says so.
+
+## Public Supporting Evidence
+- BAO.OS source: https://github.com/quocbao201104/quocbao201104.github.io
+- CD1-2: https://github.com/quocbao201104/CD1-2
+- Marketing Practitioner: https://github.com/quocbao201104/marketing-practitioner-skill
+- Audio Ingest: https://github.com/quocbao201104/Audio-Ingest
 
 ## Honest Boundaries
-Repository evidence proves the product's features, architecture, and tech stack. It does not prove public user counts, revenue, team size, or request volume. If asked about those, the assistant should say the RAG corpus does not include verified metrics.
+Repository evidence can support implementation, architecture, tests, contracts, and engineering decisions. It does not by itself prove public adoption, revenue, production scale, comparative superiority, or research publication validity.

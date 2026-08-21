@@ -1,19 +1,29 @@
 ---
-title: "Memory compression experiment"
+title: "Portfolio memory compression"
 type: "experiment"
 status: "active"
+updated: "2026-08-21"
+contains_pii: false
 ---
 
-# Memory compression experiment
+# Portfolio Memory Compression
 
 ## Purpose
-The memory compression experiment is the process of turning large source repositories into small, high-signal RAG files for BAO.OS. The goal is to help the portfolio assistant answer accurately without ingesting every line of source code.
+Memory compression means turning large repositories and research artifacts into small, high-signal Markdown facts for BAO.OS without ingesting every source line or turning guesses into portfolio claims.
 
-## Current Method
-- Read source repos for project evidence: README, package files, schema files, route maps, docs, tests, and key services.
-- Compress each project into stable facts: summary, aliases, problem, role, architecture, data flow, tech stack, engineering highlights, source evidence, and best answer.
-- Preserve uncertainty. If the repo does not prove traffic, revenue, team size, or scale, the RAG file says so.
-- Keep chunks retrieval-friendly by repeating project names and query terms.
+## Method
+- Read README/docs/contracts/tests and key implementation boundaries.
+- Compress each current project into: status, aliases, summary, problem, architecture, data flow, stack, reliability/security highlights, public evidence, private-source boundary, and honest non-claims.
+- Keep completed, active, paused, and research-in-progress statuses explicit.
+- Prefer current source over older portfolio notes when they conflict.
+- Remove abandoned-project content from the current-project corpus instead of leaving stale retrieval anchors.
+- Keep public corpus data safe even when server-side redaction exists.
 
-## Result
-The current compression pass covers Arbitext, MarketGap VN plus MarketGap, OmniPilot AI, and TruyenVietHay.
+## Current Result
+The 2026-08-21 refresh covers the current four-project story:
+- OmniPilot — building / active commercial / private source.
+- TruyenVietHay — shipped / completed / public source.
+- Trustworthy Agentic Systems — research in progress / held-out results unseen.
+- MarketGap — explored / paused / private source.
+
+Supporting public engineering evidence is indexed separately through BAO.OS, CD1-2, Marketing Practitioner, and Audio Ingest.
