@@ -116,7 +116,13 @@ export default async function handler(req: Request) {
     const mode = pickMode(requestedModel);
     const persona = pickPersona(requestedModel);
 
-    const { answer } = await runChat({ message: prompt, mode, persona });
+    const { answer } = await runChat({
+      command: mode,
+      userInput: prompt,
+      message: prompt,
+      mode,
+      persona,
+    });
 
     const uuid = (crypto as any).randomUUID?.() ?? Math.random().toString(16).slice(2);
     const id = `chatcmpl_${String(uuid).replace(/-/g, '')}`;
@@ -145,4 +151,3 @@ export default async function handler(req: Request) {
     });
   }
 }
-
