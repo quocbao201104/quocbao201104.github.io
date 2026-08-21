@@ -3,14 +3,14 @@ import { parseTerminalCommand } from '@/terminal/commandParser';
 import { routeTerminalIntent } from '@/terminal/intentRouter';
 import type { ConsoleMode } from '@/types/console';
 
+type OutputTone = 'purple' | 'cyan' | 'ok' | 'warn' | 'muted';
+
 function out(
   speaker: string,
   text: string,
-  tone: TerminalLine extends { kind: 'output'; speakerTone?: infer T }
-    ? NonNullable<T>
-    : 'muted' = 'muted',
+  tone: OutputTone = 'muted',
 ): TerminalLine {
-  return { kind: 'output', speaker, speakerTone: tone as any, text } as TerminalLine;
+  return { kind: 'output', speaker, speakerTone: tone, text } as TerminalLine;
 }
 
 function liveAiEnabled(): boolean {
@@ -29,7 +29,7 @@ export interface CommandResult {
   remote?: {
     mode: ConsoleMode;
     speaker: string;
-    tone: 'purple' | 'cyan' | 'ok' | 'warn' | 'muted';
+    tone: OutputTone;
     command: string;
     userInput: string;
     intent: string;
@@ -50,7 +50,7 @@ export function runTerminalCommand(opts: {
   const routed = routeTerminalIntent(opts.sessionId, parsed);
   if (routed.kind === 'help') return { lines: [], ui: { openHelp: true } };
   if (routed.kind === 'clear') return { lines: [], clear: true };
-  if (routed.kind === 'error') return { lines: [out('', routed.message, 'muted')] };
+  if (routed.kind === 'error') return { lines: [out('', routed.message)] };
 
   if (!liveAiEnabled()) {
     return {
