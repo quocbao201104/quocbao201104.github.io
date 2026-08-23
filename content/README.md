@@ -2,16 +2,17 @@
 
 This folder is the versioned knowledge corpus behind BAO.OS. It is also public repository content, so every file must be safe to read directly on GitHub.
 
-As of 2026-08-21, the public BAO.OS deployment runs without live LLM/RAG. The routing, retrieval, redaction, API, and ingestion implementation remain in source, while this Markdown corpus stays useful as the inspectable source of truth and can be re-ingested when the AI backend is enabled again.
+As of 2026-08-24, the public BAO.OS deployment runs without live LLM/RAG. The routing, retrieval, redaction, API, and ingestion implementation remain in source, while this Markdown corpus stays useful as the inspectable source of truth and can be re-ingested when the AI backend is enabled again.
 
 ## Current Portfolio Hierarchy
 
 - **Building — OmniPilot:** active commercial Shopee AI sales agent; private source.
+- **Building in Public / Researching — Marketing Practitioner:** active open-source research-first marketing decision system for AI agents; public source.
 - **Shipped — TruyenVietHay:** completed reading/audio platform; public source.
 - **Researching — Trustworthy Agentic Systems:** active research on durable agent state and action-to-effect binding; authoritative held-out results are not yet run.
 - **Explored — MarketGap:** paused 1688-to-Shopee market-intelligence engine + SaaS; private source.
 
-Public supporting evidence also includes BAO.OS itself, CD1-2, Marketing Practitioner, and Audio Ingest.
+Public supporting evidence also includes BAO.OS itself, CD1-2, and Audio Ingest.
 
 ## Corpus Rules
 
