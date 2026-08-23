@@ -2,11 +2,18 @@
 title: "Engineering timeline"
 type: "timeline"
 status: "active"
-updated: "2026-08-21"
+updated: "2026-08-24"
 contains_pii: false
 ---
 
 # Engineering Timeline
+
+## 2026-08 → Present — Marketing Practitioner
+- Building an open-source research-first marketing decision system for AI agents rather than a prompt/template collection.
+- Evolved the runtime around the current job, resolved state, open decision, dependency-first loading, evidence/claim boundaries, and minimum sufficient output.
+- Added shared content/distribution and commerce/product-discovery models with platform modules for Facebook, Instagram, LinkedIn, TikTok, X, Google commerce, Amazon, TikTok Shop, Shopee, Etsy, and Lazada.
+- Added addressable just-in-time knowledge routing, deterministic semantic-section/source lookup, targeted routing checks, adversarial review artifacts, and task-specification guidance for underspecified user requests.
+- Public source: https://github.com/quocbao201104/marketing-practitioner-skill
 
 ## 2026-08 → Present — Trustworthy Agentic Systems
 - Started/continued a research track on durable agent-state integrity, provenance, temporal correctness, authority, and effect governance.
@@ -34,4 +41,4 @@ contains_pii: false
 - The public deployment currently disables live LLM/RAG to avoid maintaining always-on AI/database infrastructure for portfolio traffic; the implementation remains in source for inspection or later reactivation.
 
 ## Ongoing Pattern
-Across these systems, the recurring focus is explicit state, recovery, idempotency, trust boundaries, observability, evidence, and bounded automation rather than framework-specific demos.
+Across these systems, the recurring focus is explicit state, recovery, bounded automation, trust boundaries, observability, evidence, uncertainty, and preserving the distinction between what a system can produce and what its evidence actually supports.
