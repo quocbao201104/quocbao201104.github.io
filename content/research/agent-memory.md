@@ -3,7 +3,7 @@ title: "BAO.OS memory and retrieval notes"
 type: "research"
 subtype: "rag-architecture"
 status: "active"
-updated: "2026-08-21"
+updated: "2026-08-24"
 contains_pii: false
 ---
 
@@ -19,7 +19,7 @@ The ingestion path treats Markdown as retrieval data and chunks raw text into ov
 - Profile memory: public-safe positioning, current focus, and public contact links.
 - Project memory: current status, architecture, data flow, stack, verified evidence, public links, and honest boundaries.
 - Timeline memory: chronological engineering evidence with active/completed/paused distinctions.
-- Research memory: BAO.OS retrieval architecture and Trustworthy Agentic Systems methodology/status.
+- Research memory: BAO.OS retrieval architecture plus current research-heavy projects such as Marketing Practitioner and Trustworthy Agentic Systems.
 - Notes memory: dated corpus changes that prevent old project status from silently surviving.
 
 ## Retrieval Rules
@@ -32,4 +32,4 @@ The ingestion path treats Markdown as retrieval data and chunks raw text into ov
 - Never use the RAG redaction layer as an excuse to store sensitive data in the public Git repository.
 
 ## Current Main Entities
-OmniPilot, TruyenVietHay, Trustworthy Agentic Systems, MarketGap, and BAO.OS. Public supporting evidence also includes CD1-2, Marketing Practitioner, and Audio Ingest.
+OmniPilot, Marketing Practitioner, TruyenVietHay, Trustworthy Agentic Systems, MarketGap, and BAO.OS. Public supporting evidence also includes CD1-2 and Audio Ingest.
